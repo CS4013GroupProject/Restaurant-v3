@@ -65,5 +65,9 @@ public class TableReservation extends Restaurant {
 
     }
 
+    public int getTableNumber() {
+        return this.tableNumber;
+    }
+
 
 }
