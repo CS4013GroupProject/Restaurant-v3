@@ -40,7 +40,7 @@ public class TableReservation extends Restaurant {
         reservationID = (int) ((Math.random() * 89999999) + 10000000);
         String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(cancelled)};
 
-        CSV("src/data.csv", data);
+        CSV("Restaurant/src/data.csv", data);
     }
 
 
@@ -64,6 +64,16 @@ public class TableReservation extends Restaurant {
 
 
     }
-
-
+@Override
+    public String toString(){
+    StringBuilder bobTheBuilder = new StringBuilder();
+    bobTheBuilder.append("Name: ").append(fullName).append("\n");
+    bobTheBuilder.append("Date and time: ").append(date).append(" ").append(time).append("\n");
+    bobTheBuilder.append("phone number: ").append(phoneNumber).append("\n");
+    bobTheBuilder.append("table number: " ).append(tableNumber).append("\n");
+    bobTheBuilder.append("Reservation ID: ").append(reservationID).append("\n");
+    bobTheBuilder.append("Restaurant Id: ").append(reservationID).append("\n");
+    bobTheBuilder.append("Number of people: ").append(noOfPeople).append("\n");
+    return bobTheBuilder.toString();
+    }
 }
