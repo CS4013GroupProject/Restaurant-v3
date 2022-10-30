@@ -76,4 +76,10 @@ public class TableReservation extends Restaurant {
     bobTheBuilder.append("Number of people: ").append(noOfPeople).append("\n");
     return bobTheBuilder.toString();
     }
+
+    public int getTableNumber() {
+        return this.tableNumber;
+    }
+
+
 }
