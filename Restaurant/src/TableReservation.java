@@ -43,7 +43,8 @@ public class TableReservation extends Restaurant {
         CSV("Restaurant/src/data.csv", data);
     }
 
-
+    public LocalDate getDate(){return date;}
+    public LocalTime getTime(){return time;}
     public TableReservation(int restaurantID) throws FileNotFoundException {
         //constructor for searching purposes
         this.restaurantID = getRestaurantId();
