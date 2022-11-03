@@ -1,6 +1,4 @@
 name, reservationID, Table, date, time, resturauntID
-Mark Harrison, 45516102, 7, 2022-10-28, 16:23:49.134927400, 134, false, 
-Mark Harrison, 38953876, 7, 2022-10-28, 16:53:25.598724400, 134, false, 
-Mark Harrison, 57256067, 7, 2022-10-30, 20:26:01.264323600, 134, false, 
-Mark Harrison, 41409934, 4, 2003-05-21, 12:06, 700, false, 
-mark harrison, 60753079, 5, 2003-05-21, 11:33, 500, false, 
+
+mark, 63672323, 5, 2003-05-21, 11:22, 595, false, 
+patrick, 84335854, 7, 2003-05-21, 11:33, 595, false, 

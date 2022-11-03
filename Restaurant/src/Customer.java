@@ -13,9 +13,11 @@ public class Customer extends Restaurant{
     public void menuForCustomers() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         Restaurant currentRestaurant = getListOfRestaurants().get(currentRestaurantIndex);
+
         System.out.println("Customer Menu");
         System.out.println("M)ake a reservation, V)iew Menu, C)ancel Reservation, S)witch Restaurant, L)ookup available tables");
         String input = in.nextLine();
+
         if(input.equalsIgnoreCase("M")){
             makeReservation();
         }else if(input.equalsIgnoreCase("V")){
