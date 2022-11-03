@@ -7,6 +7,15 @@ public class Food {
         this.foodName = foodName;
         this.price = price;
     }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getFoodName() {
+        return foodName;
+    }
+
     public String toString(){
         String s = "";
         s += foodName + " ";

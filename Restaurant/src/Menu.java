@@ -32,6 +32,11 @@ public class Menu extends TableReservation{
                         menu.add(new Food("Steak, Egg And Thick Cut Chips",12.95 ));
                 }
         }
+
+        public ArrayList<Food> getMenu() {
+                return menu;
+        }
+
         public String toString(){
                 return menu.toString();
         }
