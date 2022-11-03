@@ -2,8 +2,17 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Admin extends Restaurant{
+
+
+    Restaurant currentRestaurant;
+
+    public Admin(Restaurant restaurant){
+        currentRestaurant = restaurant;
+    }
     public void menuForAdmin() throws FileNotFoundException {
+
         Scanner in = new Scanner(System.in);
+
         Restaurant currentRestaurant = getListOfRestaurants().get(currentRestaurantIndex);
 
         System.out.println("Menu");
@@ -32,6 +41,7 @@ public class Admin extends Restaurant{
             }
         }else if(input.equalsIgnoreCase("Q")){
             System.out.println("Goodbye");
+            currentRestaurant.run();
 
         }
     }

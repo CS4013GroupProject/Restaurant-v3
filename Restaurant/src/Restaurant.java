@@ -67,7 +67,9 @@ public class Restaurant {
         }
     }
     public  void run() throws FileNotFoundException {
-        createRestaurant();
+        if(listOfRestaurants.size() == 0){
+            createRestaurant();
+        }
         Scanner in = new Scanner(System.in);
         System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration");
         String role = in.nextLine();
@@ -86,9 +88,10 @@ public class Restaurant {
                 //menuForChef
             }
         }else if(role.equalsIgnoreCase("A")){
-            Admin a = new Admin();
+            while(!quit){
+            Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
             a.menuForAdmin();
-        }
+        }}
 
 
         }
@@ -119,8 +122,7 @@ public class Restaurant {
         Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[1]), Integer.parseInt(restData[2]));
         listOfRestaurants.add(a);
         currentRestaurantIndex = listOfRestaurants.indexOf(a);
-        System.out.println(currentRestaurantIndex);
-        System.out.println(listOfRestaurants.get(0).getListOfRestaurants());
+
 
     }
 }

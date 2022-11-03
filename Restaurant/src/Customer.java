@@ -17,7 +17,7 @@ public class Customer {
     public void menuForCustomers() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         System.out.println("Customer Menu");
-        System.out.println("M)ake a reservation, V)iew Menu, C)ancel Reservation, S)witch Restaurant, L)ookup available tables");
+        System.out.println("M)ake a reservation, V)iew Menu, C)ancel Reservation, S)witch Restaurant, L)ookup available tables, Se)e Reservations, Q)uit");
         String input = in.nextLine();
 
         if(input.equalsIgnoreCase("M")){
@@ -38,6 +38,8 @@ public class Customer {
             for(int i = 0; i < Restaurant.getListOfRestaurants().size(); i++){
                 System.out.println((i+1) + ". " + currentRestaurant.getListOfRestaurants().get(i));
             }
+            int newIndex = in.nextInt() - 1;
+            currentRestaurant = Restaurant.getListOfRestaurants().get(newIndex);
         }else if(input.equalsIgnoreCase("L")){
             System.out.println("Input a date YYYY-MM-DD");
             String s = in.nextLine();
@@ -63,6 +65,13 @@ public class Customer {
                 System.out.println(r.getTableNumber());
             }
             System.out.println("are taken.");
+        }else if(input.equalsIgnoreCase("Se")){
+            for(TableReservation r : currentRestaurant.getListOfReservations()){
+                System.out.println(r);
+            }
+
+        }else if(input.equalsIgnoreCase("q")){
+            currentRestaurant.run();
         }
 
     }
