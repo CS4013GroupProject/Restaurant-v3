@@ -8,7 +8,13 @@ public class Order extends Menu {
         super(timeOfDay);
     }
     public void addToOrder(Food foods){
-        orders.add(foods);
-        OrderTotal += foods.getPrice();
+        if(this.getMenu().contains(foods)) {
+            orders.add(foods);
+            OrderTotal += foods.getPrice();
+        }
+    }
+
+    public double getOrderTotal() {
+        return OrderTotal;
     }
 }
