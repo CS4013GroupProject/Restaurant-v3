@@ -6,24 +6,25 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Scanner;
 
 
 public class Restaurant {
     public static void main(String[] args) throws FileNotFoundException {
-       run();
+
         Restaurant a = new Restaurant(134, 55, 15);
         LocalDate c = LocalDate.now();
         LocalTime d = LocalTime.now();
-
+        a.run();
         TableReservation b = new TableReservation(c, d, "Mark Harrison", 2260882, 3, a.restaurantId, 7 );
     }
-    private static int restaurantId;
+    private  int restaurantId;
     private int capacity;
     private int numberOfTables;
-    private static ArrayList<String> csv = new ArrayList<>();
-    private static ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
-    private static ArrayList<TableReservation> listOfReservations = new ArrayList<>();
+    private  ArrayList<String> csv = new ArrayList<>();
+    private  ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
+    private  ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     static int currentRestaurantIndex;
     static boolean quit = false;
 
@@ -41,6 +42,7 @@ public class Restaurant {
     public int getCapacity(){return capacity;}
     public int getNumberOfTables(){return numberOfTables;}
     public ArrayList<TableReservation> getListOfReservations(){return listOfReservations;}
+    public ArrayList<Restaurant> getListOfRestaurants(){return listOfRestaurants;}
     public void CSV(String path, String[] columnNames) throws FileNotFoundException {
 
         FileWriter write = null;
@@ -56,57 +58,37 @@ public class Restaurant {
             e.printStackTrace();
         }
     }
-    public static void run() throws FileNotFoundException {
+    public  void run() throws FileNotFoundException {
         createRestaurant();
-
-        while(!quit){
-            menu();
-        }
-
-         ;
-
-    }
-    public static void menu() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
-        Restaurant currentRestaurant = listOfRestaurants.get(currentRestaurantIndex);
-        System.out.println("Menu");
-        System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, M)ake Reservation, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, Q)uit ");
-        String input = in.nextLine();
-        if(input.equalsIgnoreCase("R")){
-            System.out.println(currentRestaurant.getRestaurantId());
-        }else if(input.equalsIgnoreCase("N")){
-            System.out.println(currentRestaurant.getNumberOfTables());
-        }else if(input.equalsIgnoreCase("C")){
-            System.out.println(currentRestaurant.getCapacity());
-        }else if(input.equalsIgnoreCase("M")){
-                currentRestaurant.makeReservation();
-        }else if(input.equalsIgnoreCase("V")){
-            System.out.println("Enter a time: Morning (1), Noon(2), Evening(3)");
-            int time = Integer.parseInt(in.nextLine());
-            HashMap<Integer, String> timeToChar = new HashMap<Integer, String>();
-            timeToChar.put(1, "Morning");
-            timeToChar.put(2, "Noon");
-            timeToChar.put(3,"Evening");
-            Menu a = new Menu(timeToChar.get(time));
-            System.out.println(a);
-        }else if(input.equalsIgnoreCase("Cr")){
-            createRestaurant();
-        }else if(input.equalsIgnoreCase("S")){
-            System.out.println("Choose a restaurant:");
-            for(Restaurant s : listOfRestaurants){
-                System.out.println(s.getRestaurantId());
+        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration");
+        String role = in.nextLine();
+        if(role.equalsIgnoreCase("C")){
+            while(!quit){
+                Customer c = new Customer();
+                c.menuForCustomers();
             }
-            int nextRestaurant = Integer.parseInt(in.nextLine());
-            currentRestaurant = listOfRestaurants.get(nextRestaurant);
-        }else if(input.equalsIgnoreCase("Re")){
-            for(TableReservation s : currentRestaurant.getListOfReservations()){
-                System.out.println(s);
+        }else if(role.equalsIgnoreCase("W")) {
+            Waiter w = new Waiter();
+            while (!quit) {
+                w.menuForWaiters();
             }
-        }else if(input.equalsIgnoreCase("Q")){
-            System.out.println("Goodbye");
-            return;
+        }else if(role.equalsIgnoreCase("Ch")){
+            while(!quit){
+                //menuForChef
+            }
+        }else if(role.equalsIgnoreCase("A")){
+            Admin a = new Admin();
+            a.menuForAdmin();
         }
-    }
+
+
+        }
+
+
+
+
+
     public void makeReservation() throws FileNotFoundException {
         System.out.println("Enter date 'DD/MM/YYYY, time 'HH:MM', full name, phone number, number of people, table number ");
         Scanner in = new Scanner(System.in);
@@ -128,7 +110,20 @@ public class Restaurant {
         TableReservation a = new TableReservation(b, c, resData[2],Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), getRestaurantId(), Integer.parseInt(resData[5]));
         listOfReservations.add(a);
     }
-    public static void createRestaurant() throws FileNotFoundException {
+
+    public void viewMenu(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter a time: Morning (1), Noon(2), Evening(3)");
+        int time = Integer.parseInt(in.nextLine());
+        HashMap<Integer, String> timeToChar = new HashMap<Integer, String>();
+        timeToChar.put(1, "Morning");
+        timeToChar.put(2, "Noon");
+        timeToChar.put(3,"Evening");
+        Menu a = new Menu(timeToChar.get(time));
+        System.out.println(a);
+    }
+
+    public  void createRestaurant() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         System.out.println("Create a restaurant");
         System.out.println("Enter Restaurant ID, number of tables and capacity");
