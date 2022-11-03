@@ -16,7 +16,7 @@ public class Payment extends TableReservation {
     private void writeToFile(String[] data) throws FileNotFoundException {
         
         try {
-            FileWriter f = new FileWriter("src/payments.csv", true);
+            FileWriter f = new FileWriter("Restaurant/src/payments.csv", true);
             for(String s : data) {
                 f.write(s + ", ");
             }
@@ -35,6 +35,5 @@ public class Payment extends TableReservation {
     public static void main(String[] args) throws FileNotFoundException {
         Payment a = new Payment(100, LocalDate.now());
         a.takePayment();
-        a.takeTip();
     }
 }
