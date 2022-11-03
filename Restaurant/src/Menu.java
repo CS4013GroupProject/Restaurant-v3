@@ -34,6 +34,11 @@ public class Menu extends TableReservation{
                 }
         }
 
+        public ArrayList<Food> getMenu() {
+                return menu;
+        }
+
+
         public String toString(){
                 return menu.toString();
         }
