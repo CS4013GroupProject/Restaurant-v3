@@ -24,13 +24,16 @@ public class Restaurant {
     private int capacity;
     private int numberOfTables;
     private  ArrayList<String> csv = new ArrayList<>();
-    private  ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
+    private static ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
     private  ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     static int currentRestaurantIndex;
     static boolean quit = false;
 
 
     public Restaurant(){};
+    public Restaurant(ArrayList<Restaurant> listOfRestaurants){
+        this.listOfRestaurants = listOfRestaurants;
+    }
     public Restaurant(int restaurantId, int capacity, int numberOfTables) throws FileNotFoundException {
         this.restaurantId = restaurantId;
         this.capacity = capacity;
@@ -43,7 +46,11 @@ public class Restaurant {
     public int getCapacity(){return capacity;}
     public int getNumberOfTables(){return numberOfTables;}
     public ArrayList<TableReservation> getListOfReservations(){return listOfReservations;}
-    public ArrayList<Restaurant> getListOfRestaurants(){return listOfRestaurants;}
+    public static ArrayList<Restaurant> getListOfRestaurants(){return listOfRestaurants;}
+    public String toString(){
+        String s = "" + restaurantId;
+                return s;
+    }
     public void CSV(String path, String[] columnNames) throws FileNotFoundException {
 
         FileWriter write = null;
@@ -66,7 +73,7 @@ public class Restaurant {
         String role = in.nextLine();
         if(role.equalsIgnoreCase("C")){
             while(!quit){
-                Customer c = new Customer();
+                Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
                 c.menuForCustomers();
             }
         }else if(role.equalsIgnoreCase("W")) {
@@ -90,27 +97,7 @@ public class Restaurant {
 
 
 
-    public void makeReservation() throws FileNotFoundException {
-        System.out.println("Enter date 'DD/MM/YYYY, time 'HH:MM', full name, phone number, number of people, table number ");
-        Scanner in = new Scanner(System.in);
-        String[] resData = in.nextLine().split(",");
-        //format the date string as a LocalDate
-        String[] dateAsArray = resData[0].split("/");
-        int[] dateAsInts = new int[3];
-        for(int i = 0; i < dateAsArray.length; i++) {
-            dateAsInts[i] = Integer.parseInt(dateAsArray[i]);
-        }
-        LocalDate b = LocalDate.of(dateAsInts[2], dateAsInts[1], dateAsInts[0]);
-        //format the time string as a LocalTime
-        String[] timeArray = resData[1].split(":");
-        int[] timeAsInts = new int[2];
-        for(int i = 0; i < timeArray.length; i++){
-            timeAsInts[i] = Integer.parseInt(timeArray[i]);
-        }
-        LocalTime c = LocalTime.of(timeAsInts[0], timeAsInts[1]);
-        TableReservation a = new TableReservation(b, c, resData[2],Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), getRestaurantId(), Integer.parseInt(resData[5]));
-        listOfReservations.add(a);
-    }
+
 
     public void viewMenu(){
         Scanner in = new Scanner(System.in);
@@ -132,6 +119,9 @@ public class Restaurant {
         Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[1]), Integer.parseInt(restData[2]));
         listOfRestaurants.add(a);
         currentRestaurantIndex = listOfRestaurants.indexOf(a);
+        System.out.println(currentRestaurantIndex);
+        System.out.println(listOfRestaurants.get(0).getListOfRestaurants());
+
     }
 }
 

@@ -17,8 +17,6 @@ public class Waiter extends Restaurant{
             System.out.println(currentRestaurant.getNumberOfTables());
         }else if(input.equalsIgnoreCase("C")){
             System.out.println(currentRestaurant.getCapacity());
-        }else if(input.equalsIgnoreCase("M")){
-            currentRestaurant.makeReservation();
         }else if(input.equalsIgnoreCase("V")){
             viewMenu();
         }else if(input.equalsIgnoreCase("Cr")){

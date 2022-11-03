@@ -2,6 +2,7 @@ import java.util.ArrayList;
 public class Menu extends TableReservation{
 
         ArrayList<Food> menu = new ArrayList<>();
+
         public Menu(String timeOfDay) {
                 if(timeOfDay == "Morning"){
                         Food food = new Food("g",5);
@@ -32,6 +33,7 @@ public class Menu extends TableReservation{
                         menu.add(new Food("Steak, Egg And Thick Cut Chips",12.95 ));
                 }
         }
+
         public String toString(){
                 return menu.toString();
         }
