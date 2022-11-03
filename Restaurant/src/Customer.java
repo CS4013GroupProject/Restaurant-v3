@@ -49,8 +49,9 @@ public class Customer extends Restaurant{
                         counter--;
                         currentRes.add(r);
                     }
-                }
             }
+            }
+            
             System.out.println("There are " + counter + " tables available at the given date and time. Table(s)\n");
             for(TableReservation r : currentRes){
                 System.out.println(r.getTableNumber());
