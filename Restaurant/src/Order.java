@@ -1,20 +1,35 @@
 import java.util.ArrayList;
 
-public class Order extends Menu {
+public class Order {
     private ArrayList<Food> orders = new ArrayList<>();
-    private double OrderTotal = 0;
+    private double orderTotal = 0;
+    private int tableNumber;
 
-    public Order(String timeOfDay) {
-        super(timeOfDay);
+    public Order(int tableNumber) {
+        this.tableNumber = tableNumber;
     }
-    public void addToOrder(Food foods){
-        if(this.getMenu().contains(foods)) {
-            orders.add(foods);
-            OrderTotal += foods.getPrice();
+    public void addToOrder(String food){
+        for(Food f : Menu.getMenu()){
+            if(f.getFoodName().equalsIgnoreCase(food)) {
+                orders.add(f);
+                orderTotal += f.getPrice();
+            }
         }
+
     }
 
     public double getOrderTotal() {
-        return OrderTotal;
+        return orderTotal;
+    }
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append("Food:\n");
+        for(Food f : orders){
+            s.append(f);
+            s.append("\n");
+        }
+        s.append(orderTotal);
+        return s.toString();
+
     }
 }

@@ -1,10 +1,12 @@
 import java.util.ArrayList;
+import java.util.Objects;
+
 public class Menu extends TableReservation{
 
-        ArrayList<Food> menu = new ArrayList<>();
+        static ArrayList<Food> menu = new ArrayList<>();
 
         public Menu(String timeOfDay) {
-                if(timeOfDay == "Morning"){
+                if(Objects.equals(timeOfDay, "Morning")){
                         Food food = new Food("g",5);
                         menu.add(new Food("Full Irish Breakfast",16.95 ));
                         menu.add(new Food("Vegetarian Breakfast", 15.95));
@@ -20,12 +22,12 @@ public class Menu extends TableReservation{
                         menu.add(new Food("Non-Gluten Bramley Apple Granola",6.75 ));
                         menu.add(new Food("Poached Eggs And Crushed Avocado",12.95 ));
                 }
-                else if (timeOfDay == "Noon") {
+                else if (Objects.equals(timeOfDay, "Noon")) {
                         menu.add(new Food("Smoked Mackerel",5.00));
                         menu.add(new Food("Mushroom Consomme",5.00));
                         menu.add(new Food("Ham Hock Croquette",5.00));
                 }
-                else if (timeOfDay == "Evening"){
+                else if (Objects.equals(timeOfDay, "Evening")){
                         menu.add(new Food("Baked Salmon Fillet",12.95 ));
                         menu.add(new Food("Sweet Potato Keralan Curry",12.95 ));
                         menu.add(new Food("Chargrilled Paillard Of Chicken",12.95 ));
@@ -34,7 +36,7 @@ public class Menu extends TableReservation{
                 }
         }
 
-        public ArrayList<Food> getMenu() {
+        public static ArrayList<Food> getMenu() {
                 return menu;
         }
 

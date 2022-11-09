@@ -84,14 +84,16 @@ public class Restaurant {
                 w.menuForWaiters();
             }
         }else if(role.equalsIgnoreCase("Ch")){
+            Chef chef = new Chef();
             while(!quit){
-                //menuForChef
+                chef.menuForChef();
             }
         }else if(role.equalsIgnoreCase("A")){
             while(!quit){
             Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
             a.menuForAdmin();
-        }}
+        }
+        }
 
 
         }
