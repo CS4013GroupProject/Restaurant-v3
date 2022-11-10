@@ -80,7 +80,22 @@ public class Restaurant {
         Scanner in = new Scanner(System.in);
         System.out.println("Menu for Restaurant: " + listOfRestaurants.get(currentRestaurantIndex).getRestaurantId());
         System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration");
-        String role = in.nextLine().trim();
+        String role = in.nextLine().toLowerCase().trim();
+
+        switch(role) {
+            case "C":
+                Customer c = new Customer();
+                c.menuForCustomers();
+                break;
+            case "W":
+                Waiter w = new Waiter();
+                w.menuForWaiters();
+                break;
+            case "ch":
+                Chef ch = new Chef();
+                ch.menuForChefs();
+                break;
+        }
         if(role.equalsIgnoreCase("C")){
             while(!quit){
                 Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));

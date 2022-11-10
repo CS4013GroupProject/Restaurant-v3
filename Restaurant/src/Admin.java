@@ -57,6 +57,40 @@ public class Admin extends Restaurant{
             System.out.println("Goodbye");
             currentRestaurant.run();
 
+        switch(input) {
+            case "r": 
+                System.out.println(currentRestaurant.getRestaurantId());
+                break;
+            case "n":
+                System.out.println(currentRestaurant.getNumberOfTables());
+                break;
+            case "c":
+                System.out.println(currentRestaurant.getCapacity());
+                break;
+            case "v":
+                viewMenu();
+                break;
+            case "cr":
+                createRestaurant();
+                break;
+            case "s":
+                System.out.println("Choose a restaurant:");
+                for(Restaurant s : getListOfRestaurants()){
+                    System.out.println(s.getRestaurantId());
+                }
+                int nextRestaurant = Integer.parseInt(in.nextLine());
+                currentRestaurant = getListOfRestaurants().get(nextRestaurant);
+                break;
+            case "re":
+                for(TableReservation s : currentRestaurant.getListOfReservations()){
+                    System.out.println(s);
+                }
+                break;
+            case "q":
+                System.out.println("Goodbye");
+                quit = true;
+                break;
+
         }
     }
 }
