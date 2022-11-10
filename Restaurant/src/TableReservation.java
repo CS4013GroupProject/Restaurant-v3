@@ -16,17 +16,13 @@ public class TableReservation extends Restaurant {
     private static ArrayList<String> csv = new ArrayList<>();
     boolean cancelled;
     private int rowNumber;
+    private Restaurant currentRestaurant;
 
 
-    public static void main(String[] args) throws FileNotFoundException {
-        LocalDate a = LocalDate.now();
-        LocalTime b = LocalTime.now();
-        TableReservation c = new TableReservation(a, b, "Mark Harrison", 2260882, 3, 1241, 7);
-        System.out.println(csv);
-    }
+
 
     public TableReservation(){}
-    public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber) throws FileNotFoundException {
+    public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant) throws FileNotFoundException {
         //this constructor makes a reservation
             this(restaurantID);
 
@@ -37,9 +33,10 @@ public class TableReservation extends Restaurant {
         this.noOfPeople = noOfPeople;
         this.tableNumber = tableNumber;
         cancelled = false;
+        this.restaurantID = restaurantID;
         reservationID = (int) ((Math.random() * 89999999) + 10000000);
         String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(cancelled)};
-
+        this.currentRestaurant = currentRestaurant;
         CSV("Restaurant/src/data.csv", data);
     }
 
@@ -48,8 +45,8 @@ public class TableReservation extends Restaurant {
     public TableReservation(int restaurantID) throws FileNotFoundException {
         //constructor for searching purposes
         this.restaurantID = getRestaurantId();
-
     }
+
 
 
     public String reminder() {
@@ -73,7 +70,7 @@ public class TableReservation extends Restaurant {
     bobTheBuilder.append("phone number: ").append(phoneNumber).append("\n");
     bobTheBuilder.append("table number: " ).append(tableNumber).append("\n");
     bobTheBuilder.append("Reservation ID: ").append(reservationID).append("\n");
-    bobTheBuilder.append("Restaurant Id: ").append(reservationID).append("\n");
+    bobTheBuilder.append("Restaurant Id: ").append(restaurantID).append("\n");
     bobTheBuilder.append("Number of people: ").append(noOfPeople).append("\n");
     return bobTheBuilder.toString();
     }

@@ -32,8 +32,5 @@ public class Payment extends TableReservation {
         writeToFile(data);
     }
     
-    public static void main(String[] args) throws FileNotFoundException {
-        Payment a = new Payment(100, LocalDate.now());
-        a.takePayment();
-    }
+
 }

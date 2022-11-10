@@ -13,6 +13,7 @@ public class Order {
             if(f.getFoodName().equalsIgnoreCase(food)) {
                 orders.add(f);
                 orderTotal += f.getPrice();
+                break;
             }
         }
 

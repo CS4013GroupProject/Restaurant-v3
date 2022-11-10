@@ -2,6 +2,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -12,13 +13,11 @@ import java.util.Scanner;
 
 public class Restaurant {
     public static void main(String[] args) throws FileNotFoundException {
-
         Restaurant a = new Restaurant(134, 55, 15);
         LocalDate c = LocalDate.now();
         LocalTime d = LocalTime.now();
 
         a.run();
-        TableReservation b = new TableReservation(c, d, "Mark Harrison", 2260882, 3, a.restaurantId, 7 );
     }
     private  int restaurantId;
     private int capacity;
@@ -28,6 +27,8 @@ public class Restaurant {
     private  ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     static int currentRestaurantIndex;
     static boolean quit = false;
+    private  ArrayList<Order> currentOrders = new ArrayList<>();
+    private  ArrayList<Order> completedOrder = new ArrayList<>();
 
 
     public Restaurant(){};
@@ -66,25 +67,32 @@ public class Restaurant {
             e.printStackTrace();
         }
     }
+    public ArrayList<Order> getCurrentOrders(){
+        return currentOrders;
+    }
+    public ArrayList<Order> getCompletedOrder(){
+        return completedOrder;
+    }
     public  void run() throws FileNotFoundException {
         if(listOfRestaurants.size() == 0){
             createRestaurant();
         }
         Scanner in = new Scanner(System.in);
+        System.out.println("Menu for Restaurant: " + listOfRestaurants.get(currentRestaurantIndex).getRestaurantId());
         System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration");
-        String role = in.nextLine();
+        String role = in.nextLine().trim();
         if(role.equalsIgnoreCase("C")){
             while(!quit){
                 Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
                 c.menuForCustomers();
             }
         }else if(role.equalsIgnoreCase("W")) {
-            Waiter w = new Waiter();
+            Waiter w = new Waiter(listOfRestaurants.get(currentRestaurantIndex));
             while (!quit) {
                 w.menuForWaiters();
             }
         }else if(role.equalsIgnoreCase("Ch")){
-            Chef chef = new Chef();
+            Chef chef = new Chef(listOfRestaurants.get(currentRestaurantIndex));
             while(!quit){
                 chef.menuForChef();
             }
@@ -117,15 +125,21 @@ public class Restaurant {
     }
 
     public  void createRestaurant() throws FileNotFoundException {
-        Scanner in = new Scanner(System.in);
+        Scanner in = new Scanner(System.in).useDelimiter("\\s+");
         System.out.println("Create a restaurant");
         System.out.println("Enter Restaurant ID, number of tables and capacity");
         String[] restData = in.nextLine().split(",");
+        for(int i = 0; i < restData.length; i++){
+            restData[i] = restData[i].trim();
+        }
         Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[1]), Integer.parseInt(restData[2]));
         listOfRestaurants.add(a);
         currentRestaurantIndex = listOfRestaurants.indexOf(a);
 
 
+    }
+    public  void addToActiveOrders(Order o){
+        currentOrders.add(o);
     }
 }
 
