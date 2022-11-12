@@ -25,6 +25,7 @@ public class Chef extends Restaurant{
             int index = Integer.parseInt(in.nextLine().trim());
             if(index >= 0 && index <= currentRestaurant.getCurrentOrders().size()){
                 currentRestaurant.getCompletedOrder().add(currentRestaurant.getCurrentOrders().get(index));
+                currentRestaurant.getPaymentPendingOrders().add(currentRestaurant.getCurrentOrders().get(index));
                 currentRestaurant.getCurrentOrders().remove(index);
 
             }

@@ -17,7 +17,7 @@ public class Admin extends Restaurant {
         Restaurant currentRestaurant = getListOfRestaurants().get(currentRestaurantIndex);
 
         System.out.println("Menu for Restaurant: " + currentRestaurant.getRestaurantId());
-        System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, A)dd food, Q)uit ");
+        System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, A)dd to Menu, Q)uit ");
         String input = in.nextLine().trim();
         if (input.equalsIgnoreCase("R")) {
             System.out.println(currentRestaurant.getRestaurantId());
@@ -26,17 +26,18 @@ public class Admin extends Restaurant {
         } else if (input.equalsIgnoreCase("C")) {
             System.out.println(currentRestaurant.getCapacity());
         } else if (input.equalsIgnoreCase("V")) {
-            viewMenu();
+            currentRestaurant.viewMenu();
         } else if (input.equalsIgnoreCase("Cr")) {
             createRestaurant();
         } else if (input.equalsIgnoreCase("S")) {
             System.out.println("Choose a restaurant:");
+            System.out.println(Restaurant.getListOfRestaurants());
             for (int i = 0; i < getListOfRestaurants().size(); i++) {
-                System.out.println(i + 1);
+                System.out.println((i + 1) + ".");
                 System.out.println(getListOfRestaurants().get(i).getRestaurantId());
             }
-            int nextRestaurant = Integer.parseInt(in.nextLine().trim());
-            if (nextRestaurant > 0 && nextRestaurant <= getListOfRestaurants().size()) {
+            int nextRestaurant = Integer.parseInt(in.nextLine().trim()) - 1;
+            if (nextRestaurant >= 0 && nextRestaurant <= getListOfRestaurants().size()) {
                 currentRestaurant = getListOfRestaurants().get(nextRestaurant);
                 currentRestaurantIndex = nextRestaurant;
             } else {
@@ -48,12 +49,16 @@ public class Admin extends Restaurant {
                 System.out.println(s);
             }
         } else if (input.equalsIgnoreCase("A")) {
+            System.out.println("Enter a time of day: (1) Morning, (2) Noon, (3) Evening");
+            int timeOfDay = Integer.parseInt(in.nextLine().trim());
             System.out.println("Enter food name:");
-            String foodname = in.nextLine().trim();
+            String foodName = in.nextLine().trim();
             System.out.println("Enter a price:");
-            int price = Integer.parseInt(in.nextLine().trim());
-            Food newFood = new Food(foodname, price);
-            Menu.menu.add(newFood);
+            double price = Double.parseDouble(in.nextLine().trim());
+            Food newFood = new Food(foodName, price);
+            Menu newMenu = new Menu();
+            newMenu.addToMenu(timeOfDay, newFood);
+            currentRestaurant.setMenu(newMenu);
         } else if (input.equalsIgnoreCase("Q")) {
             System.out.println("Goodbye");
             currentRestaurant.run();

@@ -4,7 +4,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Customer {
+public class Customer extends Restaurant {
 
     int customerId;
     Restaurant currentRestaurant;
@@ -16,12 +16,14 @@ public class Customer {
 
     public void menuForCustomers() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
-        System.out.println("Customer Menu");
-        System.out.println("M)ake a reservation, V)iew Menu, C)ancel Reservation, S)witch Restaurant, L)ookup available tables, Se)e Reservations, Q)uit");
+        System.out.println("Customer Menu for Restaurant: " + currentRestaurant.getRestaurantId());
+        System.out.println("M)ake a reservation, W)alk-in Reservation,V)iew Menu, C)ancel Reservation, S)witch Restaurant, P)ay, L)ookup available tables, Se)e Reservations, Q)uit");
         String input = in.nextLine().trim();
 
         if(input.equalsIgnoreCase("M")){
             makeReservation();
+        }else if(input.equalsIgnoreCase("W")){
+            makeWalkInReservation();
         }else if(input.equalsIgnoreCase("V")){
             currentRestaurant.viewMenu();
         }else if(input.equalsIgnoreCase("C")) {
@@ -41,7 +43,40 @@ public class Customer {
                 System.out.println("invalid reservation");
                 menuForCustomers();
             }
-            }else if(input.equalsIgnoreCase("S")){
+            } else if(input.equalsIgnoreCase("P")){
+            System.out.println("Choose an Order");
+            for(int i = 0; i < currentRestaurant.getPaymentPendingOrders().size(); i++){
+                System.out.println((i+1) + ".");
+                System.out.println(currentRestaurant.getPaymentPendingOrders().get(i).getOrderTotal());
+            }
+            int index = Integer.parseInt(in.nextLine().trim()) - 1;
+            System.out.println("Cash, Card, or Cheque?");
+            String paymethod = in.nextLine().trim();
+            System.out.println("How much was paid?");
+            double pay = Double.parseDouble(in.nextLine().trim());
+            if(pay < currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()){
+                System.out.println("Payment insufficient.");
+                menuForCustomers();
+            }else if(pay > currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()){
+                double change = pay - currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal();
+                System.out.printf("Change due: %.2f.%n", change );
+            }
+            System.out.println("Enter Tip Amount: (0)%, (5)%, (8)%, (10)%, (15)%, (20)%, (Custom)%");
+            double tip = Double.parseDouble(in.nextLine().trim());
+            double tipActual = currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal() * (tip / 100);
+            Payment newPayment = new Payment(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal(), LocalDate.now(), tipActual);
+            newPayment.takePayment();
+            String[] data = {String.valueOf(currentRestaurant.getPaymentPendingOrders().get(index).getTableNumber()),
+                    String.valueOf(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()),
+                    String.valueOf(LocalDate.now()),
+                    String.valueOf(tipActual),
+                    paymethod
+            };
+            currentRestaurant.getPaymentPendingOrders().remove(index);
+            super.CSV("Restaurant/src/payments.csv", data);
+            System.out.println("Payment Processed. Thank you.");
+
+        }else if(input.equalsIgnoreCase("S")){
             System.out.println("Choose a restaurant ");
             System.out.println(Restaurant.getListOfRestaurants());
             for(int i = 0; i < Restaurant.getListOfRestaurants().size(); i++){
@@ -90,26 +125,56 @@ public class Customer {
         System.out.println("Enter date 'YYYY-MM-DD, time 'HH:MM', full name, phone number, number of people, table number ");
         Scanner in = new Scanner(System.in);
         String[] resData = in.nextLine().split(",");
-        for(int i = 0; i < resData.length; i++){
+        for (int i = 0; i < resData.length; i++) {
             resData[i] = resData[i].trim();
         }
         //format the date string as a LocalDate
         String[] dateAsArray = resData[0].split("-");
         int[] dateAsInts = new int[3];
-        for(int i = 0; i < dateAsArray.length; i++) {
+        for (int i = 0; i < dateAsArray.length; i++) {
             dateAsInts[i] = Integer.parseInt(dateAsArray[i]);
         }
         LocalDate b = LocalDate.of(dateAsInts[0], dateAsInts[1], dateAsInts[2]);
+
         //format the time string as a LocalTime
         String[] timeArray = resData[1].split(":");
         int[] timeAsInts = new int[2];
-        for(int i = 0; i < timeArray.length; i++){
+        for (int i = 0; i < timeArray.length; i++) {
             timeAsInts[i] = Integer.parseInt(timeArray[i]);
         }
         LocalTime c = LocalTime.of(timeAsInts[0], timeAsInts[1]);
-        TableReservation a = new TableReservation(b, c, resData[2],Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant);
+
+
+        int counter = currentRestaurant.getNumberOfTables();
+        ArrayList<TableReservation> currentRes = new ArrayList<>();
+        for (TableReservation r : currentRestaurant.getListOfReservations()) {
+            if (r.getDate().equals(b)) {
+                if (r.getTime().getHour() + 3 >= c.getHour()) {
+                    counter--;
+                    currentRes.add(r);
+                }
+            }
+        }
+        for (TableReservation r : currentRes) {
+            if (r.getTableNumber() == Integer.parseInt(resData[5])) {
+                System.out.println("Table is booked at this time.");
+            } else {
+
+
+                TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant);
+                currentRestaurant.getListOfReservations().add(a);
+            }
+        }
+    }
+    public void makeWalkInReservation() throws FileNotFoundException {
+        System.out.println("Enter number of people. Table Number is Assigned Randomly. ");
+        Scanner in = new Scanner(System.in);
+        int noOfPeople = Integer.parseInt(in.nextLine().trim());
+
+        TableReservation a = new TableReservation(LocalDate.now(), LocalTime.now(), noOfPeople, currentRestaurant.getRestaurantId(), currentRestaurant);
         currentRestaurant.getListOfReservations().add(a);
     }
+
 
     public void cancelReservation(ArrayList<TableReservation> a, int index){
         System.out.println("Table reservation:\n " + a.get(index).toString() + "\n has been cancelled.");

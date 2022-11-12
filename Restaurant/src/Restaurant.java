@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 
 public class Restaurant {
+
     public static void main(String[] args) throws FileNotFoundException {
         Restaurant a = new Restaurant(134, 55, 15);
         LocalDate c = LocalDate.now();
@@ -19,28 +20,37 @@ public class Restaurant {
 
         a.run();
     }
+
     private  int restaurantId;
     private int capacity;
     private int numberOfTables;
     private  ArrayList<String> csv = new ArrayList<>();
     private static ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
     private  ArrayList<TableReservation> listOfReservations = new ArrayList<>();
+    private Menu menu = new Menu();
     static int currentRestaurantIndex;
     static boolean quit = false;
     private  ArrayList<Order> currentOrders = new ArrayList<>();
     private  ArrayList<Order> completedOrder = new ArrayList<>();
+    private ArrayList<Order> paymentPendingOrders = new ArrayList<>();
 
 
     public Restaurant(){};
+
     public Restaurant(ArrayList<Restaurant> listOfRestaurants){
         this.listOfRestaurants = listOfRestaurants;
     }
+
     public Restaurant(int restaurantId, int capacity, int numberOfTables) throws FileNotFoundException {
         this.restaurantId = restaurantId;
         this.capacity = capacity;
         this.numberOfTables = numberOfTables;
         String[] data = {String.valueOf(restaurantId), String.valueOf(capacity), String.valueOf(numberOfTables)};
         CSV("Restaurant/src/restaurant.csv", data);
+    }
+
+    public ArrayList<Order> getPaymentPendingOrders() {
+        return paymentPendingOrders;
     }
 
     public  int getRestaurantId(){return  restaurantId;}
@@ -52,6 +62,15 @@ public class Restaurant {
         String s = "" + restaurantId;
                 return s;
     }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
     public void CSV(String path, String[] columnNames) throws FileNotFoundException {
 
         FileWriter write = null;
@@ -79,23 +98,9 @@ public class Restaurant {
         }
         Scanner in = new Scanner(System.in);
         System.out.println("Menu for Restaurant: " + listOfRestaurants.get(currentRestaurantIndex).getRestaurantId());
-        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration");
+        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
         String role = in.nextLine().toLowerCase().trim();
 
-        switch(role) {
-            case "C":
-                Customer c = new Customer();
-                c.menuForCustomers();
-                break;
-            case "W":
-                Waiter w = new Waiter();
-                w.menuForWaiters();
-                break;
-            case "ch":
-                Chef ch = new Chef();
-                ch.menuForChefs();
-                break;
-        }
         if(role.equalsIgnoreCase("C")){
             while(!quit){
                 Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
@@ -116,6 +121,8 @@ public class Restaurant {
             Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
             a.menuForAdmin();
         }
+        }else if(role.equalsIgnoreCase("Q")){
+            System.out.println("Goodbye");
         }
 
 
@@ -128,15 +135,18 @@ public class Restaurant {
 
 
     public void viewMenu(){
+        System.out.println("Enter time of day: (1)Morning, (2)Afternoon, (3)Evening");
         Scanner in = new Scanner(System.in);
-        System.out.println("Enter a time: Morning (1), Noon(2), Evening(3)");
-        int time = Integer.parseInt(in.nextLine());
-        HashMap<Integer, String> timeToChar = new HashMap<Integer, String>();
-        timeToChar.put(1, "Morning");
-        timeToChar.put(2, "Noon");
-        timeToChar.put(3,"Evening");
-        Menu a = new Menu(timeToChar.get(time));
-        System.out.println(a);
+        int timeOfDay = Integer.parseInt(in.nextLine().trim());
+        if(timeOfDay == 1) {
+            System.out.println(menu.getMenuForMorning());
+        }else if(timeOfDay == 2){
+            System.out.println(menu.getMenuForAfterNoon());
+        }else if(timeOfDay == 3){
+            System.out.println(menu.getMenuForEvening());
+        }else{
+            System.out.println("invalid");
+        }
     }
 
     public  void createRestaurant() throws FileNotFoundException {
@@ -147,7 +157,7 @@ public class Restaurant {
         for(int i = 0; i < restData.length; i++){
             restData[i] = restData[i].trim();
         }
-        Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[1]), Integer.parseInt(restData[2]));
+        Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[2]), Integer.parseInt(restData[1]));
         listOfRestaurants.add(a);
         currentRestaurantIndex = listOfRestaurants.indexOf(a);
 

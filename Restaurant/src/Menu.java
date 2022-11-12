@@ -1,53 +1,81 @@
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Menu extends TableReservation{
+public class Menu {
 
-        static ArrayList<Food> menu = new ArrayList<>();
+        private ArrayList<Food> menuForMorning = new ArrayList<>();
+        private ArrayList<Food> menuForAfterNoon = new ArrayList<>();
+        private ArrayList<Food> menuForEvening = new ArrayList<>();
+        Restaurant currentRestaurant;
+        public Menu() {
 
-        public Menu(String timeOfDay) {
-                if(Objects.equals(timeOfDay, "Morning")){
-                        Food food = new Food("g",5);
-                        menu.add(new Food("Full Irish Breakfast",16.95 ));
-                        menu.add(new Food("Vegetarian Breakfast", 15.95));
-                        menu.add(new Food("Eggs Benedict",12.50 ));
-                        menu.add(new Food("Eggs Royale",14.50 ));
-                        menu.add(new Food("Avocado Benedict's",11.50 ));
-                        menu.add(new Food("Hot Buttermilk Pancakes With Bacon", 13.50));
-                        menu.add(new Food("Scrambled Eggs And Smoked Salmon", 13.95));
-                        menu.add(new Food("Two Hen's Eggs", 8.95));
-                        menu.add(new Food("Folded Ham And Cheese Omelette", 11.95));
-                        menu.add(new Food("Organic Galway Bay Smoked Salmon",14.95 ));
-                        menu.add(new Food("Crushed Avocado And Roasted Tomato", 10.95));
-                        menu.add(new Food("Non-Gluten Bramley Apple Granola",6.75 ));
-                        menu.add(new Food("Poached Eggs And Crushed Avocado",12.95 ));
-                }
-                else if (Objects.equals(timeOfDay, "Noon")) {
-                        menu.add(new Food("Smoked Mackerel",5.00));
-                        menu.add(new Food("Mushroom Consomme",5.00));
-                        menu.add(new Food("Ham Hock Croquette",5.00));
-                }
-                else if (Objects.equals(timeOfDay, "Evening")){
-                        menu.add(new Food("Baked Salmon Fillet",12.95 ));
-                        menu.add(new Food("Sweet Potato Keralan Curry",12.95 ));
-                        menu.add(new Food("Chargrilled Paillard Of Chicken",12.95 ));
-                        menu.add(new Food("McChicken Sandwich", 4.95));
-                        menu.add(new Food("Steak, Egg And Thick Cut Chips",12.95 ));
-                }
+
+                        menuForMorning.add(new Food("Full Irish Breakfast",16.95 ));
+                        menuForMorning.add(new Food("Vegetarian Breakfast", 15.95));
+                        menuForMorning.add(new Food("Eggs Benedict",12.50 ));
+                        menuForMorning.add(new Food("Eggs Royale",14.50 ));
+                        menuForMorning.add(new Food("Avocado Benedict's",11.50 ));
+                        menuForMorning.add(new Food("Hot Buttermilk Pancakes With Bacon", 13.50));
+                        menuForMorning.add(new Food("Scrambled Eggs And Smoked Salmon", 13.95));
+                        menuForMorning.add(new Food("Two Hen's Eggs", 8.95));
+                        menuForMorning.add(new Food("Folded Ham And Cheese Omelette", 11.95));
+                        menuForMorning.add(new Food("Organic Galway Bay Smoked Salmon",14.95 ));
+                        menuForMorning.add(new Food("Crushed Avocado And Roasted Tomato", 10.95));
+                        menuForMorning.add(new Food("Non-Gluten Bramley Apple Granola",6.75 ));
+                        menuForMorning.add(new Food("Poached Eggs And Crushed Avocado",12.95 ));
+
+                        menuForAfterNoon.add(new Food("Smoked Mackerel",5.00));
+                        menuForAfterNoon.add(new Food("Mushroom Consomme",5.00));
+                        menuForAfterNoon.add(new Food("Ham Hock Croquette",5.00));
+
+                        menuForEvening.add(new Food("Baked Salmon Fillet",12.95 ));
+                        menuForEvening.add(new Food("Sweet Potato Keralan Curry",12.95 ));
+                        menuForEvening.add(new Food("Chargrilled Paillard Of Chicken",12.95 ));
+                        menuForEvening.add(new Food("McChicken Sandwich", 4.95));
+                        menuForEvening.add(new Food("Steak, Egg And Thick Cut Chips",12.95 ));
+
+
         }
 
-        public static ArrayList<Food> getMenu() {
-                return menu;
+
+        public ArrayList<Food> getMenuForAfterNoon() {
+                return menuForAfterNoon;
         }
 
+        public ArrayList<Food> getMenuForEvening() {
+                return menuForEvening;
+        }
+
+        public ArrayList<Food> getMenuForMorning() {
+                return menuForMorning;
+        }
+        public ArrayList<Food> getTotalMenu() {
+            ArrayList<Food> total = menuForAfterNoon;
+            total.addAll(menuForEvening);
+            total.addAll(menuForMorning);
+            return total;
+        }
 
         public String toString(){
-                return menu.toString();
+                return "Morning:\n" + menuForMorning.toString() + "\n " + "Afternoon: \n" + menuForAfterNoon.toString() + "\n" + "Evening: \n" + menuForEvening.toString();
         }
-        public static void main(String[] args) {
-                Menu breakfast = new Menu("Morning");
-                System.out.println(breakfast);
+
+        public void addToMenu(int timeOfDay, Food food){
+                if(timeOfDay == 1){
+                    System.out.println("HRAONRWIPNF");
+                        menuForMorning.add(food);
+                    System.out.println(menuForMorning);
+                }else if(timeOfDay == 2){
+                        menuForAfterNoon.add(food);
+                }else if(timeOfDay == 3){
+                        menuForEvening.add(food);
+                }else{
+                        System.out.println("Invalid.");
+                }
+
         }
+
+
 }
 
 //HashMap<String, Double> breakfast = new HashMap<>();

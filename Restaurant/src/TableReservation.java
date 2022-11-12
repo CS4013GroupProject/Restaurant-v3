@@ -22,6 +22,38 @@ public class TableReservation extends Restaurant {
 
 
     public TableReservation(){}
+    public TableReservation(LocalDate date, LocalTime time, int noOfPeople, int restaurantID, Restaurant currentRestaurant) throws FileNotFoundException {
+        this(restaurantID);
+        this.date = date;
+        this.time = time;
+        this.noOfPeople = noOfPeople;
+        cancelled = false;
+        this.restaurantID = restaurantID;
+        int counter = currentRestaurant.getNumberOfTables() ;
+        ArrayList<Integer> tables = new ArrayList<>();
+        for(int i = 0; i < counter; i++){
+            tables.add(i+1);
+        }
+        for (TableReservation r : currentRestaurant.getListOfReservations()) {
+            if (r.getDate().equals(date)) {
+                if (r.getTime().getHour() + 3 >= time.getHour()) {
+                    tables.removeIf(i -> i.equals(r.tableNumber));
+                    counter--;
+                }
+            }
+        }
+        if(tables.isEmpty()){
+            System.out.println("Restaurant is currently fully booked.");
+        }else {
+            int tableNumberIndex = (int) ((Math.random() * counter));
+            tableNumber = tables.get(tableNumberIndex);
+            reservationID = (int) ((Math.random() * 89999999) + 10000000);
+            String[] data = {"Null", String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), "Null"};
+            this.currentRestaurant = currentRestaurant;
+            CSV("Restaurant/src/data.csv", data);
+        }
+    }
+
     public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant) throws FileNotFoundException {
         //this constructor makes a reservation
             this(restaurantID);
@@ -35,7 +67,7 @@ public class TableReservation extends Restaurant {
         cancelled = false;
         this.restaurantID = restaurantID;
         reservationID = (int) ((Math.random() * 89999999) + 10000000);
-        String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(cancelled)};
+        String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(phoneNumber)};
         this.currentRestaurant = currentRestaurant;
         CSV("Restaurant/src/data.csv", data);
     }
