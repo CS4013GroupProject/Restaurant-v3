@@ -7,30 +7,34 @@ import java.time.LocalDate;
 public class Payment extends TableReservation {
     private double amountDue;
     private LocalDate date;
-    
-    public Payment(int amountDue, LocalDate date) {
+    private double tip;
+
+
+    public Payment(double amountDue, LocalDate date, double tip) throws FileNotFoundException {
         this.amountDue = amountDue;
         this.date = date;
+        this.tip = tip;
     }
-    
+
     private void writeToFile(String[] data) throws FileNotFoundException {
-        
+
         try {
             FileWriter f = new FileWriter("Restaurant/src/payments.csv", true);
-            for(String s : data) {
+            for (String s : data) {
                 f.write(s + ", ");
             }
             f.write("\n");
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("fawpf");
         }
-        
+
     }
-    
+
     public void takePayment() throws FileNotFoundException {
-        String[] data = {String.valueOf(this.getTableNumber()), String.valueOf(this.amountDue)};
+        String[] data = {String.valueOf(this.getTableNumber()), String.valueOf(this.amountDue), String.valueOf(this.date), String.valueOf(this.tip)};
         writeToFile(data);
     }
-    
+
 
 }
