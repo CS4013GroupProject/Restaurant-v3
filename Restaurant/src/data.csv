@@ -1,4 +1,4 @@
-name, reservationID, Table, date, time, resturauntID, phone number
+name, reservationID, Table, date, time, resturauntID, phone number, customer ID
 
 mark, 63672323, 5, 2003-05-21, 11:22, 595, false, 
 patrick, 84335854, 7, 2003-05-21, 11:33, 595, false, 
@@ -66,3 +66,6 @@ Null, 60049998, 2, 2022-11-12, 20:41:28.152032600, 142, Null,
 Null, 64181922, 3, 2022-11-12, 20:41:30.566079, 142, Null, 
 Mark, 62912493, 3, 2022-11-12, 20:42, 142, 85, 
 Null, 19494995, 1, 2022-11-12, 20:55:16.026397, 11, Null, 
+Null, 63474527, 1, 2022-11-16, 01:26:50.488250600, 11, Null, 
+M, 76297798, 6, 2022-05-21, 13:55, 11, 4, 
+m, 27162124, 7, 2021-05-21, 13:55, 11, 5, 

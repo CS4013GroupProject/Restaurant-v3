@@ -11,8 +11,9 @@ public class Order {
         this.tableNumber = tableNumber;
         this.currentRestaurant = currentRestaurant;
     }
-    public void addToOrder(String food){
-        for(Food f : currentRestaurant.getMenu().getTotalMenu()) {
+
+    public void addToOrder(String food) {
+        for (Food f : currentRestaurant.getMenu().getTotalMenu()) {
             if (f.getFoodName().equalsIgnoreCase(food)) {
                 orders.add(f);
                 orderTotal += f.getPrice();
@@ -22,17 +23,18 @@ public class Order {
     }
 
 
-
-public int getTableNumber(){
+    public int getTableNumber() {
         return tableNumber;
-}
+    }
+
     public double getOrderTotal() {
         return orderTotal;
     }
-    public String toString(){
+
+    public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("Food:\n");
-        for(Food f : orders){
+        for (Food f : orders) {
             s.append(f);
             s.append("\n");
         }

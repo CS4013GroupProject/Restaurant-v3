@@ -21,23 +21,27 @@ public class Restaurant {
         a.run();
     }
 
-    private  int restaurantId;
+    private int restaurantId;
     private int capacity;
     private int numberOfTables;
-    private  ArrayList<String> csv = new ArrayList<>();
+    private ArrayList<String> csv = new ArrayList<>();
     private static ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
-    private  ArrayList<TableReservation> listOfReservations = new ArrayList<>();
+    private ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     private Menu menu = new Menu();
     static int currentRestaurantIndex;
     static boolean quit = false;
-    private  ArrayList<Order> currentOrders = new ArrayList<>();
-    private  ArrayList<Order> completedOrder = new ArrayList<>();
+    private ArrayList<Order> currentOrders = new ArrayList<>();
+    private ArrayList<Order> completedOrder = new ArrayList<>();
     private ArrayList<Order> paymentPendingOrders = new ArrayList<>();
+    private static ArrayList<Login> listOfCustomers = new ArrayList<>();
 
 
-    public Restaurant(){};
+    public Restaurant() {
+    }
 
-    public Restaurant(ArrayList<Restaurant> listOfRestaurants){
+
+
+    public Restaurant(ArrayList<Restaurant> listOfRestaurants) {
         this.listOfRestaurants = listOfRestaurants;
     }
 
@@ -53,14 +57,36 @@ public class Restaurant {
         return paymentPendingOrders;
     }
 
-    public  int getRestaurantId(){return  restaurantId;}
-    public int getCapacity(){return capacity;}
-    public int getNumberOfTables(){return numberOfTables;}
-    public ArrayList<TableReservation> getListOfReservations(){return listOfReservations;}
-    public static ArrayList<Restaurant> getListOfRestaurants(){return listOfRestaurants;}
-    public String toString(){
+    public static ArrayList<Login> getListOfCustomers() {
+        return listOfCustomers;
+    }
+    public static void addToListOfCustomers(Login l){
+        listOfCustomers.add(l);
+    }
+
+    public int getRestaurantId() {
+        return restaurantId;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getNumberOfTables() {
+        return numberOfTables;
+    }
+
+    public ArrayList<TableReservation> getListOfReservations() {
+        return listOfReservations;
+    }
+
+    public static ArrayList<Restaurant> getListOfRestaurants() {
+        return listOfRestaurants;
+    }
+
+    public String toString() {
         String s = "" + restaurantId;
-                return s;
+        return s;
     }
 
     public Menu getMenu() {
@@ -76,7 +102,7 @@ public class Restaurant {
         FileWriter write = null;
         try {
             write = new FileWriter(path, true);
-            for (String s: columnNames) {
+            for (String s : columnNames) {
                 write.write(s);
                 write.write(", ");
             }
@@ -86,14 +112,17 @@ public class Restaurant {
             e.printStackTrace();
         }
     }
-    public ArrayList<Order> getCurrentOrders(){
+
+    public ArrayList<Order> getCurrentOrders() {
         return currentOrders;
     }
-    public ArrayList<Order> getCompletedOrder(){
+
+    public ArrayList<Order> getCompletedOrder() {
         return completedOrder;
     }
-    public  void run() throws FileNotFoundException {
-        if(listOfRestaurants.size() == 0){
+
+    public void run() throws FileNotFoundException {
+        if (listOfRestaurants.size() == 0) {
             createRestaurant();
         }
         Scanner in = new Scanner(System.in);
@@ -101,60 +130,58 @@ public class Restaurant {
         System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
         String role = in.nextLine().toLowerCase().trim();
 
-        if(role.equalsIgnoreCase("C")){
-            while(!quit){
+        if (role.equalsIgnoreCase("C")) {
+
+            while (!quit) {
                 Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
-                c.menuForCustomers();
+                c.login();
             }
-        }else if(role.equalsIgnoreCase("W")) {
+
+        } else if (role.equalsIgnoreCase("W")) {
             Waiter w = new Waiter(listOfRestaurants.get(currentRestaurantIndex));
             while (!quit) {
                 w.menuForWaiters();
             }
-        }else if(role.equalsIgnoreCase("Ch")){
+        } else if (role.equalsIgnoreCase("Ch")) {
             Chef chef = new Chef(listOfRestaurants.get(currentRestaurantIndex));
-            while(!quit){
+            while (!quit) {
                 chef.menuForChef();
             }
-        }else if(role.equalsIgnoreCase("A")){
-            while(!quit){
-            Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
-            a.menuForAdmin();
-        }
-        }else if(role.equalsIgnoreCase("Q")){
+        } else if (role.equalsIgnoreCase("A")) {
+            while (!quit) {
+                Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
+                a.menuForAdmin();
+            }
+        } else if (role.equalsIgnoreCase("Q")) {
             System.out.println("Goodbye");
+            System.exit(0);
         }
 
 
-        }
+    }
 
 
-
-
-
-
-
-    public void viewMenu(){
+    public void viewMenu() {
         System.out.println("Enter time of day: (1)Morning, (2)Afternoon, (3)Evening");
         Scanner in = new Scanner(System.in);
         int timeOfDay = Integer.parseInt(in.nextLine().trim());
-        if(timeOfDay == 1) {
+        if (timeOfDay == 1) {
             System.out.println(menu.getMenuForMorning());
-        }else if(timeOfDay == 2){
+        } else if (timeOfDay == 2) {
             System.out.println(menu.getMenuForAfterNoon());
-        }else if(timeOfDay == 3){
+        } else if (timeOfDay == 3) {
             System.out.println(menu.getMenuForEvening());
-        }else{
+        } else {
             System.out.println("invalid");
         }
     }
 
-    public  void createRestaurant() throws FileNotFoundException {
+    public void createRestaurant() throws FileNotFoundException {
         Scanner in = new Scanner(System.in).useDelimiter("\\s+");
         System.out.println("Create a restaurant");
         System.out.println("Enter Restaurant ID, number of tables and capacity");
         String[] restData = in.nextLine().split(",");
-        for(int i = 0; i < restData.length; i++){
+        for (int i = 0; i < restData.length; i++) {
             restData[i] = restData[i].trim();
         }
         Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[2]), Integer.parseInt(restData[1]));
@@ -163,7 +190,8 @@ public class Restaurant {
 
 
     }
-    public  void addToActiveOrders(Order o){
+
+    public void addToActiveOrders(Order o) {
         currentOrders.add(o);
     }
 }

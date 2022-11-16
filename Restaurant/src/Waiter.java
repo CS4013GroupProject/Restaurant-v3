@@ -4,11 +4,11 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class Waiter extends Restaurant{
+public class Waiter extends Restaurant {
 
     private Restaurant currentRestaurant;
 
-    public Waiter(Restaurant currentRestaurant){
+    public Waiter(Restaurant currentRestaurant) {
         this.currentRestaurant = currentRestaurant;
     }
 
@@ -30,11 +30,11 @@ public class Waiter extends Restaurant{
             viewMenu();
         } else if (input.equalsIgnoreCase("Cr")) {
             createOrder();
-        } else if (input.equalsIgnoreCase("Re")){
+        } else if (input.equalsIgnoreCase("Re")) {
             for (TableReservation s : currentRestaurant.getListOfReservations()) {
                 System.out.println(s);
             }
-        }else if (input.equalsIgnoreCase("Q")) {
+        } else if (input.equalsIgnoreCase("Q")) {
             System.out.println("Goodbye");
             currentRestaurant.run();
             return;
@@ -43,6 +43,7 @@ public class Waiter extends Restaurant{
 
     }
 
+
     public void createOrder() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter table number");
@@ -50,26 +51,26 @@ public class Waiter extends Restaurant{
         System.out.println("Enter number of people");
         int numberOfPeople = Integer.parseInt(scanner.nextLine().trim());
         Order order = new Order(tableNumber, currentRestaurant);
-        System.out.println(order+ "order");
+        System.out.println(order + "order");
         currentRestaurant.viewMenu();
         System.out.println("\nEnter each food one by one:");
         boolean b = true;
-        for(int i = 1; i <= numberOfPeople; i++){
+        for (int i = 1; i <= numberOfPeople; i++) {
             b = true;
             System.out.println("Press Q to quit.\nFood for person " + i + ":\n");
-            while(b){
-            String food = scanner.nextLine().trim();
-            if(!food.equalsIgnoreCase("Q")){
-                order.addToOrder(food);
-                System.out.println(order);
-            }else{
-                b = false;
-            }
+            while (b) {
+                String food = scanner.nextLine().trim();
+                if (!food.equalsIgnoreCase("Q")) {
+                    order.addToOrder(food);
+                    System.out.println(order);
+                } else {
+                    b = false;
+                }
             }
 
         }
-            currentRestaurant.addToActiveOrders(order);
-        }
-
+        currentRestaurant.addToActiveOrders(order);
     }
+
+}
 
