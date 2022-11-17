@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
@@ -145,7 +146,7 @@ public class Restaurant {
         return completedOrder;
     }
 
-    public void run() throws FileNotFoundException {
+    public void run() throws FileNotFoundException, InputMismatchException {
         if (listOfRestaurants.size() == 0) {
             createRestaurant();
         }
@@ -185,7 +186,7 @@ public class Restaurant {
     }
 
 
-    public void viewMenu() {
+    public void viewMenu() throws InputMismatchException {
         System.out.println("Enter time of day: (1)Morning, (2)Afternoon, (3)Evening");
         Scanner in = new Scanner(System.in);
         int timeOfDay = Integer.parseInt(in.nextLine().trim());
@@ -200,17 +201,22 @@ public class Restaurant {
         }
     }
 
-    public void createRestaurant() throws FileNotFoundException {
+    public void createRestaurant() throws FileNotFoundException, InputMismatchException {
         Scanner in = new Scanner(System.in);
-        System.out.println("Create a restaurant");
+        System.out.println("Create a restaurant by entering comma separated integers");
         System.out.println("Enter Restaurant ID, number of tables and capacity");
         String[] restData = in.nextLine().split(",");
         for (int i = 0; i < restData.length; i++) {
             restData[i] = restData[i].trim();
         }
-        Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[2]), Integer.parseInt(restData[1]));
-        listOfRestaurants.add(a);
-        currentRestaurantIndex = listOfRestaurants.indexOf(a);
+        try {
+            Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[2]), Integer.parseInt(restData[1]));
+            listOfRestaurants.add(a);
+            currentRestaurantIndex = listOfRestaurants.indexOf(a);
+        } catch (IllegalArgumentException e){
+            System.out.println("Please enter comma separated Integers");
+            createRestaurant();
+        }
 
 
     }

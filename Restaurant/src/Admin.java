@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Admin extends Restaurant {
@@ -10,7 +11,7 @@ public class Admin extends Restaurant {
         currentRestaurant = restaurant;
     }
 
-    public void menuForAdmin() throws FileNotFoundException {
+    public void menuForAdmin() throws FileNotFoundException, InputMismatchException {
 
         Scanner in = new Scanner(System.in);
 
