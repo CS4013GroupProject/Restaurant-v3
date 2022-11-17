@@ -9,7 +9,14 @@ import java.util.Scanner;
 
 
 public class Restaurant {
+    public Restaurant() {
+    }
 
+    /**
+     * Main method, runs the entire program.
+     * @param args
+     * @throws FileNotFoundException
+     */
     public static void main(String[] args) throws FileNotFoundException {
         Restaurant a = new Restaurant(134, 55, 15);
         LocalDate c = LocalDate.now();
@@ -21,7 +28,6 @@ public class Restaurant {
     private int restaurantId;
     private int capacity;
     private int numberOfTables;
-    private ArrayList<String> csv = new ArrayList<>();
     private static ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
     private ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     private Menu menu = new Menu();
@@ -33,15 +39,20 @@ public class Restaurant {
     private static ArrayList<Login> listOfCustomers = new ArrayList<>();
 
 
-    public Restaurant() {
-    }
 
-
-
+ /*
     public Restaurant(ArrayList<Restaurant> listOfRestaurants) {
         this.listOfRestaurants = listOfRestaurants;
-    }
+    }*/
 
+    /**
+     * constructor for restaurant that creates a restaurant
+     * writes data to a CSV file
+     * @param restaurantId id of restaurant
+     * @param capacity number of people it can hold
+     * @param numberOfTables the number of tables in restaurant
+     * @throws FileNotFoundException
+     */
     public Restaurant(int restaurantId, int capacity, int numberOfTables) throws FileNotFoundException {
         this.restaurantId = restaurantId;
         this.capacity = capacity;
@@ -57,6 +68,11 @@ public class Restaurant {
     public static ArrayList<Login> getListOfCustomers() {
         return listOfCustomers;
     }
+
+    /**
+     * adds a login object to the list of customers. This ensures a login can only see reservations theyve made
+     * @param l the login object
+     */
     public static void addToListOfCustomers(Login l){
         listOfCustomers.add(l);
     }
@@ -81,6 +97,11 @@ public class Restaurant {
         return listOfRestaurants;
     }
 
+    /**
+     * tostring that returns the restaurant ID
+     * @return
+     */
+    @Override
     public String toString() {
         String s = "" + restaurantId;
         return s;
@@ -94,6 +115,12 @@ public class Restaurant {
         this.menu = menu;
     }
 
+    /**
+     * a method that writes data to a csv file
+     * @param path the path to the csv file
+     * @param columnNames the actual data
+     * @throws FileNotFoundException incase file is not found
+     */
     public void CSV(String path, String[] columnNames) throws FileNotFoundException {
 
         FileWriter write = null;
@@ -174,7 +201,7 @@ public class Restaurant {
     }
 
     public void createRestaurant() throws FileNotFoundException {
-        Scanner in = new Scanner(System.in).useDelimiter("\\s+");
+        Scanner in = new Scanner(System.in);
         System.out.println("Create a restaurant");
         System.out.println("Enter Restaurant ID, number of tables and capacity");
         String[] restData = in.nextLine().split(",");

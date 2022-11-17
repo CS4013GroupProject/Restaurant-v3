@@ -169,7 +169,7 @@ public class Customer extends Restaurant {
         } else if (input.equalsIgnoreCase("re")) {
             for (TableReservation r : currentRestaurant.getListOfReservations()) {
 
-                if (r.getCustomerId() == customerId) {
+                if (r.getCustomerId() == customerId && r.getPhoneNumber() != 0) {
                     System.out.println("Reminder! Reservation upcoming: ");
                     System.out.println(r);
                 }

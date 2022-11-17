@@ -123,5 +123,7 @@ public class TableReservation extends Restaurant {
         return this.tableNumber;
     }
 
-
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
 }
