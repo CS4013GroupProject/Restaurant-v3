@@ -59,7 +59,22 @@ public class Menu {
     }
 
     public String toString() {
-        return "Morning:\n" + menuForMorning.toString() + "\n " + "Afternoon: \n" + menuForAfterNoon.toString() + "\n" + "Evening: \n" + menuForEvening.toString();
+        String morningMenu = "";
+        String afternoonMenu= "";
+        String eveningMenu= "";
+
+        for(Food f : menuForMorning) {
+            morningMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
+        }
+
+        for(Food f : menuForAfterNoon) {
+            afternoonMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
+        }
+
+        for(Food f : menuForEvening) {
+            eveningMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
+        }
+        return "Morning:\n" + morningMenu + "\n\n" + "Afternoon:\n" + afternoonMenu + "\n\n" + "Evening:\n" + eveningMenu;
     }
 
     public void addToMenu(int timeOfDay, Food food) {

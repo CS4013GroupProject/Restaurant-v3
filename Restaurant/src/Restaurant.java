@@ -8,37 +8,21 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-
 public class Restaurant {
     public Restaurant() {
+
     }
-
-    /**
-     * Main method, runs the entire program.
-     * @param args
-     * @throws FileNotFoundException
-     */
-    public static void main(String[] args) throws FileNotFoundException {
-        Restaurant a = new Restaurant(134, 55, 15);
-        LocalDate c = LocalDate.now();
-        LocalTime d = LocalTime.now();
-
-        a.run();
-    }
-
     private int restaurantId;
     private int capacity;
     private int numberOfTables;
-    private static ArrayList<Restaurant> listOfRestaurants = new ArrayList<>();
     private ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     private Menu menu = new Menu();
-    static int currentRestaurantIndex;
     static boolean quit = false;
     private ArrayList<Order> currentOrders = new ArrayList<>();
     private ArrayList<Order> completedOrder = new ArrayList<>();
     private ArrayList<Order> paymentPendingOrders = new ArrayList<>();
     private static ArrayList<Login> listOfCustomers = new ArrayList<>();
-
+    public Manager manager;
 
 
  /*
@@ -54,10 +38,11 @@ public class Restaurant {
      * @param numberOfTables the number of tables in restaurant
      * @throws FileNotFoundException
      */
-    public Restaurant(int restaurantId, int capacity, int numberOfTables) throws FileNotFoundException {
+    public Restaurant(Manager m, int restaurantId, int capacity, int numberOfTables) throws FileNotFoundException {
         this.restaurantId = restaurantId;
         this.capacity = capacity;
         this.numberOfTables = numberOfTables;
+        this.manager = m;
         String[] data = {String.valueOf(restaurantId), String.valueOf(capacity), String.valueOf(numberOfTables)};
         CSV("Restaurant/src/restaurant.csv", data);
     }
@@ -94,8 +79,8 @@ public class Restaurant {
         return listOfReservations;
     }
 
-    public static ArrayList<Restaurant> getListOfRestaurants() {
-        return listOfRestaurants;
+    public ArrayList<Restaurant> getListOfRestaurants() {
+        return manager.getListOfRestaurants();
     }
 
     /**
@@ -146,44 +131,44 @@ public class Restaurant {
         return completedOrder;
     }
 
-    public void run() throws FileNotFoundException, InputMismatchException {
-        if (listOfRestaurants.size() == 0) {
-            createRestaurant();
-        }
-        Scanner in = new Scanner(System.in);
-        System.out.println("Menu for Restaurant: " + listOfRestaurants.get(currentRestaurantIndex).getRestaurantId());
-        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
-        String role = in.nextLine().toLowerCase().trim();
-
-        if (role.equalsIgnoreCase("C")) {
-
-            while (!quit) {
-                Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
-                c.login();
-            }
-
-        } else if (role.equalsIgnoreCase("W")) {
-            Waiter w = new Waiter(listOfRestaurants.get(currentRestaurantIndex));
-            while (!quit) {
-                w.menuForWaiters();
-            }
-        } else if (role.equalsIgnoreCase("Ch")) {
-            Chef chef = new Chef(listOfRestaurants.get(currentRestaurantIndex));
-            while (!quit) {
-                chef.menuForChef();
-            }
-        } else if (role.equalsIgnoreCase("A")) {
-            while (!quit) {
-                Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
-                a.menuForAdmin();
-            }
-        } else if (role.equalsIgnoreCase("Q")) {
-            System.out.println("Goodbye");
-            System.exit(0);
-        }
-
-
-    }
+//    public void run() throws FileNotFoundException, InputMismatchException {
+//        if (Manager.getListOfRestaurants().size() == 0) {
+//            createRestaurant();
+//        }
+//        Scanner in = new Scanner(System.in);
+//        System.out.println("Menu for Restaurant: " + Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()).getRestaurantId());
+//        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
+//        String role = in.nextLine().toLowerCase().trim();
+//
+//        if (role.equalsIgnoreCase("C")) {
+//
+//            while (!quit) {
+//                Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
+//                c.login();
+//            }
+//
+//        } else if (role.equalsIgnoreCase("W")) {
+//            Waiter w = new Waiter(listOfRestaurants.get(currentRestaurantIndex));
+//            while (!quit) {
+//                w.menuForWaiters();
+//            }
+//        } else if (role.equalsIgnoreCase("Ch")) {
+//            Chef chef = new Chef(listOfRestaurants.get(currentRestaurantIndex));
+//            while (!quit) {
+//                chef.menuForChef();
+//            }
+//        } else if (role.equalsIgnoreCase("A")) {
+//            while (!quit) {
+//                Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
+//                a.menuForAdmin();
+//            }
+//        } else if (role.equalsIgnoreCase("Q")) {
+//            System.out.println("Goodbye");
+//            System.exit(0);
+//        }
+//
+//
+//    }
 
 
     public void viewMenu() throws InputMismatchException {
@@ -199,26 +184,6 @@ public class Restaurant {
         } else {
             System.out.println("invalid");
         }
-    }
-
-    public void createRestaurant() throws FileNotFoundException, InputMismatchException {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Create a restaurant by entering comma separated integers");
-        System.out.println("Enter Restaurant ID, number of tables and capacity");
-        String[] restData = in.nextLine().split(",");
-        for (int i = 0; i < restData.length; i++) {
-            restData[i] = restData[i].trim();
-        }
-        try {
-            Restaurant a = new Restaurant(Integer.parseInt(restData[0]), Integer.parseInt(restData[2]), Integer.parseInt(restData[1]));
-            listOfRestaurants.add(a);
-            currentRestaurantIndex = listOfRestaurants.indexOf(a);
-        } catch (IllegalArgumentException e){
-            System.out.println("Please enter comma separated Integers");
-            createRestaurant();
-        }
-
-
     }
 
     public void addToActiveOrders(Order o) {
