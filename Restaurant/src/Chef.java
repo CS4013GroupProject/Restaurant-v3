@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Chef extends Restaurant {
@@ -10,7 +11,7 @@ public class Chef extends Restaurant {
         this.currentRestaurant = a;
     }
 
-    public void menuForChef() throws FileNotFoundException {
+    public void menuForChef() throws FileNotFoundException, InputMismatchException {
         System.out.println("Menu for restaurant: " + currentRestaurant.getRestaurantId());
         System.out.println("V)iew current orders, U)pdate status, S)ee completed orders, Q)uit");
         Scanner scan = new Scanner(System.in);
