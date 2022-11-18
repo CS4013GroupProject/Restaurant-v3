@@ -1,7 +1,9 @@
+import javax.print.attribute.standard.PrinterMakeAndModel;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Customer extends Restaurant {
@@ -15,7 +17,7 @@ public class Customer extends Restaurant {
         currentRestaurant = restaurant;
     }
 
-    public void login() throws FileNotFoundException {
+    public void login() throws FileNotFoundException, InputMismatchException {
         System.out.println("C)reate customer, S)ign in as Customer");
         Scanner in = new Scanner(System.in);
         String choice = in.nextLine().trim();
@@ -169,7 +171,7 @@ public class Customer extends Restaurant {
         } else if (input.equalsIgnoreCase("re")) {
             for (TableReservation r : currentRestaurant.getListOfReservations()) {
 
-                if (r.getCustomerId() == customerId) {
+                if (r.getCustomerId() == customerId && r.getPhoneNumber() != 0) {
                     System.out.println("Reminder! Reservation upcoming: ");
                     System.out.println(r);
                 }
@@ -180,60 +182,63 @@ public class Customer extends Restaurant {
 
     }
 
-    public void makeReservation() throws FileNotFoundException {
+    public void makeReservation() throws FileNotFoundException, InputMismatchException {
         System.out.println("Enter date 'YYYY-MM-DD, time 'HH:MM', full name, phone number, number of people, table number ");
+
         Scanner in = new Scanner(System.in);
-        String[] resData = in.nextLine().split(",");
-        for (int i = 0; i < resData.length; i++) {
-            resData[i] = resData[i].trim();
-        }
-        if(Integer.parseInt(resData[5]) >currentRestaurant.getNumberOfTables()){
-            System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());
-            menuForCustomers();
-        }
+            String[] resData = in.nextLine().split(",");
+            for (int i = 0; i < resData.length; i++) {
+                resData[i] = resData[i].trim();
+            }
 
-        //format the date string as a LocalDate
-        String[] dateAsArray = resData[0].split("-");
-        int[] dateAsInts = new int[3];
-        for (int i = 0; i < dateAsArray.length; i++) {
-            dateAsInts[i] = Integer.parseInt(dateAsArray[i]);
-        }
-        LocalDate b = LocalDate.of(dateAsInts[0], dateAsInts[1], dateAsInts[2]);
+            if (Integer.parseInt(resData[5]) > currentRestaurant.getNumberOfTables()) {
+                System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());
+                menuForCustomers();
 
-        //format the time string as a LocalTime
-        String[] timeArray = resData[1].split(":");
-        int[] timeAsInts = new int[2];
-        for (int i = 0; i < timeArray.length; i++) {
-            timeAsInts[i] = Integer.parseInt(timeArray[i]);
-        }
-        LocalTime c = LocalTime.of(timeAsInts[0], timeAsInts[1]);
+                //format the date string as a LocalDate
+                String[] dateAsArray = resData[0].split("-");
+                int[] dateAsInts = new int[3];
+                for (int i = 0; i < dateAsArray.length; i++) {
+                    dateAsInts[i] = Integer.parseInt(dateAsArray[i]);
+                }
+                LocalDate b = LocalDate.of(dateAsInts[0], dateAsInts[1], dateAsInts[2]);
+
+                //format the time string as a LocalTime
+                String[] timeArray = resData[1].split(":");
+                int[] timeAsInts = new int[2];
+                for (int i = 0; i < timeArray.length; i++) {
+                    timeAsInts[i] = Integer.parseInt(timeArray[i]);
+                }
+                LocalTime c = LocalTime.of(timeAsInts[0], timeAsInts[1]);
 
 
-        int counter = currentRestaurant.getNumberOfTables();
-        ArrayList<TableReservation> currentRes = new ArrayList<>();
-        for (TableReservation r : currentRestaurant.getListOfReservations()) {
-            if (r.getDate().equals(b)) {
-                if (r.getTime().getHour() + 3 >= c.getHour()) {
-                    counter--;
-                    currentRes.add(r);
+                int counter = currentRestaurant.getNumberOfTables();
+                ArrayList<TableReservation> currentRes = new ArrayList<>();
+                for (TableReservation r : currentRestaurant.getListOfReservations()) {
+                    if (r.getDate().equals(b)) {
+                        if (r.getTime().getHour() + 3 >= c.getHour()) {
+                            counter--;
+                            currentRes.add(r);
+                        }
+                    }
+                }
+                if (currentRes.isEmpty()) {
+                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
+                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
+                    currentRestaurant.getListOfReservations().add(a);
+                }
+                for (TableReservation r : currentRes) {
+                    if (r.getTableNumber() == Integer.parseInt(resData[5])) {
+                        System.out.println("Table is booked at this time.");
+                    } else {
+                        TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
+                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
+                        currentRestaurant.getListOfReservations().add(a);
+                    }
                 }
             }
+
         }
-        if (currentRes.isEmpty()) {
-            TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
-            currentRestaurant.getListOfReservations().add(a);
-        }
-        for (TableReservation r : currentRes) {
-            if (r.getTableNumber() == Integer.parseInt(resData[5])) {
-                System.out.println("Table is booked at this time.");
-            } else {
-                TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
-                currentRestaurant.getListOfReservations().add(a);
-            }
-        }
-    }
 
     public void makeWalkInReservation() throws FileNotFoundException {
         System.out.println("Enter number of people. Table Number is Assigned Randomly. ");
