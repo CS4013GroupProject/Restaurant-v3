@@ -15,7 +15,7 @@ public class Manager {
         return currentRestaurantIndex;
     }
 
-    public void addRestaurant(Restaurant r) {
+    public static void addRestaurant(Restaurant r) {
         listOfRestaurants.add(r);
         currentRestaurantIndex = listOfRestaurants.indexOf(r);
     }

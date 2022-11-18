@@ -137,7 +137,7 @@ public class Restaurant {
 //        }
 //        Scanner in = new Scanner(System.in);
 //        System.out.println("Menu for Restaurant: " + Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()).getRestaurantId());
-//        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
+//        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit" );
 //        String role = in.nextLine().toLowerCase().trim();
 //
 //        if (role.equalsIgnoreCase("C")) {

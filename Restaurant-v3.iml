@@ -20,5 +20,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="javafx11" level="application" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

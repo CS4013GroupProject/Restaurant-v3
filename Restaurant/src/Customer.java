@@ -191,6 +191,7 @@ public class Customer extends Restaurant {
                 resData[i] = resData[i].trim();
             }
 
+
             if (Integer.parseInt(resData[5]) > currentRestaurant.getNumberOfTables()) {
                 System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());
                 menuForCustomers();
