@@ -1,3 +1,5 @@
+import com.sun.jdi.InvalidTypeException;
+
 import javax.print.attribute.standard.PrinterMakeAndModel;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -16,12 +18,22 @@ public class Customer extends Restaurant {
         currentRestaurant = restaurant;
     }
 
+    /**
+     * Login CLI to create new users or login as an existing user
+     * Stores users in a Static arraylist in Restaurant
+     * Checks if user exists within Restaurant
+     * If a user does not exist, login runs again
+     *
+     * @throws FileNotFoundException  handles exception where file is not found
+     * @throws InputMismatchException handles exception where input is incorrect type
+     */
+
     public void login() throws FileNotFoundException, InputMismatchException {
         System.out.println("C)reate customer, S)ign in as Customer");
         Scanner in = new Scanner(System.in);
         String choice = in.nextLine().trim();
 
-        switch(choice.toUpperCase()) {
+        switch (choice.toUpperCase()) {
             case "C":
                 int newCustomerId = (int) ((Math.random() * 89999999) + 10000000);
                 System.out.println("Enter name");
@@ -36,25 +48,37 @@ public class Customer extends Restaurant {
             case "S":
                 System.out.println("Enter username:");
                 String user = in.nextLine().trim();
-                System.out.println("Enter password:");
-                String pass = in.nextLine().trim();
-                System.out.println(currentRestaurant.getListOfRestaurants().size());
-                for (Login login : Restaurant.getListOfCustomers()) {
+                if (Restaurant.getListOfCustomers().contains(user)) {
+                    System.out.println("Enter password:");
+                    String pass = in.nextLine().trim();
+                    System.out.println(currentRestaurant.getListOfRestaurants().size());
+                    for (Login login : Restaurant.getListOfCustomers()) {
 
-                    if (login.getUsername().equalsIgnoreCase(user) && login.getPassword().equals(pass)) {
-                        this.login = login;
-                        this.customerId = login.getCustomerid();
+                        if (login.getUsername().equalsIgnoreCase(user) && login.getPassword().equals(pass)) {
+                            this.login = login;
+                            this.customerId = login.getCustomerid();
 
-                        menuForCustomers();
+                            menuForCustomers();
+                        }
                     }
+                    break;
+                } else {
+                    System.out.println("Invalid User, please create user if you are new");
+                    login();
                 }
-                break;
-
         }
-
     }
 
-    public void menuForCustomers() throws FileNotFoundException {
+    /**
+     * menu CLI for customers
+     * Allows customers to Make reservations in advance, walk in reservations and cancel reservations
+     * Allows customers to switch which restaurant they are viewing
+     * Allows customers to pay for their order, check available tables, view their reservations and check reservation reminders
+     *
+     * @throws FileNotFoundException  handles exception where file is not found
+     * @throws InputMismatchException handles exception where input is incorrect type
+     */
+    public void menuForCustomers() throws FileNotFoundException, InputMismatchException {
         Scanner in = new Scanner(System.in);
         System.out.println("Customer Menu for Restaurant: " + currentRestaurant.getRestaurantId());
         System.out.println("Welcome " + login.getUsername());
@@ -179,77 +203,103 @@ public class Customer extends Restaurant {
         } else if (input.equalsIgnoreCase("q")) {
 //            currentRestaurant.run();
         }
-
     }
 
+    /**
+     * makeReservation takes information from the user and creates a reservation based on that
+     *
+     * @throws FileNotFoundException  handles exception where file is not found
+     * @throws InputMismatchException handles exception where input is incorrect type
+     */
     public void makeReservation() throws FileNotFoundException, InputMismatchException {
         System.out.println("Enter date 'YYYY-MM-DD, time 'HH:MM', full name, phone number, number of people, table number ");
 
         Scanner in = new Scanner(System.in);
-            String[] resData = in.nextLine().split(",");
-            for (int i = 0; i < resData.length; i++) {
-                resData[i] = resData[i].trim();
+        String[] resData = in.nextLine().split(",");
+        for (int i = 0; i < resData.length; i++) {
+            resData[i] = resData[i].trim();
+        }
+        //Makes sure user inputs exact required fields
+        if (resData.length != 6) {
+            System.out.println("Please enter the exact data requested");
+            makeReservation();
+        }
+
+        if (Integer.parseInt(resData[5]) > currentRestaurant.getNumberOfTables()) {
+            System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());
+            menuForCustomers();
+
+            //format the date string as a LocalDate
+            String[] dateAsArray = resData[0].split("-");
+            int[] dateAsInts = new int[3];
+            for (int i = 0; i < dateAsArray.length; i++) {
+                dateAsInts[i] = Integer.parseInt(dateAsArray[i]);
             }
+            LocalDate b = LocalDate.of(dateAsInts[0], dateAsInts[1], dateAsInts[2]);
 
-            if (Integer.parseInt(resData[5]) > currentRestaurant.getNumberOfTables()) {
-                System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());
-                menuForCustomers();
-
-                //format the date string as a LocalDate
-                String[] dateAsArray = resData[0].split("-");
-                int[] dateAsInts = new int[3];
-                for (int i = 0; i < dateAsArray.length; i++) {
-                    dateAsInts[i] = Integer.parseInt(dateAsArray[i]);
-                }
-                LocalDate b = LocalDate.of(dateAsInts[0], dateAsInts[1], dateAsInts[2]);
-
-                //format the time string as a LocalTime
-                String[] timeArray = resData[1].split(":");
-                int[] timeAsInts = new int[2];
-                for (int i = 0; i < timeArray.length; i++) {
-                    timeAsInts[i] = Integer.parseInt(timeArray[i]);
-                }
-                LocalTime c = LocalTime.of(timeAsInts[0], timeAsInts[1]);
+            //format the time string as a LocalTime
+            String[] timeArray = resData[1].split(":");
+            int[] timeAsInts = new int[2];
+            for (int i = 0; i < timeArray.length; i++) {
+                timeAsInts[i] = Integer.parseInt(timeArray[i]);
+            }
+            LocalTime c = LocalTime.of(timeAsInts[0], timeAsInts[1]);
 
 
-                int counter = currentRestaurant.getNumberOfTables();
-                ArrayList<TableReservation> currentRes = new ArrayList<>();
-                for (TableReservation r : currentRestaurant.getListOfReservations()) {
-                    if (r.getDate().equals(b)) {
-                        if (r.getTime().getHour() + 3 >= c.getHour()) {
-                            counter--;
-                            currentRes.add(r);
-                        }
+            int counter = currentRestaurant.getNumberOfTables();
+            ArrayList<TableReservation> currentRes = new ArrayList<>();
+            for (TableReservation r : currentRestaurant.getListOfReservations()) {
+                if (r.getDate().equals(b)) {
+                    if (r.getTime().getHour() + 3 >= c.getHour()) {
+                        counter--;
+                        currentRes.add(r);
                     }
                 }
-                if (currentRes.isEmpty()) {
+            }
+            if (currentRes.isEmpty()) {
+                TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
+                currentRestaurant.getListOfReservations().add(a);
+            }
+            for (TableReservation r : currentRes) {
+                if (r.getTableNumber() == Integer.parseInt(resData[5])) {
+                    System.out.println("Table is booked at this time.");
+                } else {
                     TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
                     System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
                     currentRestaurant.getListOfReservations().add(a);
                 }
-                for (TableReservation r : currentRes) {
-                    if (r.getTableNumber() == Integer.parseInt(resData[5])) {
-                        System.out.println("Table is booked at this time.");
-                    } else {
-                        TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
-                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAa");
-                        currentRestaurant.getListOfReservations().add(a);
-                    }
-                }
             }
-
         }
 
-    public void makeWalkInReservation() throws FileNotFoundException {
+    }
+
+    /**
+     * makeWalkInReservation allows a customer to make a reservation without booking in advance
+     * Number of people is inputted
+     *
+     * @throws FileNotFoundException  handles exception where file is not found
+     * @throws InputMismatchException handles exception where input is incorrect type
+     * @throws NumberFormatException  handles exception where input is invalid
+     */
+
+    public void makeWalkInReservation() throws FileNotFoundException, InputMismatchException, NumberFormatException {
         System.out.println("Enter number of people. Table Number is Assigned Randomly. ");
         Scanner in = new Scanner(System.in);
         int noOfPeople = Integer.parseInt(in.nextLine().trim());
+        System.out.println("Invalid input for number of people");
 
         TableReservation a = new TableReservation(LocalDate.now(), LocalTime.now(), noOfPeople, currentRestaurant.getRestaurantId(), currentRestaurant, customerId);
         currentRestaurant.getListOfReservations().add(a);
     }
 
-
+    /**
+     * cancelReservation
+     * Allow customer to cancel a specific reservation
+     *
+     * @param a     TableReservation ArrayList
+     * @param index which reservation to remove
+     */
     public void cancelReservation(ArrayList<TableReservation> a, int index) {
         System.out.println("Table reservation:\n " + a.get(index).toString() + "\n has been cancelled.");
         a.remove(index);

@@ -7,10 +7,8 @@ public class Menu {
     private ArrayList<Food> menuForAfterNoon = new ArrayList<>();
     private ArrayList<Food> menuForEvening = new ArrayList<>();
     Restaurant currentRestaurant;
-
+    
     public Menu() {
-
-
         menuForMorning.add(new Food("Full Irish Breakfast", 16.95));
         menuForMorning.add(new Food("Vegetarian Breakfast", 15.95));
         menuForMorning.add(new Food("Eggs Benedict", 12.50));
@@ -79,7 +77,6 @@ public class Menu {
 
     public void addToMenu(int timeOfDay, Food food) {
         if (timeOfDay == 1) {
-            System.out.println("HRAONRWIPNF");
             menuForMorning.add(food);
             System.out.println(menuForMorning);
         } else if (timeOfDay == 2) {

@@ -10,14 +10,17 @@ public class Chef extends Restaurant {
     public Chef(Restaurant a) {
         this.currentRestaurant = a;
     }
-
+    /**Menu for chef
+    * Does not take parameters, displays CLI for "chef" user to interact with.
+    * Allows users to see current orders, Update the status of an order, view completed orders and to return to the main restaurant menu
+    */
     public void menuForChef() throws FileNotFoundException, InputMismatchException {
         System.out.println("Menu for restaurant: " + currentRestaurant.getRestaurantId());
         System.out.println("V)iew current orders, U)pdate status, S)ee completed orders, Q)uit");
         Scanner scan = new Scanner(System.in);
         String input = scan.nextLine().trim();
 
-        switch(input.toUpperCase()) {
+        switch (input.toUpperCase()) {
             case "V":
                 seeCurrentOrders();
                 break;
@@ -37,7 +40,8 @@ public class Chef extends Restaurant {
                 break;
             case "S":
                 for (Order o : currentRestaurant.getCompletedOrder()) {
-                    System.out.println(o);;
+                    System.out.println(o);
+                    ;
                 }
                 break;
             case "Q":

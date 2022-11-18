@@ -3,6 +3,11 @@ public class Food {
     private double price;
     private String timeOfDay;
 
+    /** Food
+     * Constructs Food object
+     * @param foodName
+     * @param price
+     */
     public Food(String foodName, double price) {
         this.foodName = foodName;
         this.price = price;
