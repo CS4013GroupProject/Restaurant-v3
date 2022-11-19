@@ -69,7 +69,7 @@ public class MainMenu extends Application {
             displayCreationPage();
         });
     }
-    public void displayCustomerPage(GridPane rootNodeForMenu, HBox originalButtons) {
+    public void displayCustomerPage(GridPane rootNodeForMenu, HBox originalButtons, Text title) {
 
         Button bMakeRes = new Button("Make A reservation");
         Button bWalkIn = new Button("Walk-in Reservation");
@@ -189,7 +189,7 @@ public class MainMenu extends Application {
                 }
             }
 
-            listOfRes.setText(s.toString());
+            listOfRes.setText(st.toString());
             TextField choice = new TextField("Which Number");
             Button b = new Button("Submit");
             rootNodeForMenu.addRow(3, listOfRes);
@@ -284,18 +284,23 @@ public class MainMenu extends Application {
         });
         seeRem.setOnAction(f -> {
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
             Text text = new Text();
             StringBuilder string = new StringBuilder();
             for(TableReservation r : r.getListOfReservations()){
                 if(r.getCustomerId() == customer.getCustomerid()){
 
-                        s.append(r).append("\n");
+                        string.append(r).append("\n");
 
                     }
                 }
 
-            t.setText(s.toString());
+            t.setText(string.toString());
+
             rootNodeForMenu.addRow(2,t);
+            for(int i = 0; i < 100; i++){
+                System.out.println(rootNodeForMenu.getChildren().get(i));
+            }
 
         });
     }
@@ -334,7 +339,7 @@ public class MainMenu extends Application {
         buttonSubmit.setOnAction(e -> {
                     try {
                         r = new Restaurant(manager, Integer.parseInt(restaurantID.getText()), Integer.parseInt(capacity.getText()), Integer.parseInt(noOfTables.getText()));
-                        manager.addRestaurant(r);
+                        Manager.getListOfRestaurants().add(r);
                         displayMainMenu(buttonSubmit);
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
@@ -414,7 +419,7 @@ public class MainMenu extends Application {
                     Login log = new Login(username.getText(), pass.getText(), (int) ((Math.random() * 89999999) + 10000000));
                             Restaurant.getListOfCustomers().add(log);
                     customer = log;
-                    displayCustomerPage(rootNodeForMenu,originalButtons);
+                    displayCustomerPage(rootNodeForMenu,originalButtons, title);
                     }
                 );
 
@@ -433,7 +438,7 @@ public class MainMenu extends Application {
                     for(Login l : Restaurant.getListOfCustomers()){
                         if(l.getUsername().equalsIgnoreCase(username.getText()) && l.getPassword().equalsIgnoreCase(pass.getText())){
                             customer = l;
-                            displayCustomerPage(rootNodeForMenu, originalButtons);
+                            displayCustomerPage(rootNodeForMenu, originalButtons, title);
                             rootNodeForMenu.getChildren().removeAll(username, pass, b);
 
                             break;
@@ -566,22 +571,26 @@ public class MainMenu extends Application {
             Restaurant resTemp = null;
             for (Restaurant res : Manager.getListOfRestaurants()) {
                 if (String.valueOf(res.getRestaurantId()).equalsIgnoreCase(st)) {
-                    try {
-                        resTemp = new Restaurant(manager, res.getRestaurantId(), res.getCapacity(), res.getNumberOfTables());
+
+                        resTemp = res;
                         break;
-                    } catch (FileNotFoundException ex) {
-                        ex.printStackTrace();
-                    }
+
 
                 }
             }
             r = resTemp;
             data.setText("Restaurant " + r.getRestaurantId() + " settings");
-            data.setStyle("-fx-font: 36 Helvetica;");
             System.out.println(r.getListOfReservations().size());
-            rootNodeForMenu.getChildren().removeAll(rootNodeForMenu.getChildren().get(0));
-            rootNodeForMenu.addRow(1,data);
-            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+            data.setStyle("-fx-font: 36 Helvetica;");
+            rootNodeForMenu.getChildren().remove(0);
+            rootNodeForMenu.addRow(1, data);
+            rootNodeForMenu.getChildren().remove(rootNodeForMenu.getChildren().size()-1);
+
+            rootNodeForMenu.getChildren().add(0,data);
+
+
+
+
 
 
 
