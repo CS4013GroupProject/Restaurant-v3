@@ -436,11 +436,20 @@ public class MainMenu extends Application {
                 rootNodeForMenu.addRow(4,index);
                 rootNodeForMenu.addRow(5,submit);
                 submit.setOnAction(g -> {
-                    r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText())));
-                    r.getCurrentOrders().remove(Integer.parseInt(index.getText()));
+                    r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) -1));
+                    r.getCurrentOrders().remove(Integer.parseInt(index.getText()) -1);
                 });
             });
-            
+            seeComplete.setOnAction(f ->{
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                String s = "";
+                for(Order o : r.getCompletedOrder()){
+                    s += o.toString();
+                }
+                Text t = new Text(s);
+                rootNodeForMenu.addRow(2,t);
+            });
+
         });
 
         bForCustomer.setOnAction( e -> {
