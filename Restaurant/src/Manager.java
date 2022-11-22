@@ -20,7 +20,11 @@ public class Manager {
         currentRestaurantIndex = listOfRestaurants.indexOf(r);
     }
 
-//    public Restaurant getCurrentRestaurant() {
-//        return listOfRestaurants.get(currentRestaurantIndex);
-//    }
+    public static void setCurrentRestaurantIndex(int nextRestaurant) {
+        currentRestaurantIndex = nextRestaurant;
+    }
+
+    public Restaurant getCurrentRestaurant() {
+        return listOfRestaurants.get(currentRestaurantIndex);
+    }
 }

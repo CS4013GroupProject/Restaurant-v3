@@ -1,4 +1,3 @@
-
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +11,7 @@ public class Restaurant {
     public Restaurant() {
 
     }
+
     private int restaurantId;
     private int capacity;
     private int numberOfTables;
@@ -25,16 +25,19 @@ public class Restaurant {
     public Manager manager;
 
 
- /*
     public Restaurant(ArrayList<Restaurant> listOfRestaurants) {
-        this.listOfRestaurants = listOfRestaurants;
-    }*/
+        Manager m = new Manager();
+        for (Restaurant r : listOfRestaurants) {
+            m.addRestaurant(r);
+        }
+    }
 
     /**
      * constructor for restaurant that creates a restaurant
      * writes data to a CSV file
-     * @param restaurantId id of restaurant
-     * @param capacity number of people it can hold
+     *
+     * @param restaurantId   id of restaurant
+     * @param capacity       number of people it can hold
      * @param numberOfTables the number of tables in restaurant
      * @throws FileNotFoundException
      */
@@ -57,9 +60,10 @@ public class Restaurant {
 
     /**
      * adds a login object to the list of customers. This ensures a login can only see reservations theyve made
+     *
      * @param l the login object
      */
-    public static void addToListOfCustomers(Login l){
+    public static void addToListOfCustomers(Login l) {
         listOfCustomers.add(l);
     }
 
@@ -85,6 +89,7 @@ public class Restaurant {
 
     /**
      * tostring that returns the restaurant ID
+     *
      * @return
      */
     @Override
@@ -101,9 +106,22 @@ public class Restaurant {
         this.menu = menu;
     }
 
+    public void createRestaurant() throws FileNotFoundException {
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter Restaurant ID");
+        int id = Integer.parseInt(s.nextLine());
+        System.out.println("Enter Number of Tables");
+        int numberOfTables = Integer.parseInt(s.nextLine());
+        System.out.println("Enter Capacity");
+        int capacity = Integer.parseInt(s.nextLine());
+        Restaurant r = new Restaurant(this.manager, id, capacity, numberOfTables);
+        Manager.addRestaurant(r);
+    }
+
     /**
      * a method that writes data to a csv file
-     * @param path the path to the csv file
+     *
+     * @param path        the path to the csv file
      * @param columnNames the actual data
      * @throws FileNotFoundException incase file is not found
      */
@@ -131,44 +149,44 @@ public class Restaurant {
         return completedOrder;
     }
 
-//    public void run() throws FileNotFoundException, InputMismatchException {
-//        if (Manager.getListOfRestaurants().size() == 0) {
-//            createRestaurant();
-//        }
-//        Scanner in = new Scanner(System.in);
-//        System.out.println("Menu for Restaurant: " + Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()).getRestaurantId());
-//        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit" );
-//        String role = in.nextLine().toLowerCase().trim();
-//
-//        if (role.equalsIgnoreCase("C")) {
-//
-//            while (!quit) {
-//                Customer c = new Customer(listOfRestaurants.get(currentRestaurantIndex));
-//                c.login();
-//            }
-//
-//        } else if (role.equalsIgnoreCase("W")) {
-//            Waiter w = new Waiter(listOfRestaurants.get(currentRestaurantIndex));
-//            while (!quit) {
-//                w.menuForWaiters();
-//            }
-//        } else if (role.equalsIgnoreCase("Ch")) {
-//            Chef chef = new Chef(listOfRestaurants.get(currentRestaurantIndex));
-//            while (!quit) {
-//                chef.menuForChef();
-//            }
-//        } else if (role.equalsIgnoreCase("A")) {
-//            while (!quit) {
-//                Admin a = new Admin(listOfRestaurants.get(currentRestaurantIndex));
-//                a.menuForAdmin();
-//            }
-//        } else if (role.equalsIgnoreCase("Q")) {
-//            System.out.println("Goodbye");
-//            System.exit(0);
-//        }
-//
-//
-//    }
+    public void run() throws FileNotFoundException, InputMismatchException {
+        if (getListOfRestaurants().size() == 0) {
+            createRestaurant();
+        }
+        Scanner in = new Scanner(System.in);
+        System.out.println("Menu for Restaurant: " + getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()).getRestaurantId());
+        System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
+        String role = in.nextLine().toLowerCase().trim();
+
+        if (role.equalsIgnoreCase("C")) {
+
+            while (!quit) {
+                Customer c = new Customer(Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()));
+                c.login();
+            }
+
+        } else if (role.equalsIgnoreCase("W")) {
+            Waiter w = new Waiter(Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()));
+            while (!quit) {
+                w.menuForWaiters();
+            }
+        } else if (role.equalsIgnoreCase("Ch")) {
+            Chef chef = new Chef(Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()));
+            while (!quit) {
+                chef.menuForChef();
+            }
+        } else if (role.equalsIgnoreCase("A")) {
+            while (!quit) {
+                Admin a = new Admin(Manager.getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()));
+                a.menuForAdmin();
+            }
+        } else if (role.equalsIgnoreCase("Q")) {
+            System.out.println("Goodbye");
+            System.exit(0);
+        }
+
+
+    }
 
 
     public void viewMenu() throws InputMismatchException {
@@ -189,5 +207,9 @@ public class Restaurant {
     public void addToActiveOrders(Order o) {
         currentOrders.add(o);
     }
-}
 
+    public static void main(String[] args) throws FileNotFoundException {
+        Restaurant r = new Restaurant();
+        r.run();
+    }
+}
