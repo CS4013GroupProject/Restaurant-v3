@@ -52,8 +52,9 @@ public class Menu {
     }
 
     public ArrayList<Food> getTotalMenu() {
-        ArrayList<Food> total = menuForAfterNoon;
+        ArrayList<Food> total = new ArrayList<>();
         total.addAll(menuForEvening);
+        total.addAll(menuForAfterNoon);
         total.addAll(menuForMorning);
         return total;
     }

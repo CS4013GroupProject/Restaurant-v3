@@ -366,7 +366,17 @@ public class MainMenu extends Application {
         });
         return back;
     }
-
+    public Button backButton(Order o){
+        r.getCurrentOrders().add(o);
+        Button back = new Button("Back");
+        back.setOnAction(e -> {
+            Button bToCreateRestaurant = new Button("Create Restaurant");
+            bToCreateRestaurant.setScaleX(2);
+            bToCreateRestaurant.setScaleY(2);
+            displayMainMenu(bToCreateRestaurant);
+        });
+        return back;
+    }
     public void displayMainMenu(Button buttonSubmit) {
         Text title = new Text("Restaurant " + r.getRestaurantId() + " Settings:");
         Text data = new Text("");
@@ -398,6 +408,39 @@ public class MainMenu extends Application {
             HBox chefButtons = new HBox(view, update, seeComplete, backButton());
             rootNodeForMenu.getChildren().remove(originalButtons);
             rootNodeForMenu.addColumn(3, chefButtons);
+
+            view.setOnAction(f ->{
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                StringBuilder s = new StringBuilder();
+                for(Order o : r.getCurrentOrders()){
+                    s.append(o.toString());
+                }
+                Text orders = new Text(s.toString());
+                rootNodeForMenu.addRow(2,orders);
+
+            });
+            update.setOnAction(f ->{
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                Text t = new Text("Choose an order to update");
+                String s = "";
+                int i = 1;
+                for(Order o : r.getCurrentOrders()){
+                    s += i + "\n" ;
+                    s += o.toString();
+                }
+                Text orders = new Text(s);
+                TextField index = new TextField("Enter order Number");
+                Button submit = new Button("Submit");
+                rootNodeForMenu.addRow(2,t);
+                rootNodeForMenu.addRow(3,orders );
+                rootNodeForMenu.addRow(4,index);
+                rootNodeForMenu.addRow(5,submit);
+                submit.setOnAction(g -> {
+                    r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText())));
+                    r.getCurrentOrders().remove(Integer.parseInt(index.getText()));
+                });
+            });
+            
         });
 
         bForCustomer.setOnAction( e -> {
@@ -546,9 +589,73 @@ public class MainMenu extends Application {
                 response.setText(menu);
             });
         });
+        bForWaiter.setOnAction(e -> {
+            Button bRestID = new Button("Get Restaurant ID");
+            Button bCap = new Button("Get Capacity");
+            Button bNoOfT = new Button("Get Num Of Tables");
+            Button bCreateOrder = new Button("Create Order");
+            Button bViewMenu = new Button("View Menu");
+            Button bViewRes = new Button("View Reservations");
+            HBox buttonsForWaiter = new HBox(bRestID, bCap, bNoOfT, bCreateOrder, bViewMenu, bViewRes, backButton());
+            rootNodeForMenu.getChildren().remove(originalButtons);
+            rootNodeForMenu.addColumn(1, buttonsForWaiter);
+
+            bRestID.setOnAction(f -> {
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                Text t = new Text("Restaurant ID: " + r.getRestaurantId());
+                rootNodeForMenu.addRow(2, t);
+
+            });
+            bCap.setOnAction(f ->{
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                Text t = new Text("Capacity: " + r.getCapacity());
+                rootNodeForMenu.addRow(2, t);
+
+            });
+            bNoOfT.setOnAction(f -> {
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                Text t = new Text("Number of Tables: " + r.getNumberOfTables());
+                rootNodeForMenu.addRow(2,t);
+            });
+            bViewMenu.setOnAction(f -> {
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                String s = "";
+                s += r.getMenu().getTotalMenu().toString();
+                Text t = new Text(s);
+                rootNodeForMenu.addRow(2,t);
+            });
+            bCreateOrder.setOnAction(f -> {
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
+                TextField t = new TextField("Enter Table Number");
+                Button submit = new Button("Submit");
+                rootNodeForMenu.addRow(2,t);
+                rootNodeForMenu.addRow(3,submit);
+                submit.setOnAction(g -> {
+                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
+                    Order order = new Order(Integer.parseInt(t.getText()), r);
+                    Text menu = new Text(r.getMenu().getTotalMenu().toString());
+                    rootNodeForMenu.addRow(2, menu);
+                    TextField food = new TextField("Enter Food");
+                    rootNodeForMenu.addRow(3,food);
+                    Button submitButton = new Button("Submit Food");
+
+                    rootNodeForMenu.addRow(4,submitButton,backButton(order));
+                    submitButton.setOnAction(h -> {
+
+                        for(Food foodString : r.getMenu().getTotalMenu()){
+                            if(foodString.getFoodName().equalsIgnoreCase(food.getText())){
+                                order.addToOrder(foodString);
+
+                            }
+                        }});
+                    });
+                });
+            });
 
         stage.setScene(mainMenu);
-    }
+    };
     public void displaySwitch(GridPane rootNodeForMenu, Text data, Text response) {
         rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
