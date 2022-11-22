@@ -176,6 +176,7 @@ public class MainMenu extends Application {
             rootNodeForMenu.addRow(4, response);
 
         });
+
         bCancelRes.setOnAction(e -> {
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
             Text listOfRes = new Text();
@@ -216,32 +217,23 @@ public class MainMenu extends Application {
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
             Text text = new Text("Choose an Order:");
+
             Text paymentPending = new Text();
             StringBuilder str = new StringBuilder();
             int i = 0;
             for (Order o : r.getPaymentPendingOrders()) {
-                str.append(i + ".\n");
+                str.append((i+1) + ".\n");
                 str.append(o.toString());
                 str.append("\n");
                 i++;
             }
-            paymentPending.setText(s.toString());
+            paymentPending.setText(str.toString());
+
             TextField getOrder = new TextField("Choose Order To Pay");
             TextField payment = new TextField("Insert Payment");
             TextField tip = new TextField("Insert Tip");
             Button b = new Button("Submit");
 
-            b.setOnAction(g -> {
-                int tipActual = Integer.parseInt(payment.getText()) + Integer.parseInt(tip.getText());
-                Payment newPayment = null;
-                try {
-                    newPayment = new Payment(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal(), LocalDate.now(), tipActual);
-                    newPayment.takePayment();
-                    r.getPaymentPendingOrders().remove(Integer.parseInt(getOrder.getText()) - 1);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            });
 
             ObservableList<String> options =
                     FXCollections.observableArrayList(
@@ -252,7 +244,37 @@ public class MainMenu extends Application {
             ComboBox<String> comboBox = new ComboBox<>(options);
             rootNodeForMenu.addRow(2, text);
             rootNodeForMenu.addRow(3, paymentPending);
-            rootNodeForMenu.addRow(4, comboBox);
+            rootNodeForMenu.addRow(4,getOrder);
+            rootNodeForMenu.addRow(5, comboBox);
+            rootNodeForMenu.addRow(6,payment);
+            rootNodeForMenu.addRow(7,tip);
+            rootNodeForMenu.addRow(8,b);
+
+            b.setOnAction(g -> {
+                Double tipActual = Double.parseDouble(payment.getText()) + Double.parseDouble(tip.getText());
+                Payment newPayment = null;
+                if(Double.parseDouble(payment.getText()) < r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText() ) -1).getOrderTotal()){
+                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                    Text notEnough = new Text("Payment not enough!");
+                    rootNodeForMenu.addRow(2,notEnough);
+
+
+                }else{
+                try {
+                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                    Text change = new Text("Change due: " + (Integer.parseInt(payment.getText()) - r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) -1).getOrderTotal()));
+                   Text thanks = new Text("Thank you. Payment has been processed");
+                   rootNodeForMenu.addRow(2, thanks);
+                   rootNodeForMenu.addRow(3,change);
+                    newPayment = new Payment(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal(), LocalDate.now(), tipActual);
+                    newPayment.takePayment();
+                    String[] dataPayment = {String.valueOf(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()), LocalDate.now().toString(), tip.getText(),comboBox.getValue()};
+                    r.CSV("Restaurant/src/payments.csv", dataPayment);
+                    r.getPaymentPendingOrders().remove(Integer.parseInt(getOrder.getText()) - 1);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }}
+            });
         });
         lookUp.setOnAction(f -> {
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
@@ -401,6 +423,8 @@ public class MainMenu extends Application {
 
         bForChef.setOnAction(e -> {
             // "V)iew current orders, U)pdate status, S)ee completed orders, Q)uit
+            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
             Button view = new Button("View Current Orders");
             Button update = new Button("Update Status");
             Button seeComplete = new Button("See Completed Orders");
@@ -413,7 +437,7 @@ public class MainMenu extends Application {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 StringBuilder s = new StringBuilder();
                 for(Order o : r.getCurrentOrders()){
-                    s.append(o.toString());
+                    s.append(o.toString()).append("\n");
                 }
                 Text orders = new Text(s.toString());
                 rootNodeForMenu.addRow(2,orders);
@@ -426,7 +450,7 @@ public class MainMenu extends Application {
                 int i = 1;
                 for(Order o : r.getCurrentOrders()){
                     s += i + "\n" ;
-                    s += o.toString();
+                    s += o.toString() + "\n";
                 }
                 Text orders = new Text(s);
                 TextField index = new TextField("Enter order Number");
@@ -437,6 +461,7 @@ public class MainMenu extends Application {
                 rootNodeForMenu.addRow(5,submit);
                 submit.setOnAction(g -> {
                     r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) -1));
+                    r.getPaymentPendingOrders().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) -1));
                     r.getCurrentOrders().remove(Integer.parseInt(index.getText()) -1);
                 });
             });
@@ -444,7 +469,7 @@ public class MainMenu extends Application {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 String s = "";
                 for(Order o : r.getCompletedOrder()){
-                    s += o.toString();
+                    s += o.toString() + "\n";
                 }
                 Text t = new Text(s);
                 rootNodeForMenu.addRow(2,t);
@@ -453,6 +478,8 @@ public class MainMenu extends Application {
         });
 
         bForCustomer.setOnAction( e -> {
+            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
             Button bCreateAcc = new Button("Create Account");
             Button bSignIn = new Button("Sign in");
             rootNodeForMenu.addRow(2,bCreateAcc);
@@ -521,32 +548,42 @@ public class MainMenu extends Application {
 
             HBox adminButtons = new HBox(getID, getNumberOfTables, getCapacity, viewMenu, createNewRestaurant, switchRestaurant, viewReservations, addToMenu, backButton());
             rootNodeForMenu.getChildren().remove(originalButtons);
+            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
             rootNodeForMenu.addColumn(3, adminButtons);
 
             getID.setOnAction(d -> {
-                data.setText("Restaurant ID:");
-                response.setText(String.valueOf(r.getRestaurantId()));
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
+                Text t = new Text("Restaurant ID: " + r.getRestaurantId() );
+                rootNodeForMenu.addRow(2,t);
             });
 
             getCapacity.setOnAction(d -> {
-                data.setText("Restaurant Capacity:");
-                response.setText(String.valueOf(r.getCapacity()));
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
+                Text t = new Text("Restaurant Capacity: " + r.getCapacity() );
+                rootNodeForMenu.addRow(2,t);
             });
 
             getNumberOfTables.setOnAction(d -> {
-                data.setText("Number of Tables:");
-                response.setText(String.valueOf(r.getNumberOfTables()));
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
+                Text t = new Text("Restaurant Number Of Tables: " + r.getNumberOfTables() );
+                rootNodeForMenu.addRow(2,t);
             });
             switchRestaurant.setOnAction( d ->{
                 displaySwitch(rootNodeForMenu, data, response);
             });
             viewReservations.setOnAction( d -> {
-                data.setText("Current Reservations");
-                StringBuilder s = new StringBuilder();
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                String s = "";
                 for(TableReservation r : r.getListOfReservations()){
-                    s.append(r.toString()).append("\n");
+                    s += r.toString() + "\n";
+
                 }
-                response.setText(s.toString());
+                Text res = new Text(s);
+                rootNodeForMenu.addRow(2,res);
             });
             addToMenu.setOnAction(d -> {
                 data.setText("");
@@ -593,12 +630,16 @@ public class MainMenu extends Application {
             });
 
             viewMenu.setOnAction(d -> {
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
                 String menu = r.getMenu().toString();
-                data.setText("Restaurant Menu:");
-                response.setText(menu);
+                Text textMenu = new Text("Restaurant Menu:\n" + menu);
+                rootNodeForMenu.addRow(2,textMenu);
             });
         });
         bForWaiter.setOnAction(e -> {
+            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
             Button bRestID = new Button("Get Restaurant ID");
             Button bCap = new Button("Get Capacity");
             Button bNoOfT = new Button("Get Num Of Tables");
@@ -632,6 +673,16 @@ public class MainMenu extends Application {
                 s += r.getMenu().getTotalMenu().toString();
                 Text t = new Text(s);
                 rootNodeForMenu.addRow(2,t);
+            });
+            bViewRes.setOnAction(f -> {
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                String s = "";
+                for(TableReservation r : r.getListOfReservations()){
+                    s+= r.toString() + "\n";
+
+                }
+                Text res = new Text(s);
+                rootNodeForMenu.addRow(2,res);
             });
             bCreateOrder.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);

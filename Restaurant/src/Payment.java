@@ -26,13 +26,13 @@ public class Payment extends TableReservation {
             f.write("\n");
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("fawpf");
+            System.out.println("file not found");
         }
 
     }
 
     public void takePayment() throws FileNotFoundException {
-        String[] data = {String.valueOf(this.getTableNumber()), String.valueOf(this.amountDue), String.valueOf(this.date), String.valueOf(this.tip)};
+        String[] data = { String.valueOf(this.amountDue), String.valueOf(this.date), String.valueOf(this.tip)};
         writeToFile(data);
     }
 
