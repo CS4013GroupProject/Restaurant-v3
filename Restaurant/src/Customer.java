@@ -10,7 +10,8 @@ public class Customer extends Restaurant {
 
     int customerId;
     Restaurant currentRestaurant;
-    Login login;
+    String username;
+    String password;
 
     public Customer(Restaurant restaurant) {
         currentRestaurant = restaurant;
@@ -21,43 +22,42 @@ public class Customer extends Restaurant {
         Scanner in = new Scanner(System.in);
         String choice = in.nextLine().trim();
 
-        switch(choice.toUpperCase()) {
-            case "C":
-                int newCustomerId = (int) ((Math.random() * 89999999) + 10000000);
-                System.out.println("Enter name");
-                String username = in.nextLine().trim();
+        if (choice.equalsIgnoreCase("C")) {
+            int newCustomerId = (int) ((Math.random() * 89999999) + 10000000);
+            System.out.println("Enter name");
+            username = in.nextLine().trim();
 
-                System.out.println("Enter pass");
-                String password = in.nextLine().trim();
-                Login l = new Login(username, password, newCustomerId);
-                Restaurant.addToListOfCustomers(l);
-                this.login = l;
-                break;
-            case "S":
-                System.out.println("Enter username:");
-                String user = in.nextLine().trim();
-                System.out.println("Enter password:");
-                String pass = in.nextLine().trim();
-                System.out.println(currentRestaurant.getListOfRestaurants().size());
-                for (Login login : Restaurant.getListOfCustomers()) {
+            System.out.println("Enter pass");
+            password = in.nextLine().trim();
+            Login l = new Login(username, password, newCustomerId);
+            Restaurant.addToListOfCustomers(l);
+            this.username = l.getUsername();
+            this.password = l.getPassword();
+            this.customerId = l.getCustomerid();
+        } else if (choice.equalsIgnoreCase("S")) {
+            System.out.println("Enter username:");
+            String user = in.nextLine().trim();
+            System.out.println("Enter password:");
+            String pass = in.nextLine().trim();
+            System.out.println(Restaurant.getListOfRestaurants().size());
+            for (Login l : Restaurant.getListOfCustomers()) {
 
-                    if (login.getUsername().equalsIgnoreCase(user) && login.getPassword().equals(pass)) {
-                        this.login = login;
-                        this.customerId = login.getCustomerid();
-
-                        menuForCustomers();
-                    }
+                if (l.getUsername().equalsIgnoreCase(user) && l.getPassword().equals(pass)) {
+                    this.username = l.getUsername();
+                    this.password = l.getPassword();
+                    this.customerId = l.getCustomerid();
+                } else {
                 }
-                break;
+            }
 
         }
-
+        menuForCustomers();
     }
 
     public void menuForCustomers() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         System.out.println("Customer Menu for Restaurant: " + currentRestaurant.getRestaurantId());
-        System.out.println("Welcome " + login.getUsername());
+        System.out.println("Welcome " + username);
         System.out.println("M)ake a reservation, W)alk-in Reservation,V)iew Menu, C)ancel Reservation, S)witch Restaurant, P)ay, L)ookup available tables, Se)e Reservations, See Re)minders Q)uit");
         String input = in.nextLine().trim();
 
@@ -123,12 +123,12 @@ public class Customer extends Restaurant {
             menuForCustomers();
         } else if (input.equalsIgnoreCase("S")) {
             System.out.println("Choose a restaurant ");
-            System.out.println(currentRestaurant.getListOfRestaurants());
-            for (int i = 0; i < currentRestaurant.getListOfRestaurants().size(); i++) {
-                System.out.println((i + 1) + ". " + currentRestaurant.getListOfRestaurants().get(i));
+            System.out.println(Restaurant.getListOfRestaurants());
+            for (int i = 0; i < Restaurant.getListOfRestaurants().size(); i++) {
+                System.out.println((i + 1) + ". " + Restaurant.getListOfRestaurants().get(i));
             }
             int newIndex = Integer.parseInt(in.nextLine().trim()) - 1;
-            currentRestaurant = currentRestaurant.getListOfRestaurants().get(newIndex);
+            currentRestaurant = Restaurant.getListOfRestaurants().get(newIndex);
             menuForCustomers();
         } else if (input.equalsIgnoreCase("L")) {
             System.out.println("Input a date YYYY-MM-DD");
@@ -177,7 +177,7 @@ public class Customer extends Restaurant {
                 }
             }
         } else if (input.equalsIgnoreCase("q")) {
-//            currentRestaurant.run();
+            currentRestaurant.run();
         }
 
     }
@@ -190,7 +190,6 @@ public class Customer extends Restaurant {
             for (int i = 0; i < resData.length; i++) {
                 resData[i] = resData[i].trim();
             }
-
 
             if (Integer.parseInt(resData[5]) > currentRestaurant.getNumberOfTables()) {
                 System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());

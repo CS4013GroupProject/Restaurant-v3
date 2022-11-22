@@ -116,7 +116,6 @@ public class TableReservation extends Restaurant {
         bobTheBuilder.append("Reservation ID: ").append(reservationID).append("\n");
         bobTheBuilder.append("Restaurant Id: ").append(restaurantID).append("\n");
         bobTheBuilder.append("Number of people: ").append(noOfPeople).append("\n");
-        bobTheBuilder.append("Customer ID: ").append(customerId).append("\n");
         return bobTheBuilder.toString();
     }
 

@@ -52,30 +52,14 @@ public class Menu {
     }
 
     public ArrayList<Food> getTotalMenu() {
-        ArrayList<Food> total = new ArrayList<>();
+        ArrayList<Food> total = menuForAfterNoon;
         total.addAll(menuForEvening);
-        total.addAll(menuForAfterNoon);
         total.addAll(menuForMorning);
         return total;
     }
 
     public String toString() {
-        String morningMenu = "";
-        String afternoonMenu= "";
-        String eveningMenu= "";
-
-        for(Food f : menuForMorning) {
-            morningMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
-        }
-
-        for(Food f : menuForAfterNoon) {
-            afternoonMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
-        }
-
-        for(Food f : menuForEvening) {
-            eveningMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
-        }
-        return "Morning:\n" + morningMenu + "\n\n" + "Afternoon:\n" + afternoonMenu + "\n\n" + "Evening:\n" + eveningMenu;
+        return "Morning:\n" + menuForMorning.toString() + "\n " + "Afternoon: \n" + menuForAfterNoon.toString() + "\n" + "Evening: \n" + menuForEvening.toString();
     }
 
     public void addToMenu(int timeOfDay, Food food) {
