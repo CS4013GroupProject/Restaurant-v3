@@ -113,7 +113,7 @@ public class Customer extends Restaurant {
             double tipActual = currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal() * (tip / 100);
             Payment newPayment = new Payment(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal(), LocalDate.now(), tipActual);
             newPayment.takePayment();
-            String[] data = {String.valueOf(currentRestaurant.getPaymentPendingOrders().get(index).getTableNumber()),
+            String[] data = {
                     String.valueOf(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()),
                     String.valueOf(LocalDate.now()),
                     String.valueOf(tipActual),
@@ -198,6 +198,8 @@ public class Customer extends Restaurant {
             System.out.println("Not a valid table number. Number of tables is: " + currentRestaurant.getNumberOfTables());
             menuForCustomers();
 
+
+        }else{
             //format the date string as a LocalDate
             String[] dateAsArray = resData[0].split("-");
             int[] dateAsInts = new int[3];
@@ -225,22 +227,33 @@ public class Customer extends Restaurant {
                     }
                 }
             }
+            ArrayList<TableReservation> tempres = new ArrayList<>();
             if (currentRestaurant.getListOfReservations().isEmpty()) {
                 TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
                 currentRestaurant.getListOfReservations().add(a);
                 System.out.println("AAAAAAAAAAAAAAAAA");
-            }
-            for (TableReservation r : currentRes) {
-                if (r.getTableNumber() == Integer.parseInt(resData[5])) {
-                    System.out.println("Table is booked at this time.");
-                } else {
+            }else{
+            for (TableReservation r : currentRestaurant.getListOfReservations()) {
+                tempres.clear();
+                if(r.getDate().getDayOfYear() == b.getDayOfYear()){
+                    if(r.getTime().getHour()  < c.getHour() ){
+                        if (r.getTableNumber() == Integer.parseInt(resData[5])) {
+                        System.out.println("Table is booked at this time.");
+                        menuForCustomers();
+                        }
+                    }
+                }}
                     TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
-                    currentRestaurant.getListOfReservations().add(a);
-                }
-            }
-        }
 
-    }
+                currentRestaurant.getListOfReservations().add(a);
+
+            }
+            }
+
+            }
+
+
+
 
     public void makeWalkInReservation() throws FileNotFoundException {
         System.out.println("Enter number of people. Table Number is Assigned Randomly. ");
