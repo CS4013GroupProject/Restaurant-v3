@@ -20,6 +20,11 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="javafx11" level="application" />
+<<<<<<< Updated upstream
     <orderEntry type="library" name="lib" level="project" />
+=======
+    <orderEntry type="library" name="javafx11" level="project" />
+    <orderEntry type="library" name="lib" level="application" />
+>>>>>>> Stashed changes
   </component>
 </module>
