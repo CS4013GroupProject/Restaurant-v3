@@ -16,13 +16,13 @@ public class Restaurant {
     private int restaurantId;
     private int capacity;
     private int numberOfTables;
-    private ArrayList<TableReservation> listOfReservations = new ArrayList<>();
+    private final ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     private Menu menu = new Menu();
     static boolean quit = false;
-    private ArrayList<Order> currentOrders = new ArrayList<>();
-    private ArrayList<Order> completedOrder = new ArrayList<>();
-    private ArrayList<Order> paymentPendingOrders = new ArrayList<>();
-    private static ArrayList<Login> listOfCustomers = new ArrayList<>();
+    private final ArrayList<Order> currentOrders = new ArrayList<>();
+    private final ArrayList<Order> completedOrder = new ArrayList<>();
+    private final ArrayList<Order> paymentPendingOrders = new ArrayList<>();
+    private static final ArrayList<Login> listOfCustomers = new ArrayList<>();
     public Manager manager;
 
     /**
@@ -32,7 +32,7 @@ public class Restaurant {
      * @param restaurantId   id of restaurant
      * @param capacity       number of people it can hold
      * @param numberOfTables the number of tables in restaurant
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if file not found by Scanner
      */
     public Restaurant(Manager m, int restaurantId, int capacity, int numberOfTables, boolean exists) throws FileNotFoundException {
         this.restaurantId = restaurantId;
@@ -56,7 +56,7 @@ public class Restaurant {
     }
 
     /**
-     * adds a login object to the list of customers. This ensures a login can only see reservations theyve made
+     * adds a login object to the list of customers. This ensures a login can only see reservations they've made
      *
      * @param l the login object
      */
@@ -64,7 +64,7 @@ public class Restaurant {
         listOfCustomers.add(l);
     }
 
-    private void loadReservationsFromDisk() throws FileNotFoundException {
+    private void loadReservationsFromDisk() {
 
         try {
             Scanner sc = new Scanner(new File("Restaurant/src/data.csv"));
@@ -77,7 +77,7 @@ public class Restaurant {
                 }
 
                 String[] data = sc.nextLine().split(",");
-                // name, reservationID, Table, date, time, resturauntID, phone number, customer ID
+                // name, reservationID, Table, date, time, restaurantID, phone number, customer ID
                 for(int i = 0; i < data.length; i++) {
                     data[i] = data[i].trim();
                 }
@@ -122,18 +122,17 @@ public class Restaurant {
     }
 
     public ArrayList<Restaurant> getListOfRestaurants() {
-        return manager.getListOfRestaurants();
+        return Manager.getListOfRestaurants();
     }
 
     /**
-     * tostring that returns the restaurant ID
+     * toString that returns the restaurant ID
      *
-     * @return
+     * @return string of restaurant ID
      */
     @Override
     public String toString() {
-        String s = "" + restaurantId;
-        return s;
+        return "" + restaurantId;
     }
 
     public Menu getMenu() {
@@ -161,11 +160,11 @@ public class Restaurant {
      *
      * @param path        the path to the csv file
      * @param columnNames the actual data
-     * @throws FileNotFoundException incase file is not found
+     * @throws FileNotFoundException error if file is not found
      */
     public void CSV(String path, String[] columnNames) throws FileNotFoundException {
 
-        FileWriter write = null;
+        FileWriter write;
         try {
             write = new FileWriter(path, true);
             for (String s : columnNames) {
