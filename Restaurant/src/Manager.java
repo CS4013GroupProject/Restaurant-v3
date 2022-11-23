@@ -18,7 +18,9 @@ public class Manager {
 
     private void loadRestaurantsFromDisk() {
         try {
+
             Scanner sc = new Scanner(new File("Restaurant/src/Restaurant.csv"));
+            sc.nextLine();
             int firstLine = 0;
             while(sc.hasNext()) {
                 if(firstLine == 0) {

@@ -662,6 +662,8 @@ public class MainMenu extends Application {
                 rootNodeForMenu.addRow(5,end);
                 rootNodeForMenu.addRow(6,submit);
                 submit.setOnAction(g -> {
+                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
                     LocalDate before = start.getValue();
                     LocalDate after = end.getValue();
                     List<LocalDate> datesBetween = before.datesUntil(after).toList();
@@ -676,9 +678,11 @@ public class MainMenu extends Application {
                         } catch (FileNotFoundException ex) {
                             ex.printStackTrace();
                         }
+                        assert scanPay != null;
                         scanPay.nextLine();
 
                         double totalForDay = 0;
+                        double totalTipsForDay = 0;
                         while(scanPay.hasNext()){
                             String line =scanPay.nextLine().trim();
 
@@ -689,11 +693,12 @@ public class MainMenu extends Application {
                                 dateFormat[j] = Integer.parseInt(date[j]);
                             }
                             LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1],dateFormat[2]);
-
+                            System.out.println(r.getRestaurantId());
+                            System.out.println(dataPerLine[4].substring(0,1));
                             if(dateOf.isBefore( after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0,1)))){
-
                                 if(dateOf.equals(datesBetween.get(i))){
                                     totalForDay += Double.parseDouble(dataPerLine[0]);
+                                    totalTipsForDay += Double.parseDouble(dataPerLine[2]);
                                     totalRev += Double.parseDouble(dataPerLine[0]);
                                     totalTips += Double.parseDouble(dataPerLine[2]);
 
@@ -703,14 +708,14 @@ public class MainMenu extends Application {
                             }
 
                         }
-                        String textString =  "Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay;
+                        String textString =  "Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay + "\nTips: " + totalTipsForDay;
 
-                        rootNodeForMenu.addRow(i + 1, new Text(textString));
+                        rootNodeForMenu.addRow(i + 1 + 1, new Text(textString));
 
 
 
                     }
-                    String s = "Total Revenue for " + r.getRestaurantId() + ": " +  totalRev;
+                    String s = "Total Revenue for " + r.getRestaurantId() + ": " +  totalRev + " \nTips: " + totalTips;
                     int noOfRows = rootNodeForMenu.getRowCount();
                     rootNodeForMenu.addRow(noOfRows + 1, new Text(s));
 

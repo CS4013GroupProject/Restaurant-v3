@@ -97,6 +97,7 @@ public class Admin extends Restaurant {
                     scanPay.nextLine();
 
                     double totalForDay = 0;
+                    double totalTipsForDay= 0;
                     while(scanPay.hasNext()){
                     String line =scanPay.nextLine().trim();
 
@@ -112,6 +113,7 @@ public class Admin extends Restaurant {
 
                             if(dateOf.equals(datesBetween.get(i))){
                                 totalForDay += Double.parseDouble(dataPerLine[0]);
+                                totalTipsForDay += Double.parseDouble(dataPerLine[2]);
                                 totalRev += Double.parseDouble(dataPerLine[0]);
                                 totalTips += Double.parseDouble(dataPerLine[2]);
 
@@ -121,11 +123,11 @@ public class Admin extends Restaurant {
                         }
 
                     }
-                    System.out.println("Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay);
+                    System.out.println("Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay + "\nTips: " + totalTipsForDay);
 
 
                 }
-                System.out.println("Total Revenue for " + currentRestaurant.getRestaurantId() + ": " +  totalRev);
+                System.out.println("Total Revenue for " + currentRestaurant.getRestaurantId() + ": " +  totalRev + "\nTips: " + totalTips);
 
 
 
