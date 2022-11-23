@@ -29,45 +29,58 @@ public class MainMenu extends Application {
     private int xHeight = 1440;
     private int yHeight = 900;
 
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws FileNotFoundException {
         manager = new Manager();
-        //------------MAIN MENU---------------//
-        Button bToCreateRestaurant = new Button("Create Restaurant");
-        bToCreateRestaurant.setScaleX(2);
-        bToCreateRestaurant.setScaleY(2);
-        StackPane buttonPane = new StackPane(bToCreateRestaurant);
-        buttonPane.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+        manager.startup();
+        System.out.println("Post startup");
+        Restaurant preload = Manager.getListOfRestaurants().get(0);
+        System.out.println(preload);
 
         primaryStage.setResizable(false);
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(400);
 
-        Text titleText1 = new Text("Yum Restaurants\n");
-        titleText1.setStyle("-fx-font: 42 Helvetica;");
-        titleText1.setY(60);
+        if(preload != null) {
+            r = preload;
+            stage = primaryStage;
+            primaryStage.show();
+            displayMainMenu();
+        } else {
+            //------------MAIN MENU---------------//
+            Button bToCreateRestaurant = new Button("Create Restaurant");
+            bToCreateRestaurant.setScaleX(2);
+            bToCreateRestaurant.setScaleY(2);
+            StackPane buttonPane = new StackPane(bToCreateRestaurant);
+            buttonPane.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
 
-        Text titleText2 = new Text("Created by Sam Nick Mark Brendan");
-        titleText2.setStyle("-fx-font: 24 Helvetica;");
-        titleText2.setY(100);
+            Text titleText1 = new Text("Yum Restaurants\n");
+            titleText1.setStyle("-fx-font: 42 Helvetica;");
+            titleText1.setY(60);
 
-        Pane titlePane = new Pane(titleText1, titleText2);
-        titlePane.setBackground(new Background(new BackgroundFill(Color.LAVENDER,null,null)));
+            Text titleText2 = new Text("Created by Sam Nick Mark Brendan");
+            titleText2.setStyle("-fx-font: 24 Helvetica;");
+            titleText2.setY(100);
 
-        StackPane rootPane = new StackPane(titlePane,buttonPane);
+            Pane titlePane = new Pane(titleText1, titleText2);
+            titlePane.setBackground(new Background(new BackgroundFill(Color.LAVENDER,null,null)));
 
-        Scene titleScene = new Scene(rootPane, xHeight, yHeight);
-        titleScene.setFill(Color.LAWNGREEN);
-        System.out.println(buttonPane.getBackground());
+            StackPane rootPane = new StackPane(titlePane,buttonPane);
 
-        primaryStage.setScene(titleScene);
+            Scene titleScene = new Scene(rootPane, xHeight, yHeight);
+            titleScene.setFill(Color.LAWNGREEN);
+            System.out.println(buttonPane.getBackground());
+
+            primaryStage.setScene(titleScene);
 
 
-        primaryStage.show();
-        stage = primaryStage;
+            primaryStage.show();
+            stage = primaryStage;
 
-        bToCreateRestaurant.setOnAction(e -> {
-            displayCreationPage();
-        });
+            bToCreateRestaurant.setOnAction(e -> {
+                displayCreationPage();
+            });
+        }
+
     }
     public void displayCustomerPage(GridPane rootNodeForMenu, HBox originalButtons, Text title) {
 
@@ -133,7 +146,7 @@ public class MainMenu extends Application {
                 int noOfPPl = Integer.parseInt(noOfPpl.getText());
                 int tableNoInt = Integer.parseInt(tableNo.getText());
                 try {
-                    TableReservation res = new TableReservation(dateAsLocalDate, time, nameString, Integer.parseInt(phoneString), noOfPPl, r.getRestaurantId(), tableNoInt, r, customer.getCustomerid());
+                    TableReservation res = new TableReservation(dateAsLocalDate, time, nameString, Integer.parseInt(phoneString), noOfPPl, r.getRestaurantId(), tableNoInt, r, customer.getCustomerid(), false);
                     r.getListOfReservations().add(res);
                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
@@ -360,9 +373,9 @@ public class MainMenu extends Application {
         stage.show();
         buttonSubmit.setOnAction(e -> {
                     try {
-                        r = new Restaurant(manager, Integer.parseInt(restaurantID.getText()), Integer.parseInt(capacity.getText()), Integer.parseInt(noOfTables.getText()));
+                        r = new Restaurant(manager, Integer.parseInt(restaurantID.getText()), Integer.parseInt(capacity.getText()), Integer.parseInt(noOfTables.getText()), false);
                         Manager.getListOfRestaurants().add(r);
-                        displayMainMenu(buttonSubmit);
+                        displayMainMenu();
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
@@ -384,7 +397,7 @@ public class MainMenu extends Application {
             Button bToCreateRestaurant = new Button("Create Restaurant");
             bToCreateRestaurant.setScaleX(2);
             bToCreateRestaurant.setScaleY(2);
-            displayMainMenu(bToCreateRestaurant);
+            displayMainMenu();
         });
         return back;
     }
@@ -395,11 +408,11 @@ public class MainMenu extends Application {
             Button bToCreateRestaurant = new Button("Create Restaurant");
             bToCreateRestaurant.setScaleX(2);
             bToCreateRestaurant.setScaleY(2);
-            displayMainMenu(bToCreateRestaurant);
+            displayMainMenu();
         });
         return back;
     }
-    public void displayMainMenu(Button buttonSubmit) {
+    public void displayMainMenu() {
         Text title = new Text("Restaurant " + r.getRestaurantId() + " Settings:");
         Text data = new Text("");
         title.setStyle("-fx-font: 36 Helvetica;");

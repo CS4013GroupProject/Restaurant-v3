@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -11,6 +12,30 @@ public class Manager {
         return listOfRestaurants;
     }
 
+    public void startup() throws FileNotFoundException {
+        loadRestaurantsFromDisk();
+    }
+
+    private void loadRestaurantsFromDisk() {
+        try {
+            Scanner sc = new Scanner(new File("Restaurant/src/Restaurant.csv"));
+            int firstLine = 0;
+            while(sc.hasNext()) {
+                if(firstLine == 0) {
+                    sc.nextLine();
+                    firstLine++;
+                    continue;
+                }
+
+                String[] restaurantData = sc.nextLine().split(",");
+                Restaurant persistentRestaurant = new Restaurant(this, Integer.parseInt(restaurantData[0].trim()), Integer.parseInt(restaurantData[1].trim()), Integer.parseInt(restaurantData[2].trim()), true);
+                addRestaurant(persistentRestaurant);
+            }
+        } catch (FileNotFoundException f){
+            System.out.println("File not found");
+        }
+    }
+
     public static int getCurrentRestaurantIndex() {
         return currentRestaurantIndex;
     }
@@ -18,6 +43,18 @@ public class Manager {
     public static void addRestaurant(Restaurant r) {
         listOfRestaurants.add(r);
         currentRestaurantIndex = listOfRestaurants.indexOf(r);
+    }
+
+    public Restaurant getRestaurantByID(int id) {
+        Restaurant r;
+
+        for(Restaurant rest : getListOfRestaurants()) {
+            if(rest.getRestaurantId() == id) {
+                return rest;
+            }
+        }
+
+        return null;
     }
 
     public static void setCurrentRestaurantIndex(int nextRestaurant) {

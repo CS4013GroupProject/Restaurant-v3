@@ -56,7 +56,7 @@ public class TableReservation extends Restaurant {
         }
     }
 
-    public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant, int customerId) throws FileNotFoundException {
+    public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant, int customerId, boolean exists) throws FileNotFoundException {
         //this constructor makes a reservation
         this(restaurantID);
 
@@ -70,9 +70,11 @@ public class TableReservation extends Restaurant {
         cancelled = false;
         this.restaurantID = restaurantID;
         reservationID = (int) ((Math.random() * 89999999) + 10000000);
-        String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(phoneNumber)};
+        String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(phoneNumber), String.valueOf(customerId), String.valueOf(noOfPeople)};
         this.currentRestaurant = currentRestaurant;
-        CSV("Restaurant/src/data.csv", data);
+        if(!exists) {
+            CSV("Restaurant/src/data.csv", data);
+        }
     }
 
     public LocalDate getDate() {
