@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Admin extends Restaurant {
 
@@ -75,43 +74,43 @@ public class Admin extends Restaurant {
 
                 String[] before = in.nextLine().trim().split("-");
                 int[] beforeFormat = new int[3];
-                for(int i = 0; i < 3; i++){
+                for (int i = 0; i < 3; i++) {
                     beforeFormat[i] = Integer.parseInt(before[i]);
                 }
 
                 System.out.println("Enter Last Day YYYY-MM-DD");
                 String[] after = in.nextLine().trim().split("-");
                 int[] afterFormat = new int[3];
-                for(int i = 0; i < 3; i++){
+                for (int i = 0; i < 3; i++) {
                     afterFormat[i] = Integer.parseInt(after[i]);
                 }
-                LocalDate beforeDate = LocalDate.of(beforeFormat[0],beforeFormat[1],beforeFormat[2] );
+                LocalDate beforeDate = LocalDate.of(beforeFormat[0], beforeFormat[1], beforeFormat[2]);
                 LocalDate afterDate = LocalDate.of(afterFormat[0], afterFormat[1], afterFormat[2]);
                 List<LocalDate> datesBetween = beforeDate.datesUntil(afterDate).toList();
 
                 boolean finished = false;
                 double totalRev = 0;
-                double totalTips= 0;
-                for(int i = 0; i < datesBetween.size(); i++){
+                double totalTips = 0;
+                for (int i = 0; i < datesBetween.size(); i++) {
                     Scanner scanPay = new Scanner(new File("Restaurant//src//payments.csv"));
                     scanPay.nextLine();
 
                     double totalForDay = 0;
-                    double totalTipsForDay= 0;
-                    while(scanPay.hasNext()){
-                    String line =scanPay.nextLine().trim();
+                    double totalTipsForDay = 0;
+                    while (scanPay.hasNext()) {
+                        String line = scanPay.nextLine().trim();
 
-                    String[] dataPerLine = line.split(", ");
-                    String[] date = dataPerLine[1].split("-");
-                    int[] dateFormat = new int[3];
-                    for(int j = 0; j < 3; j++){
-                        dateFormat[j] = Integer.parseInt(date[j]);
-                    }
-                    LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1],dateFormat[2]);
+                        String[] dataPerLine = line.split(", ");
+                        String[] date = dataPerLine[1].split("-");
+                        int[] dateFormat = new int[3];
+                        for (int j = 0; j < 3; j++) {
+                            dateFormat[j] = Integer.parseInt(date[j]);
+                        }
+                        LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1], dateFormat[2]);
 
-                    if(dateOf.isBefore( afterDate) && dateOf.isAfter(beforeDate) && (currentRestaurant.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0,1)))){
+                        if (dateOf.isBefore(afterDate) && dateOf.isAfter(beforeDate) && (currentRestaurant.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0, 1)))) {
 
-                            if(dateOf.equals(datesBetween.get(i))){
+                            if (dateOf.equals(datesBetween.get(i))) {
                                 totalForDay += Double.parseDouble(dataPerLine[0]);
                                 totalTipsForDay += Double.parseDouble(dataPerLine[2]);
                                 totalRev += Double.parseDouble(dataPerLine[0]);
@@ -123,20 +122,21 @@ public class Admin extends Restaurant {
                         }
 
                     }
-                    System.out.println("Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay + "\nTips: " + totalTipsForDay);
+                    System.out.println("Total For Day " + datesBetween.get(i).toString() + " : " + totalForDay + "\nTips: " + totalTipsForDay);
 
 
                 }
-                System.out.println("Total Revenue for " + currentRestaurant.getRestaurantId() + ": " +  totalRev + "\nTips: " + totalTips);
-
-
-
-
+                System.out.println("Total Revenue for " + currentRestaurant.getRestaurantId() + ": " + totalRev + "\nTips: " + totalTips);
 
             case "Q":
                 System.out.println("Goodbye");
                 currentRestaurant.run();
                 break;
+
+            default:
+                System.out.println("Invalid input");
+                menuForAdmin();
         }
+
     }
 }

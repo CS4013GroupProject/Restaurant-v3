@@ -1,5 +1,4 @@
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -42,7 +41,6 @@ public class Chef extends Restaurant {
             case "S":
                 for (Order o : currentRestaurant.getCompletedOrder()) {
                     System.out.println(o);
-                    ;
                 }
                 break;
             case "Q":

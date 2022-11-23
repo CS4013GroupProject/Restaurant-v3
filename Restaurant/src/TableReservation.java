@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -50,7 +49,7 @@ public class TableReservation extends Restaurant {
             int tableNumberIndex = (int) ((Math.random() * counter));
             tableNumber = tables.get(tableNumberIndex);
             reservationID = (int) ((Math.random() * 89999999) + 10000000);
-            String[] data = {"Null", String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), "Null", String.valueOf(customerId)};
+            String[] data = {"null", String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), "0", String.valueOf(customerId), String.valueOf(noOfPeople)};
             this.currentRestaurant = currentRestaurant;
             CSV("Restaurant/src/data.csv", data);
         }

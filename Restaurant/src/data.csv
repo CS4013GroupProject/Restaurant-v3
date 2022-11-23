@@ -1,2 +1,1 @@
-name, reservationID, Table, date, time, restaurantID, phone number, customer ID, numberOfPeople
-Sam, 22172600, 20, 2022-11-23, 10:30, 1, 874747474, 66485252, 30,
+name, reservationID, Table, date, time, restaurantID, phone number, customer ID, numberOfPeople,

@@ -1,7 +1,4 @@
-import com.sun.jdi.InvalidTypeException;
-
 import java.io.FileNotFoundException;
-import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Waiter extends Restaurant {
@@ -48,11 +45,12 @@ public class Waiter extends Restaurant {
         Order order = new Order(tableNumber, currentRestaurant);
         currentRestaurant.viewMenu();
         System.out.println("\nEnter each food one by one:");
-        String food = s.nextLine();
+        String food = s.nextLine().toUpperCase();
         while(!food.equalsIgnoreCase("q")){
             for(Food f: currentRestaurant.getMenu().getTotalMenu()){
-                if(f.getFoodName().equalsIgnoreCase(food)){
+                if(f.getFoodName().toUpperCase().equalsIgnoreCase(food)){
                     order.addToOrder(f);
+                    System.out.println("Food Added");
                 }
             }
             food = s.nextLine();

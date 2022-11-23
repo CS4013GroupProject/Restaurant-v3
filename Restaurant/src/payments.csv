@@ -1,5 +1,1 @@
-amount,date, tip, method, Restaurant ID
-12.5, 2022-11-23, 0.625, cash, 1,
-14.5, 2022-11-23, 2.9000000000000004, cash, 1,
-12.5, 2022-11-23, 0.625, cash, 1, 
-8.95, 2022-11-25, 1.79, Cash, 1, 
+amount,date, tip, method, Restaurant ID,
