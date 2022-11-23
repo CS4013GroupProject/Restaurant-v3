@@ -17,6 +17,7 @@ public class TableReservation extends Restaurant {
     boolean cancelled;
     private int rowNumber;
     private Restaurant currentRestaurant;
+    private boolean booked = false;
 
 
     public TableReservation() {
@@ -71,7 +72,18 @@ public class TableReservation extends Restaurant {
         reservationID = (int) ((Math.random() * 89999999) + 10000000);
         String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(phoneNumber), String.valueOf(customerId), String.valueOf(noOfPeople)};
         this.currentRestaurant = currentRestaurant;
-        if(!exists) {
+        for(TableReservation r : currentRestaurant.getListOfReservations()){
+            if(r.getDate().equals(date)){
+                if(r.getTime().getHour() + 3 >= time.getHour()){
+                    if (r.getTableNumber() == tableNumber){
+                        System.out.println("Table is already booked at this time.");
+                        booked = true;
+
+                    }
+                }
+            }
+        }
+        if(!exists && !booked) {
             CSV("Restaurant/src/data.csv", data);
         }
     }
@@ -82,6 +94,9 @@ public class TableReservation extends Restaurant {
 
     public LocalTime getTime() {
         return time;
+    }
+    public boolean getBooked(){
+        return booked;
     }
 
     public TableReservation(int restaurantID) throws FileNotFoundException {

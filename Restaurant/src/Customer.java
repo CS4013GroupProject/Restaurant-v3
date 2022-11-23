@@ -30,7 +30,7 @@ public class Customer extends Restaurant {
                 System.out.println("Enter pass");
                 String password = in.nextLine().trim();
                 Login l = new Login(username, password, newCustomerId);
-                currentRestaurant.addToListOfCustomers(l, false);
+                currentRestaurant.addToListOfCustomers(l, true);
                 this.login = l;
                 break;
             case "S":
@@ -252,7 +252,7 @@ public class Customer extends Restaurant {
                 } else {
                     for (TableReservation r : currentRestaurant.getListOfReservations()) {
                         if (r.getDate().getDayOfYear() == b.getDayOfYear()) {
-                            if (r.getTime().getHour() < c.getHour()) {
+                            if (r.getTime().getHour() + 3 >= c.getHour()) {
                                 if (r.getTableNumber() == Integer.parseInt(resData[5])) {
                                     System.out.println("Table is booked at this time.");
                                     menuForCustomers();
@@ -261,8 +261,9 @@ public class Customer extends Restaurant {
                         }
                     }
                     TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false);
-
-                    currentRestaurant.getListOfReservations().add(a);
+                    if(!a.getBooked()) {
+                        currentRestaurant.getListOfReservations().add(a);
+                    }
 
                 }
             }
