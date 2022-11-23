@@ -33,19 +33,18 @@ public class MainMenu extends Application {
         manager = new Manager();
         manager.startup();
         System.out.println("Post startup");
-        Restaurant preload = Manager.getListOfRestaurants().get(0);
-        System.out.println(preload);
-
         primaryStage.setResizable(false);
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(400);
 
-        if(preload != null) {
+        try {
+            Restaurant preload = Manager.getListOfRestaurants().get(0);
+            System.out.println(preload);
             r = preload;
             stage = primaryStage;
             primaryStage.show();
             displayMainMenu();
-        } else {
+        } catch (Exception f) {
             //------------MAIN MENU---------------//
             Button bToCreateRestaurant = new Button("Create Restaurant");
             bToCreateRestaurant.setScaleX(2);
@@ -80,6 +79,7 @@ public class MainMenu extends Application {
                 displayCreationPage();
             });
         }
+
 
     }
     public void displayCustomerPage(GridPane rootNodeForMenu, HBox originalButtons, Text title) {
