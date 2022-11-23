@@ -4,13 +4,24 @@ import java.util.Scanner;
 
 public class Admin extends Restaurant {
 
-
+/* Admin class, creates admin for admin to access and alter information
+ */
     Restaurant currentRestaurant;
 
     public Admin(Restaurant restaurant) {
-        currentRestaurant = restaurant;
+            currentRestaurant = restaurant;
     }
-
+/** menuForAdmin method, creates menu for admin so they can get - Restaurant id,
+Number of tables,
+Capacity,
+View the menu,
+Create new restaurant,
+Switch restaurant,
+view reservations,
+add to menu and quit
+ *@throws FileNotFoundException throws filenotfoundexception
+* @throws InputMismatchException throws inputmismatchexception
+ */
     public void menuForAdmin() throws FileNotFoundException, InputMismatchException {
 
         Scanner in = new Scanner(System.in);
@@ -64,6 +75,11 @@ public class Admin extends Restaurant {
             System.out.println("Goodbye");
             currentRestaurant.run();
 
+
+            /**
+             switch-case to execute selected blocks of code based on admin input
+            @param input admin input
+             */
             switch (input) {
                 case "r":
                     System.out.println(currentRestaurant.getRestaurantId());

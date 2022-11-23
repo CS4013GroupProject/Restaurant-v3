@@ -9,13 +9,24 @@ public class Payment extends TableReservation {
     private LocalDate date;
     private double tip;
 
-
+    /**
+     * payment constructor that creates the amountDue object, the date object and the tip object
+     * @param amountDue amount due
+     * @param date date
+     * @param tip tip
+     * @throws FileNotFoundException throws FileNotFoundException
+     */
     public Payment(double amountDue, LocalDate date, double tip) throws FileNotFoundException {
         this.amountDue = amountDue;
         this.date = date;
         this.tip = tip;
     }
 
+    /**
+     * writeToFile method that writes to the csv file
+     * @param data
+     * @throws FileNotFoundException
+     */
     private void writeToFile(String[] data) throws FileNotFoundException {
 
         try {

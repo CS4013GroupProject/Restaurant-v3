@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Menu {
+    /** Menu class to list food and price for breakfast lunch and dinner
+     *
+     */
 
     private ArrayList<Food> menuForMorning = new ArrayList<>();
     private ArrayList<Food> menuForAfterNoon = new ArrayList<>();
@@ -9,7 +12,9 @@ public class Menu {
     Restaurant currentRestaurant;
 
     public Menu() {
-
+/** Menu method lists food in an arraylist
+ *
+ */
 
         menuForMorning.add(new Food("Full Irish Breakfast", 16.95));
         menuForMorning.add(new Food("Vegetarian Breakfast", 15.95));
@@ -58,10 +63,20 @@ public class Menu {
         return total;
     }
 
+    /**
+     * toString method that returns the time of day + the menu for that time of day
+     * @return menu for morning, afternoon and evening
+     */
+
     public String toString() {
         return "Morning:\n" + menuForMorning.toString() + "\n " + "Afternoon: \n" + menuForAfterNoon.toString() + "\n" + "Evening: \n" + menuForEvening.toString();
     }
 
+    /**
+     * addToMenu method that allows admin to add items to menu
+     * @param timeOfDay takes time of day
+     * @param food takes food item to be added
+     */
     public void addToMenu(int timeOfDay, Food food) {
         if (timeOfDay == 1) {
             System.out.println("HRAONRWIPNF");
@@ -79,6 +94,7 @@ public class Menu {
 
 
 }
+//commented out old code
 
 //HashMap<String, Double> breakfast = new HashMap<>();
 //        breakfast.put("Full Irish Breakfast", 16.95);
