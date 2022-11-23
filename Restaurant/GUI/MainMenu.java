@@ -333,6 +333,7 @@ public class MainMenu extends Application {
 
             rootNodeForMenu.addRow(2,t);
             for(int i = 0; i < 100; i++){
+                System.out.println(i);
                 System.out.println(rootNodeForMenu.getChildren().get(i));
             }
 
@@ -782,7 +783,7 @@ public class MainMenu extends Application {
                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
                     Order order = new Order(Integer.parseInt(t.getText()), r);
-                    Text menu = new Text(r.getMenu().getTotalMenu().toString());
+                    Text menu = new Text(r.getMenu().toString());
                     rootNodeForMenu.addRow(2, menu);
                     TextField food = new TextField("Enter Food");
                     rootNodeForMenu.addRow(3,food);

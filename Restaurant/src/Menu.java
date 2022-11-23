@@ -58,6 +58,7 @@ public class Menu {
         return total;
     }
 
+    @Override
     public String toString() {
         String morningMenu = "";
         String afternoonMenu= "";
