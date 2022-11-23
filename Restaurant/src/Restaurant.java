@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,22 +16,14 @@ public class Restaurant {
     private int restaurantId;
     private int capacity;
     private int numberOfTables;
-    private ArrayList<TableReservation> listOfReservations = new ArrayList<>();
+    private final ArrayList<TableReservation> listOfReservations = new ArrayList<>();
     private Menu menu = new Menu();
     static boolean quit = false;
-    private ArrayList<Order> currentOrders = new ArrayList<>();
-    private ArrayList<Order> completedOrder = new ArrayList<>();
-    private ArrayList<Order> paymentPendingOrders = new ArrayList<>();
-    private static ArrayList<Login> listOfCustomers = new ArrayList<>();
+    private final ArrayList<Order> currentOrders = new ArrayList<>();
+    private final ArrayList<Order> completedOrder = new ArrayList<>();
+    private final ArrayList<Order> paymentPendingOrders = new ArrayList<>();
+    private static final ArrayList<Login> listOfCustomers = new ArrayList<>();
     public Manager manager;
-
-
-    public Restaurant(ArrayList<Restaurant> listOfRestaurants) {
-        Manager m = new Manager();
-        for (Restaurant r : listOfRestaurants) {
-            m.addRestaurant(r);
-        }
-    }
 
     /**
      * constructor for restaurant that creates a restaurant
@@ -39,15 +32,19 @@ public class Restaurant {
      * @param restaurantId   id of restaurant
      * @param capacity       number of people it can hold
      * @param numberOfTables the number of tables in restaurant
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if file not found by Scanner
      */
-    public Restaurant(Manager m, int restaurantId, int capacity, int numberOfTables) throws FileNotFoundException {
+    public Restaurant(Manager m, int restaurantId, int capacity, int numberOfTables, boolean exists) throws FileNotFoundException {
         this.restaurantId = restaurantId;
         this.capacity = capacity;
         this.numberOfTables = numberOfTables;
         this.manager = m;
         String[] data = {String.valueOf(restaurantId), String.valueOf(capacity), String.valueOf(numberOfTables)};
-        CSV("Restaurant/src/restaurant.csv", data);
+        if(!exists) {
+            CSV("Restaurant/src/restaurant.csv", data);
+        } else {
+            loadReservationsFromDisk();
+        }
     }
 
     public ArrayList<Order> getPaymentPendingOrders() {
@@ -59,12 +56,53 @@ public class Restaurant {
     }
 
     /**
-     * adds a login object to the list of customers. This ensures a login can only see reservations theyve made
+     * adds a login object to the list of customers. This ensures a login can only see reservations they've made
      *
      * @param l the login object
      */
     public static void addToListOfCustomers(Login l) {
         listOfCustomers.add(l);
+    }
+
+    private void loadReservationsFromDisk() {
+
+        try {
+            Scanner sc = new Scanner(new File("Restaurant/src/data.csv"));
+            int firstLine = 0;
+            while(sc.hasNext()) {
+                if(firstLine == 0) {
+                    sc.nextLine();
+                    firstLine++;
+                    continue;
+                }
+
+                String[] data = sc.nextLine().split(",");
+                // name, reservationID, Table, date, time, restaurantID, phone number, customer ID
+                for(int i = 0; i < data.length; i++) {
+                    data[i] = data[i].trim();
+                }
+
+                String name = data[0];
+                int reservationID = Integer.parseInt(data[1]);
+                int table = Integer.parseInt(data[2]);
+                String[] dateSplit = data[3].split("-");
+                LocalDate date = LocalDate.of(Integer.parseInt(dateSplit[0]), Integer.parseInt(dateSplit[1]), Integer.parseInt(dateSplit[2]));
+                String[] timeSplit = data[4].split(":");
+                LocalTime time = LocalTime.of(Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1]));
+                int restaurantID = Integer.parseInt(data[5]);
+                int phoneNumber = Integer.parseInt(data[6]);
+                int customerID = Integer.parseInt(data[7]);
+                int numberOfPeople = Integer.parseInt(data[8]);
+
+                if(restaurantID != this.getRestaurantId()) continue;
+
+                TableReservation tableReservation = new TableReservation(date, time, name, phoneNumber, numberOfPeople, restaurantID, table, this, customerID, true);
+                this.listOfReservations.add(tableReservation);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public int getRestaurantId() {
@@ -84,18 +122,17 @@ public class Restaurant {
     }
 
     public ArrayList<Restaurant> getListOfRestaurants() {
-        return manager.getListOfRestaurants();
+        return Manager.getListOfRestaurants();
     }
 
     /**
-     * tostring that returns the restaurant ID
+     * toString that returns the restaurant ID
      *
-     * @return
+     * @return string of restaurant ID
      */
     @Override
     public String toString() {
-        String s = "" + restaurantId;
-        return s;
+        return "" + restaurantId;
     }
 
     public Menu getMenu() {
@@ -114,7 +151,7 @@ public class Restaurant {
         int numberOfTables = Integer.parseInt(s.nextLine());
         System.out.println("Enter Capacity");
         int capacity = Integer.parseInt(s.nextLine());
-        Restaurant r = new Restaurant(this.manager, id, capacity, numberOfTables);
+        Restaurant r = new Restaurant(this.manager, id, capacity, numberOfTables, false);
         Manager.addRestaurant(r);
     }
 
@@ -123,11 +160,11 @@ public class Restaurant {
      *
      * @param path        the path to the csv file
      * @param columnNames the actual data
-     * @throws FileNotFoundException incase file is not found
+     * @throws FileNotFoundException error if file is not found
      */
     public void CSV(String path, String[] columnNames) throws FileNotFoundException {
 
-        FileWriter write = null;
+        FileWriter write;
         try {
             write = new FileWriter(path, true);
             for (String s : columnNames) {
@@ -150,9 +187,6 @@ public class Restaurant {
     }
 
     public void run() throws FileNotFoundException, InputMismatchException {
-        if (getListOfRestaurants().size() == 0) {
-            createRestaurant();
-        }
         Scanner in = new Scanner(System.in);
         System.out.println("Menu for Restaurant: " + getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()).getRestaurantId());
         System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
@@ -210,8 +244,15 @@ public class Restaurant {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-
         Restaurant r = new Restaurant();
-        r.run();
+        r.manager = new Manager();
+        r.manager.startup();
+        Restaurant existing = Manager.getListOfRestaurants().get(0);
+        if(existing != null) {
+            Manager.setCurrentRestaurantIndex(0);
+            existing.run();
+        } else {
+            r.run();
+        }
     }
 }

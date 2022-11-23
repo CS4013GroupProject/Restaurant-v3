@@ -238,7 +238,7 @@ public class Customer extends Restaurant {
             }
             ArrayList<TableReservation> tempres = new ArrayList<>();
             if (currentRestaurant.getListOfReservations().isEmpty()) {
-                TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
+                TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false);
                 currentRestaurant.getListOfReservations().add(a);
                 System.out.println("AAAAAAAAAAAAAAAAA");
             }else{
@@ -252,7 +252,7 @@ public class Customer extends Restaurant {
                         }
                     }
                 }}
-                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId);
+                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false);
 
                 currentRestaurant.getListOfReservations().add(a);
 
