@@ -249,8 +249,8 @@ public class Restaurant {
         r.manager = new Manager();
         r.manager.startup();
         Restaurant existing = Manager.getListOfRestaurants().get(0);
-        Manager.setCurrentRestaurantIndex(0);
         if(existing != null) {
+            Manager.setCurrentRestaurantIndex(0);
             existing.run();
         } else {
             r.run();
