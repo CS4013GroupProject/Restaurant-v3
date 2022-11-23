@@ -10,13 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 public class MainMenu extends Application {
     public static void main(String[] args) {
@@ -558,8 +557,9 @@ public class MainMenu extends Application {
             Button switchRestaurant = new Button("Switch Restaurant");
             Button viewReservations = new Button("View Reservations");
             Button addToMenu = new Button("Add to Menu");
+            Button getAnalytics = new Button("Generate Analytics");
 
-            HBox adminButtons = new HBox(getID, getNumberOfTables, getCapacity, viewMenu, createNewRestaurant, switchRestaurant, viewReservations, addToMenu, backButton());
+            HBox adminButtons = new HBox(getID, getNumberOfTables, getCapacity, viewMenu, createNewRestaurant, switchRestaurant, viewReservations, addToMenu, getAnalytics, backButton());
             rootNodeForMenu.getChildren().remove(originalButtons);
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
@@ -648,6 +648,75 @@ public class MainMenu extends Application {
                 String menu = r.getMenu().toString();
                 Text textMenu = new Text("Restaurant Menu:\n" + menu);
                 rootNodeForMenu.addRow(2,textMenu);
+            });
+            getAnalytics.setOnAction(d ->{
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                Text t = new Text("Enter Start Date");
+                Text t2 = new Text("Enter End Date");
+                DatePicker start = new DatePicker();
+                DatePicker end = new DatePicker();
+                Button submit = new Button("Submit");
+                rootNodeForMenu.addRow(2,t);
+                rootNodeForMenu.addRow(3,start);
+                rootNodeForMenu.addRow(4,t2);;
+                rootNodeForMenu.addRow(5,end);
+                rootNodeForMenu.addRow(6,submit);
+                submit.setOnAction(g -> {
+                    LocalDate before = start.getValue();
+                    LocalDate after = end.getValue();
+                    List<LocalDate> datesBetween = before.datesUntil(after).toList();
+
+                    boolean finished = false;
+                    double totalRev = 0;
+                    double totalTips= 0;
+                    for(int i = 0; i < datesBetween.size(); i++){
+                        Scanner scanPay = null;
+                        try {
+                            scanPay = new Scanner(new File("Restaurant//src//payments.csv"));
+                        } catch (FileNotFoundException ex) {
+                            ex.printStackTrace();
+                        }
+                        scanPay.nextLine();
+
+                        double totalForDay = 0;
+                        while(scanPay.hasNext()){
+                            String line =scanPay.nextLine().trim();
+
+                            String[] dataPerLine = line.split(", ");
+                            String[] date = dataPerLine[1].split("-");
+                            int[] dateFormat = new int[3];
+                            for(int j = 0; j < 3; j++){
+                                dateFormat[j] = Integer.parseInt(date[j]);
+                            }
+                            LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1],dateFormat[2]);
+
+                            if(dateOf.isBefore( after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0,1)))){
+
+                                if(dateOf.equals(datesBetween.get(i))){
+                                    totalForDay += Double.parseDouble(dataPerLine[0]);
+                                    totalRev += Double.parseDouble(dataPerLine[0]);
+                                    totalTips += Double.parseDouble(dataPerLine[2]);
+
+                                }
+
+
+                            }
+
+                        }
+                        String textString =  "Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay;
+
+                        rootNodeForMenu.addRow(i + 1, new Text(textString));
+
+
+
+                    }
+                    String s = "Total Revenue for " + r.getRestaurantId() + ": " +  totalRev;
+                    int noOfRows = rootNodeForMenu.getRowCount();
+                    rootNodeForMenu.addRow(noOfRows + 1, new Text(s));
+
+
+
+                });
             });
         });
         bForWaiter.setOnAction(e -> {
