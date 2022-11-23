@@ -187,6 +187,9 @@ public class Restaurant {
     }
 
     public void run() throws FileNotFoundException, InputMismatchException {
+        if(getListOfRestaurants().size() == 0) {
+            createRestaurant();
+        }
         Scanner in = new Scanner(System.in);
         System.out.println("Menu for Restaurant: " + getListOfRestaurants().get(Manager.getCurrentRestaurantIndex()).getRestaurantId());
         System.out.println("C)ustomer or W)aiter or Ch)ef or A)dministration.\nQ)uit");
@@ -247,11 +250,12 @@ public class Restaurant {
         Restaurant r = new Restaurant();
         r.manager = new Manager();
         r.manager.startup();
-        Restaurant existing = Manager.getListOfRestaurants().get(0);
-        if(existing != null) {
+        try {
+            Restaurant existing = Manager.getListOfRestaurants().get(0);
             Manager.setCurrentRestaurantIndex(0);
             existing.run();
-        } else {
+
+        } catch (Exception e) {
             r.run();
         }
     }
