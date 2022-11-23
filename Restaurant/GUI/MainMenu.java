@@ -332,10 +332,7 @@ public class MainMenu extends Application {
             t.setText(string.toString());
 
             rootNodeForMenu.addRow(2,t);
-            for(int i = 0; i < 100; i++){
-                System.out.println(i);
-                System.out.println(rootNodeForMenu.getChildren().get(i));
-            }
+
 
         });
     }
