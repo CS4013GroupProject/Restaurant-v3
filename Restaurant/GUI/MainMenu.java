@@ -509,7 +509,7 @@ public class MainMenu extends Application {
                 b.setOnAction(g -> {
                     rootNodeForMenu.getChildren().removeAll(username, pass, b);
                     Login log = new Login(username.getText(), pass.getText(), (int) ((Math.random() * 89999999) + 10000000));
-                            Restaurant.getListOfCustomers().add(log);
+                            r.addToListOfCustomers(log, false);
                     customer = log;
                     displayCustomerPage(rootNodeForMenu,originalButtons, title);
                     }
@@ -620,8 +620,8 @@ public class MainMenu extends Application {
                  rootNodeForMenu.addRow(3,price);
                  rootNodeForMenu.addRow(4,comboBox);
                 b.setOnAction(f -> {
-                    Food newFood = new Food(name.getText(), Integer.parseInt(price.getText()));
-                    Menu newMenu = new Menu();
+                    Food newFood = new Food(name.getText(), Double.parseDouble(price.getText()));
+                    Menu newMenu = new Menu(r);
                     int time = 0;
                     if (comboBox.getValue().equalsIgnoreCase("morning")){
                         time = 1;
@@ -630,7 +630,11 @@ public class MainMenu extends Application {
                     }else if (comboBox.getValue().equalsIgnoreCase("evening")){
                         time = 3;
                     }
-                    newMenu.addToMenu(time, newFood);
+                    try {
+                        newMenu.addToMenu(time, newFood);
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
                     r.setMenu(newMenu);
                     stage.setScene(mainMenu);
                 });

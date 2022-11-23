@@ -30,7 +30,7 @@ public class Customer extends Restaurant {
                 System.out.println("Enter pass");
                 String password = in.nextLine().trim();
                 Login l = new Login(username, password, newCustomerId);
-                Restaurant.addToListOfCustomers(l);
+                currentRestaurant.addToListOfCustomers(l, false);
                 this.login = l;
                 break;
             case "S":

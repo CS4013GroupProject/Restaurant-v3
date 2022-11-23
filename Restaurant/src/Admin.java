@@ -65,7 +65,7 @@ public class Admin extends Restaurant {
                 System.out.println("Enter a price:");
                 double price = Double.parseDouble(in.nextLine().trim());
                 Food newFood = new Food(foodName, price);
-                Menu newMenu = new Menu();
+                Menu newMenu = new Menu(currentRestaurant);
                 newMenu.addToMenu(timeOfDay, newFood);
                 currentRestaurant.setMenu(newMenu);
                 break;

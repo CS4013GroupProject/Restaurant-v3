@@ -1,15 +1,20 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Menu {
 
+    Restaurant currentRestaurant;
     private ArrayList<Food> menuForMorning = new ArrayList<>();
     private ArrayList<Food> menuForAfterNoon = new ArrayList<>();
     private ArrayList<Food> menuForEvening = new ArrayList<>();
-    Restaurant currentRestaurant;
 
-    public Menu() {
+    public Menu(Restaurant r) {
 
-
+        currentRestaurant = r;
         menuForMorning.add(new Food("Full Irish Breakfast", 16.95));
         menuForMorning.add(new Food("Vegetarian Breakfast", 15.95));
         menuForMorning.add(new Food("Eggs Benedict", 12.50));
@@ -34,20 +39,52 @@ public class Menu {
         menuForEvening.add(new Food("McChicken Sandwich", 4.95));
         menuForEvening.add(new Food("Steak, Egg And Thick Cut Chips", 12.95));
 
-
+        try {
+            loadMenuFromDisk();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
+    private void loadMenuFromDisk() throws FileNotFoundException {
+        Scanner sc = new Scanner(new File("Restaurant/src/menu.csv"));
 
-    public ArrayList<Food> getMenuForAfterNoon() {
-        return menuForAfterNoon;
+        int firstLine = 0;
+        while (sc.hasNext()) {
+            if (firstLine == 0) {
+                sc.nextLine();
+                firstLine++;
+                continue;
+            }
+
+            String[] data = sc.nextLine().split(",");
+            for (int i = 0; i < data.length; i++) {
+                data[i] = data[i].trim();
+            }
+
+            int restaurantID = Integer.parseInt(data[0]);
+            String foodName = data[1];
+            double price = Double.parseDouble(data[2]);
+            int timeOfDay = Integer.parseInt(data[3]);
+
+            if (restaurantID != currentRestaurant.getRestaurantId()) continue;
+            Food f = new Food(foodName, price);
+            ArrayList<Food> arr = (timeOfDay == 1 ? menuForMorning : timeOfDay == 2 ? menuForAfterNoon : timeOfDay == 3 ? menuForEvening : menuForMorning);
+
+            arr.add(f);
+        }
     }
 
-    public ArrayList<Food> getMenuForEvening() {
-        return menuForEvening;
+    public String getMenuForAfterNoon() {
+        return stringifyMenu(menuForAfterNoon);
     }
 
-    public ArrayList<Food> getMenuForMorning() {
-        return menuForMorning;
+    public String getMenuForEvening() {
+        return stringifyMenu(menuForEvening);
+    }
+
+    public String getMenuForMorning() {
+        return stringifyMenu(menuForMorning);
     }
 
     public ArrayList<Food> getTotalMenu() {
@@ -58,27 +95,25 @@ public class Menu {
         return total;
     }
 
+    public String stringifyMenu(ArrayList<Food> menu) {
+        String m = "";
+        for(Food f : menu) {
+            m += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
+        }
+
+        return m;
+    }
+
     @Override
     public String toString() {
-        String morningMenu = "";
-        String afternoonMenu= "";
-        String eveningMenu= "";
+        String morningMenu = stringifyMenu(menuForMorning);
+        String afternoonMenu = stringifyMenu(menuForAfterNoon);
+        String eveningMenu = stringifyMenu(menuForEvening);
 
-        for(Food f : menuForMorning) {
-            morningMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
-        }
-
-        for(Food f : menuForAfterNoon) {
-            afternoonMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
-        }
-
-        for(Food f : menuForEvening) {
-            eveningMenu += "\n" + f.getFoodName() + "\t\t:\t\t" + f.getPrice();
-        }
         return "Morning:\n" + morningMenu + "\n\n" + "Afternoon:\n" + afternoonMenu + "\n\n" + "Evening:\n" + eveningMenu;
     }
 
-    public void addToMenu(int timeOfDay, Food food) {
+    public void addToMenu(int timeOfDay, Food food) throws FileNotFoundException {
         if (timeOfDay == 1) {
             System.out.println("HRAONRWIPNF");
             menuForMorning.add(food);
@@ -91,6 +126,26 @@ public class Menu {
             System.out.println("Invalid.");
         }
 
+        String[] values = {String.valueOf(currentRestaurant.getRestaurantId()), String.valueOf(food.getFoodName()), String.valueOf(food.getPrice()), String.valueOf(timeOfDay)};
+        // restaurantID, name, price, timeOfDay
+        CSV("Restaurant/src/menu.csv", values);
+
+    }
+
+    public void CSV(String path, String[] columnNames) throws FileNotFoundException {
+
+        FileWriter write;
+        try {
+            write = new FileWriter(path, true);
+            for (String s : columnNames) {
+                write.write(s);
+                write.write(", ");
+            }
+            write.write("\n");
+            write.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
