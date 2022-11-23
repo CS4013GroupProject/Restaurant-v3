@@ -696,7 +696,7 @@ public class MainMenu extends Application {
                             }
                             LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1],dateFormat[2]);
                             System.out.println(r.getRestaurantId());
-                            System.out.println(dataPerLine[4].substring(0,1));
+                            System.out.println(dataPerLine[4].charAt(0));
                             if(dateOf.isBefore( after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0,1)))){
                                 if(dateOf.equals(datesBetween.get(i))){
                                     totalForDay += Double.parseDouble(dataPerLine[0]);
