@@ -97,8 +97,16 @@ public class Customer extends Restaurant {
                 System.out.println(currentRestaurant.getPaymentPendingOrders().get(i).getOrderTotal());
             }
             int index = Integer.parseInt(in.nextLine().trim()) - 1;
+            System.out.println("Enter Date: YYYY-MM-DD");
+            String[] dateFormat = in.nextLine().trim().split("-");
+            int[] intFormat = new int[3];
+            for(int i = 0; i < 3; i++){
+                intFormat[i] = Integer.parseInt(dateFormat[i]);
+            }
+            LocalDate theDay = LocalDate.of(intFormat[0], intFormat[1], intFormat[2] );
+
             System.out.println("Cash, Card, or Cheque?");
-            String paymethod = in.nextLine().trim();
+            String payMethod = in.nextLine().trim();
             System.out.println("How much was paid?");
             double pay = Double.parseDouble(in.nextLine().trim());
             if (pay < currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()) {
@@ -115,9 +123,10 @@ public class Customer extends Restaurant {
             newPayment.takePayment();
             String[] data = {
                     String.valueOf(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()),
-                    String.valueOf(LocalDate.now()),
+                    String.valueOf(theDay),
                     String.valueOf(tipActual),
-                    paymethod
+                    payMethod,
+                    String.valueOf(currentRestaurant.getRestaurantId())
             };
             currentRestaurant.getPaymentPendingOrders().remove(index);
             super.CSV("Restaurant/src/payments.csv", data);

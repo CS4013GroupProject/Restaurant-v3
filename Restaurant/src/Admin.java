@@ -1,6 +1,8 @@
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Admin extends Restaurant {
 
@@ -17,7 +19,7 @@ public class Admin extends Restaurant {
         Restaurant currentRestaurant = getListOfRestaurants().get(Manager.getCurrentRestaurantIndex());
 
         System.out.println("Menu for Restaurant: " + currentRestaurant.getRestaurantId());
-        System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, A)dd to Menu, Q)uit ");
+        System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, A)dd to Menu, Ge)nerate Analytics Q)uit ");
         String input = in.nextLine().trim();
 
         switch (input.toUpperCase()) {
@@ -68,6 +70,67 @@ public class Admin extends Restaurant {
                 newMenu.addToMenu(timeOfDay, newFood);
                 currentRestaurant.setMenu(newMenu);
                 break;
+            case "GE":
+                System.out.println("Enter first day YYYY-MM-DD");
+
+                String[] before = in.nextLine().trim().split("-");
+                int[] beforeFormat = new int[3];
+                for(int i = 0; i < 3; i++){
+                    beforeFormat[i] = Integer.parseInt(before[i]);
+                }
+
+                System.out.println("Enter Last Day YYYY-MM-DD");
+                String[] after = in.nextLine().trim().split("-");
+                int[] afterFormat = new int[3];
+                for(int i = 0; i < 3; i++){
+                    afterFormat[i] = Integer.parseInt(after[i]);
+                }
+                LocalDate beforeDate = LocalDate.of(beforeFormat[0],beforeFormat[1],beforeFormat[2] );
+                LocalDate afterDate = LocalDate.of(afterFormat[0], afterFormat[1], afterFormat[2]);
+                List<LocalDate> datesBetween = beforeDate.datesUntil(afterDate).toList();
+
+                boolean finished = false;
+                double totalRev = 0;
+                double totalTips= 0;
+                for(int i = 0; i < datesBetween.size(); i++){
+                    Scanner scanPay = new Scanner(new File("Restaurant//src//payments.csv"));
+                    scanPay.nextLine();
+
+                    double totalForDay = 0;
+                    while(scanPay.hasNext()){
+                    String line =scanPay.nextLine().trim();
+
+                    String[] dataPerLine = line.split(", ");
+                    String[] date = dataPerLine[1].split("-");
+                    int[] dateFormat = new int[3];
+                    for(int j = 0; j < 3; j++){
+                        dateFormat[j] = Integer.parseInt(date[j]);
+                    }
+                    LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1],dateFormat[2]);
+
+                    if(dateOf.isBefore( afterDate) && dateOf.isAfter(beforeDate) && (currentRestaurant.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0,1)))){
+
+                            if(dateOf.equals(datesBetween.get(i))){
+                                totalForDay += Double.parseDouble(dataPerLine[0]);
+                                totalRev += Double.parseDouble(dataPerLine[0]);
+                                totalTips += Double.parseDouble(dataPerLine[2]);
+
+                            }
+
+
+                        }
+
+                    }
+                    System.out.println("Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay);
+
+
+                }
+                System.out.println("Total Revenue for " + currentRestaurant.getRestaurantId() + ": " +  totalRev);
+
+
+
+
+
             case "Q":
                 System.out.println("Goodbye");
                 currentRestaurant.run();
