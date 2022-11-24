@@ -123,6 +123,7 @@ public class TableReservation extends Restaurant {
     public boolean getBooked(){
         return booked;
     }
+    public int getReservationID(){return reservationID;}
 
     public TableReservation(int restaurantID) throws FileNotFoundException {
         //constructor for searching purposes

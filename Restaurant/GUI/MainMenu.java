@@ -245,8 +245,10 @@ public class MainMenu extends Application {
             Text listOfRes = new Text();
             StringBuilder st = new StringBuilder();
             int i = 1;
+            ArrayList<TableReservation> thisCustomerRes = new ArrayList<>();
             for (TableReservation r : r.getListOfReservations()) {
                 if (r.getCustomerId() == customer.getCustomerid()) {
+                    thisCustomerRes.add(r);
                     st.append(i + ".").append("\n");
                     st.append(r.toString()).append("\n");
                     i++;
@@ -261,11 +263,21 @@ public class MainMenu extends Application {
             rootNodeForMenu.addRow(5, b);
 
             b.setOnAction(f -> {
-                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
                 int choiceIndex = Integer.parseInt(choice.getText());
-                r.getListOfReservations().remove(choiceIndex - 1);
+                Restaurant resToRemove = thisCustomerRes.get(choiceIndex - 1);
+                System.out.println(resToRemove + "gaege");
+                for(TableReservation reservation : r.getListOfReservations()){
+                    System.out.println("AAAAAAAA" + reservation);
+                    if (reservation.equals(resToRemove)){
+                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA");
+                        r.getListOfReservations().remove(resToRemove);
+                        break;
+                    }
+                }
                 System.out.println(r.getListOfRestaurants().size());
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+
             });
         });
         Text data = new Text();
