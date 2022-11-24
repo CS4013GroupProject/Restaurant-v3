@@ -24,14 +24,7 @@ public class Manager {
 
             Scanner sc = new Scanner(new File("Restaurant/src/Restaurant.csv"));
             sc.nextLine();
-            int firstLine = 0;
             while(sc.hasNext()) {
-                if(firstLine == 0) {
-                    sc.nextLine();
-                    firstLine++;
-                    continue;
-                }
-
                 String[] restaurantData = sc.nextLine().split(",");
                 Restaurant persistentRestaurant = new Restaurant(this, Integer.parseInt(restaurantData[0].trim()), Integer.parseInt(restaurantData[1].trim()), Integer.parseInt(restaurantData[2].trim()), true);
                 addRestaurant(persistentRestaurant);

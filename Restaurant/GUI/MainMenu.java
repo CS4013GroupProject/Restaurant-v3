@@ -1,13 +1,16 @@
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.Scene;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -16,6 +19,7 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MainMenu extends Application {
     /**
@@ -29,8 +33,11 @@ public class MainMenu extends Application {
     public Login customer;
     private Stage stage;
     private Manager manager;
-    private int xHeight = 1440;
-    private int yHeight = 900;
+    private int xHeight = 1920;
+    String backgroundColor = "#E5F9E0";
+    String navColor = "#222E50";
+    String buttonColor = "#A3F7B5";
+    private int yHeight = 1080;
 
     /**
      * start method that creates the GUI and starts it
@@ -53,7 +60,7 @@ public class MainMenu extends Application {
             displayMainMenu();
         } catch (Exception f) {
             //------------MAIN MENU---------------//
-            Button bToCreateRestaurant = new Button("Create Restaurant");
+            Button bToCreateRestaurant = generateButton("Create Restaurant");
             bToCreateRestaurant.setScaleX(2);
             bToCreateRestaurant.setScaleY(2);
             StackPane buttonPane = new StackPane(bToCreateRestaurant);
@@ -92,23 +99,33 @@ public class MainMenu extends Application {
     /**
      * display customer method that displays the GUI menu for customers
      * @param rootNodeForMenu
-     * @param originalButtons
+     * @param sidebar
      * @param title
      */
-    public void displayCustomerPage(GridPane rootNodeForMenu, HBox originalButtons, Text title) {
+    public void displayCustomerPage(GridPane rootNodeForMenu, VBox sidebar, Text title) {
 
-        Button bMakeRes = new Button("Make A reservation");
-        Button bWalkIn = new Button("Walk-in Reservation");
-        Button viewMenu = new Button("View Menu");
-        Button bCancelRes = new Button("Cancel Reservation");
-        Button switchRestaurant = new Button("Switch Restaurant");
-        Button pay = new Button("Pay");
-        Button lookUp = new Button("Lookup Available Tables");
-        Button seeRem = new Button("See Reminders");
-        Button quit = new Button("Quit");
-        HBox customerButtons = new HBox(bMakeRes, bWalkIn, viewMenu, bCancelRes, switchRestaurant, pay, lookUp, seeRem, backButton());
-        rootNodeForMenu.getChildren().remove(originalButtons);
-        rootNodeForMenu.addColumn(1, customerButtons);
+        Button bMakeRes = generateButton("Make A reservation");
+        Button bWalkIn = generateButton("Walk-in Reservation");
+        Button viewMenu = generateButton("View Menu");
+        Button bCancelRes = generateButton("Cancel Reservation");
+        Button switchRestaurant = generateButton("Switch Restaurant");
+        Button pay = generateButton("Pay");
+        Button lookUp = generateButton("Lookup Available Tables");
+        Button seeRem = generateButton("See Reminders");
+
+        ArrayList<Button> buttons = new ArrayList<>();
+
+        sidebar.getChildren().clear();
+
+        sidebar.getChildren().add(bMakeRes);
+        sidebar.getChildren().add(bWalkIn);
+        sidebar.getChildren().add(viewMenu);
+        sidebar.getChildren().add(bCancelRes);
+        sidebar.getChildren().add(switchRestaurant);
+        sidebar.getChildren().add(pay);
+        sidebar.getChildren().add(lookUp);
+        sidebar.getChildren().add(seeRem);
+
         StringBuilder s = new StringBuilder();
         for(TableReservation r : r.getListOfReservations()){
             System.out.println(r.getDate().getDayOfYear() + "Q");
@@ -117,8 +134,8 @@ public class MainMenu extends Application {
             System.out.println((LocalTime.now().getHour() * 60) + LocalTime.now().getMinute());
             if(r.getCustomerId() == customer.getCustomerid()){
                 if(r.getDate().getDayOfYear() > LocalDate.now().getDayOfYear()){
-                        s.append("Reminder! You have the following reservation upcoming!\n");
-                        s.append(r).append("\n");
+                    s.append("Reminder! You have the following reservation upcoming!\n");
+                    s.append(r).append("\n");
 
                 }
             }
@@ -136,7 +153,7 @@ public class MainMenu extends Application {
             TextField noOfPpl = new TextField("Number of People");
             TextField tableNo = new TextField("Table Number");
 
-            Button submitResData = new Button("Submit");
+            Button submitResData = generateButton("Submit");
             DatePicker datePick = new DatePicker();
             LocalDate date = datePick.getValue();
 
@@ -160,9 +177,24 @@ public class MainMenu extends Application {
                 int tableNoInt = Integer.parseInt(tableNo.getText());
                 try {
                     TableReservation res = new TableReservation(dateAsLocalDate, time, nameString, Integer.parseInt(phoneString), noOfPPl, r.getRestaurantId(), tableNoInt, r, customer.getCustomerid(), false);
-                    r.getListOfReservations().add(res);
-                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                    boolean booked = false;
+                    for(TableReservation r : r.getListOfReservations()){
+                        if(r.getDate().equals(dateAsLocalDate)){
+                            if(r.getTime().getHour() + 3 >= time.getHour()){
+                                if(r.getTableNumber() == tableNoInt){
 
+                                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                                    Text text = new Text("Table is booked at that time");
+                                    rootNodeForMenu.addRow(2,text);
+                                    booked = true;
+                                }
+                            }
+                        }
+                    }
+                    if(!booked) {
+                        r.getListOfReservations().add(res);
+                        rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                    }
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
                 }
@@ -174,7 +206,7 @@ public class MainMenu extends Application {
 
             Label l2 = new Label("Number of People");
             TextField noOfPpl2 = new TextField("Number of People");
-            Button submitResData2 = new Button("Submit");
+            Button submitResData2 = generateButton("Submit");
 
             rootNodeForMenu.addRow(2, l2);
             rootNodeForMenu.addRow(3, noOfPpl2);
@@ -218,7 +250,7 @@ public class MainMenu extends Application {
 
             listOfRes.setText(st.toString());
             TextField choice = new TextField("Which Number");
-            Button b = new Button("Submit");
+            Button b = generateButton("Submit");
             rootNodeForMenu.addRow(3, listOfRes);
             rootNodeForMenu.addRow(4, choice);
             rootNodeForMenu.addRow(5, b);
@@ -258,7 +290,7 @@ public class MainMenu extends Application {
             TextField getOrder = new TextField("Choose Order To Pay");
             TextField payment = new TextField("Insert Payment");
             TextField tip = new TextField("Insert Tip");
-            Button b = new Button("Submit");
+            Button b = generateButton("Submit");
 
 
             ObservableList<String> options =
@@ -286,20 +318,21 @@ public class MainMenu extends Application {
 
 
                 }else{
-                try {
-                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
-                    Text change = new Text("Change due: " + (Integer.parseInt(payment.getText()) - r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) -1).getOrderTotal()));
-                   Text thanks = new Text("Thank you. Payment has been processed");
-                   rootNodeForMenu.addRow(2, thanks);
-                   rootNodeForMenu.addRow(3,change);
-                    newPayment = new Payment(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal(), LocalDate.now(), tipActual);
-                    newPayment.takePayment();
-                    String[] dataPayment = {String.valueOf(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()), LocalDate.now().toString(), tip.getText(),comboBox.getValue()};
-                    r.CSV("Restaurant/src/payments.csv", dataPayment);
-                    r.getPaymentPendingOrders().remove(Integer.parseInt(getOrder.getText()) - 1);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }}
+                    try {
+                        rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                        double changeDue = Math.round((Double.parseDouble(payment.getText()) - r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) -1).getOrderTotal()) * 100) / 100;
+                        Text change = new Text("Change due: €" + changeDue);
+                        Text thanks = new Text("Thank you. Payment has been processed");
+                        rootNodeForMenu.addRow(2, thanks);
+                        rootNodeForMenu.addRow(3,change);
+                        newPayment = new Payment(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal(), LocalDate.now(), tipActual);
+                        newPayment.takePayment();
+                        String[] dataPayment = {String.valueOf(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()), LocalDate.now().toString(), tip.getText(),comboBox.getValue()};
+                        r.CSV("Restaurant/src/payments.csv", dataPayment);
+                        r.getPaymentPendingOrders().remove(Integer.parseInt(getOrder.getText()) - 1);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }}
             });
         });
         lookUp.setOnAction(f -> {
@@ -307,7 +340,7 @@ public class MainMenu extends Application {
             DatePicker date = new DatePicker();
             TextField time = new TextField("HH:MM");
             Label l = new Label("Choose a date and time");
-            Button b = new Button("Submit");
+            Button b = generateButton("Submit");
             rootNodeForMenu.addRow(2, l);
             rootNodeForMenu.addRow(3, date);
             rootNodeForMenu.addRow(4, time);
@@ -338,10 +371,10 @@ public class MainMenu extends Application {
             for(TableReservation r : r.getListOfReservations()){
                 if(r.getCustomerId() == customer.getCustomerid()){
 
-                        string.append(r).append("\n");
+                    string.append(r).append("\n");
 
-                    }
                 }
+            }
 
             t.setText(string.toString());
 
@@ -368,7 +401,7 @@ public class MainMenu extends Application {
         javafx.scene.control.TextField restaurantID = new javafx.scene.control.TextField("ID");
         javafx.scene.control.TextField capacity = new javafx.scene.control.TextField("Capacity");
         javafx.scene.control.TextField noOfTables = new TextField("Number Of Tables");
-        Button buttonSubmit = new Button("Submit");
+        Button buttonSubmit = generateButton("Submit");
 
 
 
@@ -400,7 +433,7 @@ public class MainMenu extends Application {
      * @return returns quit
      */
     public Button quitButton() {
-        Button quit = new Button("Quit");
+        Button quit = generateButton("Quit");
         quit.setOnAction(e -> {
             stage.close();
         });
@@ -412,9 +445,9 @@ public class MainMenu extends Application {
      */
 
     public Button backButton() {
-        Button back = new Button("Back");
+        Button back = generateButton("Back");
         back.setOnAction(e -> {
-            Button bToCreateRestaurant = new Button("Create Restaurant");
+            Button bToCreateRestaurant = generateButton("Create Restaurant");
             bToCreateRestaurant.setScaleX(2);
             bToCreateRestaurant.setScaleY(2);
             displayMainMenu();
@@ -428,48 +461,129 @@ public class MainMenu extends Application {
      */
     public Button backButton(Order o){
         r.getCurrentOrders().add(o);
-        Button back = new Button("Back");
+        Button back = generateButton("Back");
         back.setOnAction(e -> {
-            Button bToCreateRestaurant = new Button("Create Restaurant");
+            Button bToCreateRestaurant = generateButton("Create Restaurant");
             bToCreateRestaurant.setScaleX(2);
             bToCreateRestaurant.setScaleY(2);
             displayMainMenu();
         });
         return back;
     }
-    public void displayMainMenu() {
-        Text title = new Text("Restaurant " + r.getRestaurantId() + " Settings:");
-        Text data = new Text("");
-        title.setStyle("-fx-font: 36 Helvetica;");
-        Button bForCustomer = new Button("Customer ");
-        Button bForWaiter = new Button("Waiter");
-        Button bForChef = new Button("Chef");
-        Button bForAdmin = new Button("Administration");
 
-        HBox originalButtons = new HBox(bForCustomer, bForWaiter, bForChef, bForAdmin, quitButton());
+    public Button generateButton(String text) {
+        Button b = new Button(text);
+        b.setPrefSize(200, 60);
+        b.setBackground(Background.fill(Paint.valueOf(buttonColor)));
+        b.setStyle("-fx-font: 16 Helvetica;");
+        return b;
+    }
+
+    public ArrayList<Button> generateMenuButtons() {
+        Button buttonCustomer = generateButton("Customer");
+
+        Button buttonChef = generateButton("Chef");
+
+        Button buttonAdmin = generateButton("Administration");
+
+        Button buttonWaiter = generateButton("Waiter");
+
+        Button buttonQuit = quitButton();
+
+        ArrayList<Button> buttonList = new ArrayList<>();
+
+        buttonList.add(buttonCustomer);
+        buttonList.add(buttonChef);
+        buttonList.add(buttonAdmin);
+        buttonList.add(buttonWaiter);
+        buttonList.add(buttonQuit);
+
+        return buttonList;
+    }
+
+
+    public HBox addMenuHbox(ArrayList<Button> buttonList, boolean excludeBack) {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(15);
+        hbox.setBackground(Background.fill(Paint.valueOf(navColor)));
+
+        for(Button b : buttonList) {
+            hbox.getChildren().add(b);
+        }
+
+        if(!excludeBack) {
+            hbox.getChildren().add(backButton());
+        }
+
+
+        return hbox;
+    }
+
+    public void setActive(ArrayList<Button> buttons, Button a) {
+        for(Button b : buttons) {
+            b.setBackground(Background.fill(Paint.valueOf(buttonColor)));
+        }
+
+        a.setBackground(Background.fill(Color.DARKGRAY));
+    }
+
+    public void displayMainMenu() {
+        Text title = new Text("Yum Restaurants | Restaurant " + r.getRestaurantId());
+        Text data = new Text("");
+        title.setStyle("-fx-font: 36 Helvetica; -fx-border-radius: 25px;");
+
+        GridPane textBox = new GridPane();
+
+        textBox.setBackground(Background.fill(Color.LIGHTSLATEGREY));
+        textBox.setPadding(new Insets(5));
+        textBox.getChildren().add(title);
+
+        BorderPane nav = new BorderPane();
+
+        ArrayList<Button> originalButtons = generateMenuButtons();
+        HBox navbar = addMenuHbox(originalButtons, true);
+        VBox sidebar = new VBox();
+
+        nav.setBackground(Background.fill(Paint.valueOf(backgroundColor)));
+
+        Button bForCustomer = originalButtons.get(0);
+        Button bForChef = originalButtons.get(1);
+        Button bForAdmin = originalButtons.get(2);
+        Button bForWaiter = originalButtons.get(3);
+
+        sidebar.setBackground(Background.fill(Paint.valueOf(navColor)));
+        sidebar.setPadding(new Insets(10, 20, 20, 12));
+        sidebar.setSpacing(10);
+
+        nav.setTop(navbar);
         GridPane rootNodeForMenu = new GridPane();
         ScrollPane root = new ScrollPane(rootNodeForMenu);
-        rootNodeForMenu.addRow(1,title);
-        rootNodeForMenu.addColumn(3, originalButtons);
+        rootNodeForMenu.addRow(1,textBox);
+        rootNodeForMenu.setPadding(new Insets(10));
         rootNodeForMenu.setVgap(10);
-        Scene mainMenu = new Scene(root, xHeight, yHeight);
+        rootNodeForMenu.setAlignment(Pos.CENTER);
+        nav.setCenter(rootNodeForMenu);
+        nav.setLeft(sidebar);
+        Scene mainMenu = new Scene(nav, xHeight, yHeight);
         Text response = new Text("");
         data.setStyle("-fx-font: 26 Helvetica;");
-        response.setStyle("-fx-font: 16 Helvetica;");
+        response.setStyle("-fx-font: 22 Helvetica;");
         rootNodeForMenu.addRow(9, data);
         rootNodeForMenu.addRow(10, response);
 
         bForChef.setOnAction(e -> {
             // "V)iew current orders, U)pdate status, S)ee completed orders, Q)uit
-            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+            setActive(originalButtons, bForChef);
+            sidebar.getChildren().clear();
 
-            Button view = new Button("View Current Orders");
-            Button update = new Button("Update Status");
-            Button seeComplete = new Button("See Completed Orders");
+            Button view = generateButton("View Current Orders");
+            Button update = generateButton("Update Status");
+            Button seeComplete = generateButton("See Completed Orders");
 
-            HBox chefButtons = new HBox(view, update, seeComplete, backButton());
-            rootNodeForMenu.getChildren().remove(originalButtons);
-            rootNodeForMenu.addColumn(3, chefButtons);
+            sidebar.getChildren().add(view);
+            sidebar.getChildren().add(update);
+            sidebar.getChildren().add(seeComplete);
 
             view.setOnAction(f ->{
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
@@ -492,7 +606,7 @@ public class MainMenu extends Application {
                 }
                 Text orders = new Text(s);
                 TextField index = new TextField("Enter order Number");
-                Button submit = new Button("Submit");
+                Button submit = generateButton("Submit");
                 rootNodeForMenu.addRow(2,t);
                 rootNodeForMenu.addRow(3,orders );
                 rootNodeForMenu.addRow(4,index);
@@ -518,36 +632,38 @@ public class MainMenu extends Application {
         bForCustomer.setOnAction( e -> {
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
-            Button bCreateAcc = new Button("Create Account");
-            Button bSignIn = new Button("Sign in");
-            rootNodeForMenu.addRow(2,bCreateAcc);
-            rootNodeForMenu.addRow(3,bSignIn);
+            setActive(originalButtons, bForCustomer);
+            sidebar.getChildren().clear();
+
+            Button bCreateAcc = generateButton("Create Account");
+            Button bSignIn = generateButton("Sign in");
+            sidebar.getChildren().add(bCreateAcc);
+            sidebar.getChildren().add(bSignIn);
             bCreateAcc.setOnAction( f ->{
-                rootNodeForMenu.getChildren().remove(bCreateAcc);
-                rootNodeForMenu.getChildren().remove(bSignIn);
                 TextField username = new TextField("Username");
                 TextField pass = new TextField("Password");
-                Button b = new Button("Submit");
+                Button b = generateButton("Submit");
                 rootNodeForMenu.addRow(3, username);
                 rootNodeForMenu.addRow(4,pass);
                 rootNodeForMenu.addRow(5, b);
                 b.setOnAction(g -> {
-                    rootNodeForMenu.getChildren().removeAll(username, pass, b);
-                    Login log = new Login(username.getText(), pass.getText(), (int) ((Math.random() * 89999999) + 10000000));
+                            rootNodeForMenu.getChildren().removeAll(username, pass, b);
+                            Login log = new Login(username.getText(), pass.getText(), (int) ((Math.random() * 89999999) + 10000000));
                             r.addToListOfCustomers(log, false);
-                    customer = log;
-                    displayCustomerPage(rootNodeForMenu,originalButtons, title);
-                    }
+                            customer = log;
+//                            navbar.getChildren().clear();
+//                            navbar.getChildren().add(bForCustomer);
+//                            setActive(new ArrayList<Button>(), bForCustomer);
+                            displayCustomerPage(rootNodeForMenu,sidebar, title);
+                        }
                 );
 
             });
             bSignIn.setOnAction(f -> {
-
-                rootNodeForMenu.getChildren().remove(bCreateAcc);
-                rootNodeForMenu.getChildren().remove(bSignIn);
+                rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 TextField username = new TextField("Username");
                 TextField pass = new TextField("Password");
-                Button b = new Button("Submit");
+                Button b = generateButton("Submit");
                 rootNodeForMenu.addRow(3, username);
                 rootNodeForMenu.addRow(4,pass);
                 rootNodeForMenu.addRow(5, b);
@@ -555,9 +671,11 @@ public class MainMenu extends Application {
                     for(Login l : Restaurant.getListOfCustomers()){
                         if(l.getUsername().equalsIgnoreCase(username.getText()) && l.getPassword().equalsIgnoreCase(pass.getText())){
                             customer = l;
-                            displayCustomerPage(rootNodeForMenu, originalButtons, title);
+//                            navbar.getChildren().clear();
+//                            navbar.getChildren().add(bForCustomer);
+//                            setActive(new ArrayList<Button>(), bForCustomer);
+                            displayCustomerPage(rootNodeForMenu, sidebar, title);
                             rootNodeForMenu.getChildren().removeAll(username, pass, b);
-
                             break;
                         }
                     }
@@ -574,22 +692,28 @@ public class MainMenu extends Application {
         });
 
         bForAdmin.setOnAction(e -> {
-            //         System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, A)dd to Menu, Q)uit ");
-            Button getID = new Button("Get Restaurant ID");
-            Button getNumberOfTables = new Button("Get Number of Tables");
-            Button getCapacity = new Button("Get Capacity");
-            Button viewMenu = new Button("View Menu");
-            Button createNewRestaurant = new Button("Create New Restaurant");
-            Button switchRestaurant = new Button("Switch Restaurant");
-            Button viewReservations = new Button("View Reservations");
-            Button addToMenu = new Button("Add to Menu");
-            Button getAnalytics = new Button("Generate Analytics");
+            setActive(originalButtons, bForAdmin);
+            sidebar.getChildren().clear();
 
-            HBox adminButtons = new HBox(getID, getNumberOfTables, getCapacity, viewMenu, createNewRestaurant, switchRestaurant, viewReservations, addToMenu, getAnalytics, backButton());
-            rootNodeForMenu.getChildren().remove(originalButtons);
-            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+            Button getID = generateButton("Get Restaurant ID");
+            Button getNumberOfTables = generateButton("Get Number of Tables");
+            Button getCapacity = generateButton("Get Capacity");
+            Button viewMenu = generateButton("View Menu");
+            Button createNewRestaurant = generateButton("Create New Restaurant");
+            Button switchRestaurant = generateButton("Switch Restaurant");
+            Button viewReservations = generateButton("View Reservations");
+            Button addToMenu = generateButton("Add to Menu");
+            Button getAnalytics = generateButton("Generate Analytics");
 
-            rootNodeForMenu.addColumn(3, adminButtons);
+            sidebar.getChildren().add(getID);
+            sidebar.getChildren().add(getNumberOfTables);
+            sidebar.getChildren().add(getCapacity);
+            sidebar.getChildren().add(viewMenu);
+            sidebar.getChildren().add(createNewRestaurant);
+            sidebar.getChildren().add(switchRestaurant);
+            sidebar.getChildren().add(viewReservations);
+            sidebar.getChildren().add(addToMenu);
+            sidebar.getChildren().add(getAnalytics);
 
             getID.setOnAction(d -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
@@ -622,7 +746,8 @@ public class MainMenu extends Application {
 
                 }
                 Text res = new Text(s);
-                rootNodeForMenu.addRow(2,res);
+                ScrollPane scroll = new ScrollPane(res);
+                rootNodeForMenu.addRow(2,scroll);
             });
             addToMenu.setOnAction(d -> {
                 data.setText("");
@@ -638,12 +763,12 @@ public class MainMenu extends Application {
                                 "Noon",
                                 "Evening"
                         );
-                 ComboBox<String> comboBox = new ComboBox<>(options);
-                 Button b = new Button("Submit");
-                 rootNodeForMenu.addRow(5,b);
-                 rootNodeForMenu.addRow(2,name);
-                 rootNodeForMenu.addRow(3,price);
-                 rootNodeForMenu.addRow(4,comboBox);
+                ComboBox<String> comboBox = new ComboBox<>(options);
+                Button b = generateButton("Submit");
+                rootNodeForMenu.addRow(5,b);
+                rootNodeForMenu.addRow(2,name);
+                rootNodeForMenu.addRow(3,price);
+                rootNodeForMenu.addRow(4,comboBox);
                 b.setOnAction(f -> {
                     Food newFood = new Food(name.getText(), Double.parseDouble(price.getText()));
                     Menu newMenu = new Menu(r);
@@ -685,7 +810,7 @@ public class MainMenu extends Application {
                 Text t2 = new Text("Enter End Date");
                 DatePicker start = new DatePicker();
                 DatePicker end = new DatePicker();
-                Button submit = new Button("Submit");
+                Button submit = generateButton("Submit");
                 rootNodeForMenu.addRow(2,t);
                 rootNodeForMenu.addRow(3,start);
                 rootNodeForMenu.addRow(4,t2);;
@@ -755,17 +880,22 @@ public class MainMenu extends Application {
             });
         });
         bForWaiter.setOnAction(e -> {
-            rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+            sidebar.getChildren().clear();
+            setActive(originalButtons, bForWaiter);
 
-            Button bRestID = new Button("Get Restaurant ID");
-            Button bCap = new Button("Get Capacity");
-            Button bNoOfT = new Button("Get Num Of Tables");
-            Button bCreateOrder = new Button("Create Order");
-            Button bViewMenu = new Button("View Menu");
-            Button bViewRes = new Button("View Reservations");
-            HBox buttonsForWaiter = new HBox(bRestID, bCap, bNoOfT, bCreateOrder, bViewMenu, bViewRes, backButton());
-            rootNodeForMenu.getChildren().remove(originalButtons);
-            rootNodeForMenu.addColumn(1, buttonsForWaiter);
+            Button bRestID = generateButton("Get Restaurant ID");
+            Button bCap = generateButton("Get Capacity");
+            Button bNoOfT = generateButton("Get Num Of Tables");
+            Button bCreateOrder = generateButton("Create Order");
+            Button bViewMenu = generateButton("View Menu");
+            Button bViewRes = generateButton("View Reservations");
+
+            sidebar.getChildren().add(bRestID);
+            sidebar.getChildren().add(bCap);
+            sidebar.getChildren().add(bNoOfT);
+            sidebar.getChildren().add(bCreateOrder);
+            sidebar.getChildren().add(bViewMenu);
+            sidebar.getChildren().add(bViewRes);
 
             bRestID.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
@@ -805,7 +935,7 @@ public class MainMenu extends Application {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
                 TextField t = new TextField("Enter Table Number");
-                Button submit = new Button("Submit");
+                Button submit = generateButton("Submit");
                 rootNodeForMenu.addRow(2,t);
                 rootNodeForMenu.addRow(3,submit);
                 submit.setOnAction(g -> {
@@ -816,7 +946,7 @@ public class MainMenu extends Application {
                     rootNodeForMenu.addRow(2, menu);
                     TextField food = new TextField("Enter Food");
                     rootNodeForMenu.addRow(3,food);
-                    Button submitButton = new Button("Submit Food");
+                    Button submitButton = generateButton("Submit Food");
 
                     rootNodeForMenu.addRow(4,submitButton,backButton(order));
                     submitButton.setOnAction(h -> {
@@ -824,12 +954,19 @@ public class MainMenu extends Application {
                         for(Food foodString : r.getMenu().getTotalMenu()){
                             if(foodString.getFoodName().equalsIgnoreCase(food.getText())){
                                 order.addToOrder(foodString);
-
+                                food.setText("");
+                                try {
+                                    submitButton.setText("Added!");
+                                    TimeUnit.SECONDS.sleep(2);
+                                    submitButton.setText("Submit Food");
+                                } catch (InterruptedException ex) {
+                                    ex.printStackTrace();
+                                }
                             }
                         }});
-                    });
                 });
             });
+        });
 
         stage.setScene(mainMenu);
     };
@@ -838,7 +975,7 @@ public class MainMenu extends Application {
 
         response.setText("");
         TextField f = new TextField("Restaurant ID");
-        Button b = new Button("Submit");
+        Button b = generateButton("Submit");
         GridPane switchRes = new GridPane();
         switchRes.addRow(2, f);
         switchRes.addRow(3, b);
@@ -856,14 +993,14 @@ public class MainMenu extends Application {
             for (Restaurant res : Manager.getListOfRestaurants()) {
                 if (String.valueOf(res.getRestaurantId()).equalsIgnoreCase(st)) {
 
-                        resTemp = res;
-                        break;
+                    resTemp = res;
+                    break;
 
 
                 }
             }
             r = resTemp;
-            data.setText("Restaurant " + r.getRestaurantId() + " settings");
+            data.setText("Yum Restaurants | Restaurant " + r.getRestaurantId());
             System.out.println(r.getListOfReservations().size());
             data.setStyle("-fx-font: 36 Helvetica;");
             rootNodeForMenu.getChildren().remove(0);
@@ -871,13 +1008,6 @@ public class MainMenu extends Application {
             rootNodeForMenu.getChildren().remove(rootNodeForMenu.getChildren().size()-1);
 
             rootNodeForMenu.getChildren().add(0,data);
-
-
-
-
-
-
-
 
         });
     }
