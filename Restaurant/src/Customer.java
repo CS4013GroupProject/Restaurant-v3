@@ -16,6 +16,11 @@ public class Customer extends Restaurant {
         currentRestaurant = restaurant;
     }
 
+    /**
+     * login method that lets customers login to new or existing account for the restaurant and cutomer class
+     * @throws FileNotFoundException throws FileNotFoundException
+     * @throws InputMismatchException throws InputMismatchException
+     */
     public void login() throws FileNotFoundException, InputMismatchException {
         System.out.println("C)reate customer, S)ign in as Customer Q)uit");
         Scanner in = new Scanner(System.in);
@@ -58,6 +63,18 @@ public class Customer extends Restaurant {
 
     }
 
+    /**
+     * menuForCustomer method that lets customer -
+     * make/cancel reservations
+     * view menu
+     * switch the restaurant
+     * pay
+     * lookup available tables
+     * see reservations
+     * see reminders
+     * quit
+     * @throws FileNotFoundException throws FileNotFoundException
+     */
     public void menuForCustomers() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         System.out.println("Customer Menu for Restaurant: " + currentRestaurant.getRestaurantId());
@@ -198,6 +215,16 @@ public class Customer extends Restaurant {
 
     }
 
+    /**
+     * makeReservation method takes -
+     * time and date of reservation,
+     * name of customer
+     * phone number of customer
+     * number of people at the table,
+     * and the table number and then reserves those details for the customer
+     * @throws FileNotFoundException throws FileNotFoundException
+     * @throws InputMismatchException throws InputMismatchException
+     */
     public void makeReservation() throws FileNotFoundException, InputMismatchException {
         System.out.println("Enter date 'YYYY-MM-DD, time 'HH:MM', full name, phone number, number of people, table number");
         try {
@@ -273,7 +300,10 @@ public class Customer extends Restaurant {
         }
     }
 
-
+    /**
+     * makeWalkInReservation takes number of people and assigns an available table
+     * @throws FileNotFoundException
+     */
     public void makeWalkInReservation() throws FileNotFoundException {
         System.out.println("Enter number of people. Table Number is Assigned Randomly");
 
@@ -294,7 +324,11 @@ public class Customer extends Restaurant {
         }
     }
 
-
+    /**
+     * cancelReservation removes a reservation from the index
+     * @param a a
+     * @param index index
+     */
     public void cancelReservation(ArrayList<TableReservation> a, int index) {
         System.out.println("Table reservation:\n " + a.get(index).toString() + "\n has been cancelled.");
         a.remove(index);

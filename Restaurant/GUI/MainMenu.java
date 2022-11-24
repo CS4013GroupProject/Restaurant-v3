@@ -18,6 +18,10 @@ import java.time.LocalTime;
 import java.util.*;
 
 public class MainMenu extends Application {
+    /**
+     * Main menu class that creates the GUI for the program
+     * @param args args
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -28,6 +32,10 @@ public class MainMenu extends Application {
     private int xHeight = 1440;
     private int yHeight = 900;
 
+    /**
+     * start method that creates the GUI and starts it
+     * @param primaryStage primary stage
+     */
     public void start(Stage primaryStage) throws FileNotFoundException {
         manager = new Manager();
         manager.startup();
@@ -81,6 +89,12 @@ public class MainMenu extends Application {
 
 
     }
+    /**
+     * display customer method that displays the GUI menu for customers
+     * @param rootNodeForMenu
+     * @param originalButtons
+     * @param title
+     */
     public void displayCustomerPage(GridPane rootNodeForMenu, HBox originalButtons, Text title) {
 
         Button bMakeRes = new Button("Make A reservation");
@@ -337,7 +351,9 @@ public class MainMenu extends Application {
         });
     }
 
-
+    /**
+     * displayCreationPage that displays the page for creating restaurants
+     */
     public void displayCreationPage() {
         Text textCreateRestaurant = new Text("First things first.\n" +
                 "Create A Restaurant\n");
@@ -379,7 +395,10 @@ public class MainMenu extends Application {
                 }
         );
     }
-
+    /**
+     * quit button method, creates quit button
+     * @return returns quit
+     */
     public Button quitButton() {
         Button quit = new Button("Quit");
         quit.setOnAction(e -> {
@@ -387,6 +406,10 @@ public class MainMenu extends Application {
         });
         return quit;
     }
+    /**
+     * backButton method that creates back button to return to previous screen
+     * @return returns back
+     */
 
     public Button backButton() {
         Button back = new Button("Back");
@@ -398,6 +421,11 @@ public class MainMenu extends Application {
         });
         return back;
     }
+    /**
+     * backButton method that creates back button to return to previous screen
+     * @param o order
+     * @return returns back
+     */
     public Button backButton(Order o){
         r.getCurrentOrders().add(o);
         Button back = new Button("Back");

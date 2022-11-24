@@ -6,12 +6,18 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
+    /** Menu class to list food and price for breakfast lunch and dinner
+     *
+     */
 
     Restaurant currentRestaurant;
     private ArrayList<Food> menuForMorning = new ArrayList<>();
     private ArrayList<Food> menuForAfterNoon = new ArrayList<>();
     private ArrayList<Food> menuForEvening = new ArrayList<>();
 
+    /** Menu method lists food in an arraylist
+     *
+     */
     public Menu(Restaurant r) {
 
         currentRestaurant = r;
@@ -95,6 +101,11 @@ public class Menu {
         return total;
     }
 
+    /**
+     * method that turns the array list of food into a string
+     * @param menu menu
+     * @return m
+     */
     public String stringifyMenu(ArrayList<Food> menu) {
         String m = "";
         for(Food f : menu) {
@@ -103,7 +114,10 @@ public class Menu {
 
         return m;
     }
-
+    /**
+     * toString method that returns the time of day + the menu for that time of day
+     * @return menu for morning, afternoon and evening
+     */
     @Override
     public String toString() {
         String morningMenu = stringifyMenu(menuForMorning);
@@ -112,7 +126,11 @@ public class Menu {
 
         return "Morning:\n" + morningMenu + "\n\n" + "Afternoon:\n" + afternoonMenu + "\n\n" + "Evening:\n" + eveningMenu;
     }
-
+    /**
+     * addToMenu method that allows admin to add items to menu
+     * @param timeOfDay takes time of day
+     * @param food takes food item to be added
+     */
     public void addToMenu(int timeOfDay, Food food) throws FileNotFoundException {
         if (timeOfDay == 1) {
             System.out.println("HRAONRWIPNF");
@@ -150,7 +168,7 @@ public class Menu {
 
 
 }
-
+//commented out old code
 //HashMap<String, Double> breakfast = new HashMap<>();
 //        breakfast.put("Full Irish Breakfast", 16.95);
 //        breakfast.put("Vegetarian Breakfast", 15.95);

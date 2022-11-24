@@ -4,12 +4,24 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Admin extends Restaurant {
-
+    /**Admin class, creates admin for admin to access and alter information
+     */
     Restaurant currentRestaurant;
 
     public Admin(Restaurant restaurant) {
         currentRestaurant = restaurant;
     }
+    /** menuForAdmin method, creates menu for admin so they can get - Restaurant id,
+     Number of tables,
+     Capacity,
+     View the menu,
+     Create new restaurant,
+     Switch restaurant,
+     view reservations,
+     add to menu and quit
+     *@throws FileNotFoundException throws filenotfoundexception
+     * @throws InputMismatchException throws inputmismatchexception
+     */
 
     public void menuForAdmin() throws FileNotFoundException, InputMismatchException {
 
@@ -20,6 +32,10 @@ public class Admin extends Restaurant {
         System.out.println("Menu for Restaurant: " + currentRestaurant.getRestaurantId());
         System.out.println("Get R)estaurant ID, get N)umber of Tables, get C)apacity, V)iew Menu, Cr)eate new restaurant, S)witch restaurant, View Re)servations, A)dd to Menu, Ge)nerate Analytics Q)uit ");
         String input = in.nextLine().trim();
+        /**
+         switch-case to execute selected blocks of code based on admin input
+         @param input admin input
+         */
 
         switch (input.toUpperCase()) {
             case "R":

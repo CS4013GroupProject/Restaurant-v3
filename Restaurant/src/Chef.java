@@ -9,6 +9,15 @@ public class Chef extends Restaurant {
     public Chef(Restaurant a) {
         this.currentRestaurant = a;
     }
+    /**
+     * menuforChef method that allows chef to-
+     * view current orders,
+     * update the status of an order
+     * see the completed orders
+     * quits the program
+     * @throws FileNotFoundException throws FileNotFoundExceptions
+     * @throws InputMismatchException throws InputMismatchExceptions
+     */
 
     public void menuForChef() throws FileNotFoundException, InputMismatchException {
         System.out.println("Menu for restaurant: " + currentRestaurant.getRestaurantId());
