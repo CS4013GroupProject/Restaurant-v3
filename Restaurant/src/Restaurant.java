@@ -70,6 +70,9 @@ public class Restaurant {
         }
     }
 
+    /**
+     * loads the reservations from CSVs to allow for persistent storage
+     */
     private void loadReservationsFromDisk() {
 
         try {
@@ -111,6 +114,9 @@ public class Restaurant {
 
     }
 
+    /**
+     * loads login details from csv for persistent storage
+     */
     private void loadLoginsFromDisk() {
         try {
             Scanner sc = new Scanner(new File("Restaurant/src/logins.csv"));
@@ -182,6 +188,10 @@ public class Restaurant {
         this.menu = menu;
     }
 
+    /**
+     * creates a new restaurant
+     * @throws FileNotFoundException
+     */
     public void createRestaurant() throws FileNotFoundException {
         Scanner s = new Scanner(System.in);
         System.out.println("Enter Restaurant ID");
@@ -235,6 +245,10 @@ public class Restaurant {
         return completedOrder;
     }
 
+    /**
+     * displays the main menu
+     * @throws FileNotFoundException
+     */
     public void run() throws FileNotFoundException {
         if (getListOfRestaurants().size() == 0) {
             createRestaurant();
@@ -276,7 +290,10 @@ public class Restaurant {
 
     }
 
-
+    /**
+     * displays the menu for the current restaurant
+     * @throws InputMismatchException
+     */
     public void viewMenu() throws InputMismatchException {
         System.out.println("Enter time of day: (1)Morning, (2)Afternoon, (3)Evening");
         Scanner in = new Scanner(System.in);
@@ -296,18 +313,5 @@ public class Restaurant {
         currentOrders.add(o);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
 
-        Restaurant r = new Restaurant();
-        r.manager = new Manager();
-        r.manager.startup();
-        try {
-            Restaurant existing = Manager.getListOfRestaurants().get(0);
-            Manager.setCurrentRestaurantIndex(0);
-            existing.run();
-
-        } catch (Exception e) {
-            r.run();
-        }
-    }
 }

@@ -4,8 +4,8 @@ public class Food {
     private String timeOfDay;
     /**
      * Food constructor that initializes food name and price
-     * @param foodName
-     * @param price
+     * @param foodName name of food
+     * @param price price of food
      */
     public Food(String foodName, double price) {
         this.foodName = foodName;
