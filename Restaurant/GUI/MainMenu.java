@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -36,6 +37,7 @@ public class MainMenu extends Application {
     private Manager manager;
     private int xHeight = 1920;
     private int yHeight = 1080;
+    final DecimalFormat df = new DecimalFormat("#.##");
 
     /**
      * Main menu class that creates the GUI for the program
@@ -351,7 +353,7 @@ public class MainMenu extends Application {
                 } else {
                     try {
                         clearRootNode();
-                        double changeDue = Math.round((paymentDouble - selectedOrder.getOrderTotal()) * 100) / 100;
+                        String changeDue = df.format(paymentDouble - selectedOrder.getOrderTotal());
                         Text change = new Text("Change due: €" + changeDue);
                         Text thanks = new Text("Thank you. Payment has been processed");
                         rootNodeForMenu.addRow(2, thanks);
