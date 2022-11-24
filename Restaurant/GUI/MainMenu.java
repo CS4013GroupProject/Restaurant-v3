@@ -726,6 +726,7 @@ public class MainMenu extends Application {
             sidebar.getChildren().add(bCreateAcc);
             sidebar.getChildren().add(bSignIn);
             bCreateAcc.setOnAction(f -> {
+                clearRootNode();
                 TextField username = new TextField("Username");
                 TextField pass = new TextField("Password");
                 Button b = generateButton("Submit");

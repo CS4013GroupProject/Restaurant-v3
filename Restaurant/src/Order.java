@@ -34,7 +34,7 @@ public class Order {
     }
 
     public double getOrderTotal() {
-        return orderTotal;
+        return Math.round(orderTotal * 100) / 100;
     }
 
     /**
