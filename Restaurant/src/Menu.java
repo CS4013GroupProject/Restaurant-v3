@@ -109,6 +109,16 @@ public class Menu {
         return total;
     }
 
+    public ArrayList<Food> getAllMenuItemsAsArray() {
+        ArrayList<Food> totalMenu = new ArrayList<>();
+
+        totalMenu.addAll(menuForMorning);
+        totalMenu.addAll(menuForAfterNoon);
+        totalMenu.addAll(menuForEvening);
+
+        return totalMenu;
+    }
+
     /**
      * method that turns the array list of food into a string
      * @param menu menu
