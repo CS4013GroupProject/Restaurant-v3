@@ -52,6 +52,10 @@ public class Menu {
         }
     }
 
+    /**
+     * loads menu data from csv so menu data is persistent
+     * @throws FileNotFoundException
+     */
     private void loadMenuFromDisk() throws FileNotFoundException {
         Scanner sc = new Scanner(new File("Restaurant/src/menu.csv"));
 
@@ -93,6 +97,10 @@ public class Menu {
         return stringifyMenu(menuForMorning);
     }
 
+    /**
+     * returns total menu
+     * @return
+     */
     public ArrayList<Food> getTotalMenu() {
         ArrayList<Food> total = new ArrayList<>();
         total.addAll(menuForEvening);
@@ -104,7 +112,7 @@ public class Menu {
     /**
      * method that turns the array list of food into a string
      * @param menu menu
-     * @return m
+     * @return the menu
      */
     public String stringifyMenu(ArrayList<Food> menu) {
         String m = "";

@@ -1,6 +1,9 @@
 import java.io.FileNotFoundException;
 
 public class Driver {
+    /**
+     * Runs the program
+     */
     public static void main(String[] args) throws FileNotFoundException {
 
         Restaurant r = new Restaurant();

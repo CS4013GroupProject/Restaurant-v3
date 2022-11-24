@@ -23,6 +23,17 @@ public class TableReservation extends Restaurant {
     public TableReservation() {
     }
 
+    /**
+     * constructor for a reservation for a walkin reservations
+     * @param date date of reservation
+     * @param time time of reservation
+     * @param noOfPeople number of people at reservation
+     * @param restaurantID restaurant id
+     * @param currentRestaurant the restaurant of the reservation
+     * @param customerId id of customer who made reservation
+     * @throws FileNotFoundException
+     */
+
     public TableReservation(LocalDate date, LocalTime time, int noOfPeople, int restaurantID, Restaurant currentRestaurant, int customerId) throws FileNotFoundException {
         this(restaurantID);
         this.customerId = customerId;
@@ -56,6 +67,20 @@ public class TableReservation extends Restaurant {
         }
     }
 
+    /**
+     * constructor for a regular reservation in advance
+     * @param date date of reservation
+     * @param time time of reservation
+     * @param fullName name under reservation
+     * @param phoneNumber number of the reservation maker
+     * @param noOfPeople number of people at the reservation
+     * @param restaurantID restaurant which the reservation is at
+     * @param tableNumber table number of reservation
+     * @param currentRestaurant current restaurant
+     * @param customerId customer id of customer who made reservation
+     * @param exists boolean relating to the csv writer
+     * @throws FileNotFoundException
+     */
     public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant, int customerId, boolean exists) throws FileNotFoundException {
         //this constructor makes a reservation
         this(restaurantID);
@@ -108,6 +133,10 @@ public class TableReservation extends Restaurant {
         return customerId;
     }
 
+    /**
+     * formats a reminder of this reservation
+     * @return formatted string of basic reservation info
+     */
     public String reminder() {
         if (reservationID != 0) {
             return phoneNumber + ": Reminder! You have a reservation due for " + date + " at " + time + ", at table " + tableNumber + ".";

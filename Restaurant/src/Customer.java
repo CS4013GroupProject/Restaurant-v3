@@ -12,6 +12,10 @@ public class Customer extends Restaurant {
     Restaurant currentRestaurant;
     Login login;
 
+    /**
+     * Constructor that assigns a customer object to a restaurant
+     * @param restaurant current restaurant the customer object has been created in
+     */
     public Customer(Restaurant restaurant) {
         currentRestaurant = restaurant;
     }

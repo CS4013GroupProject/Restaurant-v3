@@ -9,6 +9,10 @@ public class Waiter extends Restaurant {
         this.currentRestaurant = currentRestaurant;
     }
 
+    /**
+     * displays the menu for a waiter
+     * @throws FileNotFoundException
+     */
     public void menuForWaiters() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         Restaurant currentRestaurant = getListOfRestaurants().get(manager.getCurrentRestaurantIndex());
@@ -37,6 +41,10 @@ public class Waiter extends Restaurant {
         }
     }
 
+    /**
+     * creates an order and prompts user to enter food for order
+     * @throws FileNotFoundException
+     */
 
     public void createOrder() throws FileNotFoundException {
         Scanner s = new Scanner(System.in);

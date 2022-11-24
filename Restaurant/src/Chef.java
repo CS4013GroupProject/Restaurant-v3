@@ -19,6 +19,7 @@ public class Chef extends Restaurant {
      * @throws InputMismatchException throws InputMismatchExceptions
      */
 
+
     public void menuForChef() throws FileNotFoundException, InputMismatchException {
         System.out.println("Menu for restaurant: " + currentRestaurant.getRestaurantId());
         System.out.println("V)iew current orders, U)pdate status, S)ee completed orders, Q)uit");
@@ -57,6 +58,10 @@ public class Chef extends Restaurant {
                 currentRestaurant.run();
         }
     }
+
+    /**
+     * Prints current orders that haven't been completed.
+     */
 
     public void seeCurrentOrders() {
         for (Order o : currentRestaurant.getCurrentOrders()) {

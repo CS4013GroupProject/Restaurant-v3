@@ -11,6 +11,10 @@ public class Manager {
         return listOfRestaurants;
     }
 
+    /**
+     * Loads persistant data from csv in order to carry over storage
+     * @throws FileNotFoundException
+     */
     public void startup() throws FileNotFoundException {
         loadRestaurantsFromDisk();
     }
@@ -34,11 +38,20 @@ public class Manager {
         return currentRestaurantIndex;
     }
 
+    /**
+     * adds a restaurant to the list of restaurants
+     * @param r the restaurant to be added
+     */
     public static void addRestaurant(Restaurant r) {
         listOfRestaurants.add(r);
         currentRestaurantIndex = listOfRestaurants.indexOf(r);
     }
 
+    /**
+     * searches for a restaurant by ID
+     * @param id id of restaurant
+     * @return returns restaurant that has that ID
+     */
     public Restaurant getRestaurantByID(int id) {
         Restaurant r;
 

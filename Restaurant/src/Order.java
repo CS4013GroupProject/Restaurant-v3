@@ -33,6 +33,10 @@ public class Order {
         return orderTotal;
     }
 
+    /**
+     * formats order data as a string
+     * @return string of order data
+     */
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("Food:\n");
