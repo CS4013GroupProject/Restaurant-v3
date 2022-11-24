@@ -294,16 +294,14 @@ public class MainMenu extends Application {
             Text text = new Text("Choose an Order:");
 
             Text paymentPending = new Text();
-            StringBuilder str = new StringBuilder();
             int i = 0;
+
+            ComboBox<String> orderSelector = new ComboBox<>();
+
             for (Order o : r.getPaymentPendingOrders()) {
-                str.append((i + 1) + ".\n");
-                str.append(o.toString());
-                str.append("\n");
+                orderSelector.getItems().add((i + 1) + ". " + o);
                 i++;
             }
-            paymentPending.setText(str.toString());
-
             TextField getOrder = new TextField("Choose Order To Pay");
             TextField payment = new TextField("Insert Payment");
             TextField tip = new TextField("Insert Tip");
@@ -318,35 +316,36 @@ public class MainMenu extends Application {
 
             ComboBox<String> comboBox = new ComboBox<>(options);
             rootNodeForMenu.addRow(2, text);
-            rootNodeForMenu.addRow(3, paymentPending);
-            rootNodeForMenu.addRow(4, getOrder);
+            rootNodeForMenu.addRow(3, orderSelector);
             rootNodeForMenu.addRow(5, comboBox);
             rootNodeForMenu.addRow(6, payment);
             rootNodeForMenu.addRow(7, tip);
             rootNodeForMenu.addRow(8, b);
 
             b.setOnAction(g -> {
-                Double tipActual = Double.parseDouble(payment.getText()) + Double.parseDouble(tip.getText());
+                String selectedCombo = orderSelector.getValue().split("\\.")[0];
+                Order selectedOrder = r.getPaymentPendingOrders().get(Integer.parseInt(selectedCombo)-1);
+                double paymentDouble = Double.parseDouble(payment.getText());
+                double tipDouble = Double.parseDouble(tip.getText());
                 Payment newPayment = null;
-                if (Double.parseDouble(payment.getText()) < r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()) {
+                if (paymentDouble < selectedOrder.getOrderTotal()) {
                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                     Text notEnough = new Text("Payment not enough!");
                     rootNodeForMenu.addRow(2, notEnough);
 
-
                 } else {
                     try {
                         rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
-                        double changeDue = Math.round((Double.parseDouble(payment.getText()) - r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()) * 100) / 100;
+                        double changeDue = Math.round((paymentDouble - selectedOrder.getOrderTotal()) * 100) / 100;
                         Text change = new Text("Change due: €" + changeDue);
                         Text thanks = new Text("Thank you. Payment has been processed");
                         rootNodeForMenu.addRow(2, thanks);
                         rootNodeForMenu.addRow(3, change);
-                        newPayment = new Payment(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal(), LocalDate.now(), tipActual);
+                        newPayment = new Payment(selectedOrder.getOrderTotal(), LocalDate.now(), tipDouble);
                         newPayment.takePayment();
-                        String[] dataPayment = {String.valueOf(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()), LocalDate.now().toString(), tip.getText(), comboBox.getValue()};
+                        String[] dataPayment = {String.valueOf(selectedOrder.getOrderTotal()), LocalDate.now().toString(), tip.getText(), comboBox.getValue()};
                         r.CSV("Restaurant/src/payments.csv", dataPayment);
-                        r.getPaymentPendingOrders().remove(Integer.parseInt(getOrder.getText()) - 1);
+                        r.getPaymentPendingOrders().remove(selectedOrder);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -945,38 +944,51 @@ public class MainMenu extends Application {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
                 GridPane tableButtons = new GridPane();
-                TextField t = new TextField("Enter Table Number");
-                Button submit = generateButton("Submit");
-                rootNodeForMenu.addRow(2, t);
-                rootNodeForMenu.addRow(3, submit);
-                submit.setOnAction(g -> {
-                    rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
+                tableButtons.setHgap(10);
+                tableButtons.setVgap(10);
+                int row = 0;
+                int column = 0;
 
-                    Order order = new Order(Integer.parseInt(t.getText()), r);
-                    Text menu = new Text(r.getMenu().toString());
-                    rootNodeForMenu.addRow(2, menu);
-                    TextField food = new TextField("Enter Food");
-                    rootNodeForMenu.addRow(3, food);
-                    Button submitButton = generateButton("Submit Food");
+                for(int i = 1; i < r.getNumberOfTables(); i++) {
+                    Button a = generateButton("Table " + i);
+                    int tableNumber = i;
+                    a.setOnAction(g -> {
+                        rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
-                    rootNodeForMenu.addRow(4, submitButton, backButton(order));
-                    submitButton.setOnAction(h -> {
+                        Order order = new Order(tableNumber, r);
+                        Text menu = new Text(r.getMenu().toString());
+                        rootNodeForMenu.addRow(2, menu);
+                        TextField food = new TextField("Enter Food");
+                        rootNodeForMenu.addRow(3, food);
+                        Button submitButton = generateButton("Submit Food");
 
-                        for (Food foodString : r.getMenu().getTotalMenu()) {
-                            if (foodString.getFoodName().equalsIgnoreCase(food.getText())) {
-                                order.addToOrder(foodString);
-                                food.setText("");
-                                try {
-                                    submitButton.setText("Added!");
-                                    TimeUnit.SECONDS.sleep(2);
-                                    submitButton.setText("Submit Food");
-                                } catch (InterruptedException ex) {
-                                    ex.printStackTrace();
+                        rootNodeForMenu.addRow(4, submitButton, backButton(order));
+                        submitButton.setOnAction(h -> {
+
+                            for (Food foodString : r.getMenu().getTotalMenu()) {
+                                if (foodString.getFoodName().equalsIgnoreCase(food.getText())) {
+                                    order.addToOrder(foodString);
+                                    food.setText("");
+                                    try {
+                                        submitButton.setText("Added!");
+                                        TimeUnit.SECONDS.sleep(2);
+                                        submitButton.setText("Submit Food");
+                                    } catch (InterruptedException ex) {
+                                        ex.printStackTrace();
+                                    }
                                 }
                             }
-                        }
+                        });
                     });
-                });
+
+                    tableButtons.add(a, column, row);
+                    column++;
+                    if(column > 4) {column = 0; row++;};
+                }
+
+                TextField t = new TextField("Enter Table Number");
+                Button submit = generateButton("Submit");
+                rootNodeForMenu.addRow(2, tableButtons);
             });
         });
 
