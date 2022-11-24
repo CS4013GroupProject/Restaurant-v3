@@ -303,6 +303,8 @@ public class MainMenu extends Application {
                 i++;
             }
             TextField getOrder = new TextField("Choose Order To Pay");
+            Text text1 = new Text("Choose date");
+            DatePicker d = new DatePicker();
             TextField payment = new TextField("Insert Payment");
             TextField tip = new TextField("Insert Tip");
             Button b = generateButton("Submit");
@@ -317,13 +319,16 @@ public class MainMenu extends Application {
             ComboBox<String> comboBox = new ComboBox<>(options);
             rootNodeForMenu.addRow(2, text);
             rootNodeForMenu.addRow(3, orderSelector);
-            rootNodeForMenu.addRow(5, comboBox);
-            rootNodeForMenu.addRow(6, payment);
-            rootNodeForMenu.addRow(7, tip);
-            rootNodeForMenu.addRow(8, b);
+            rootNodeForMenu.addRow(4,text1);
+            rootNodeForMenu.addRow(5,d);
+            rootNodeForMenu.addRow(6, comboBox);
+            rootNodeForMenu.addRow(7, payment);
+            rootNodeForMenu.addRow(8, tip);
+            rootNodeForMenu.addRow(9, b);
 
             b.setOnAction(g -> {
                 String selectedCombo = orderSelector.getValue().split("\\.")[0];
+                LocalDate selectedDate = d.getValue();
                 Order selectedOrder = r.getPaymentPendingOrders().get(Integer.parseInt(selectedCombo)-1);
                 double paymentDouble = Double.parseDouble(payment.getText());
                 double tipDouble = Double.parseDouble(tip.getText());
@@ -341,9 +346,8 @@ public class MainMenu extends Application {
                         Text thanks = new Text("Thank you. Payment has been processed");
                         rootNodeForMenu.addRow(2, thanks);
                         rootNodeForMenu.addRow(3, change);
-                        newPayment = new Payment(selectedOrder.getOrderTotal(), LocalDate.now(), tipDouble);
-                        newPayment.takePayment();
-                        String[] dataPayment = {String.valueOf(selectedOrder.getOrderTotal()), LocalDate.now().toString(), tip.getText(), comboBox.getValue()};
+                        newPayment = new Payment(selectedOrder.getOrderTotal(), selectedDate, tipDouble);
+                        String[] dataPayment = {String.valueOf(selectedOrder.getOrderTotal()), selectedDate.toString(), tip.getText(), comboBox.getValue(), String.valueOf(r.getRestaurantId())};
                         r.CSV("Restaurant/src/payments.csv", dataPayment);
                         r.getPaymentPendingOrders().remove(selectedOrder);
                     } catch (FileNotFoundException e) {
@@ -855,6 +859,7 @@ public class MainMenu extends Application {
                         double totalTipsForDay = 0;
                         while (scanPay.hasNext()) {
                             String line = scanPay.nextLine().trim();
+                            System.out.println(line);
 
                             String[] dataPerLine = line.split(", ");
                             String[] date = dataPerLine[1].split("-");
@@ -864,8 +869,8 @@ public class MainMenu extends Application {
                             }
                             LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1], dateFormat[2]);
                             System.out.println(r.getRestaurantId());
-                            System.out.println(dataPerLine[4].charAt(0));
-                            if (dateOf.isBefore(after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0, 1)))) {
+                            System.out.println();
+                            if (dateOf.isBefore(after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0, dataPerLine[4].length() - 1)))) {
                                 if (dateOf.equals(datesBetween.get(i))) {
                                     totalForDay += Double.parseDouble(dataPerLine[0]);
                                     totalTipsForDay += Double.parseDouble(dataPerLine[2]);
@@ -878,7 +883,7 @@ public class MainMenu extends Application {
                         }
                         String textString = "Total For Day " + datesBetween.get(i).toString() + " : " + totalForDay + "\nTips: " + totalTipsForDay;
 
-                        rootNodeForMenu.addRow(i + 1 + 1, new Text(textString));
+                        rootNodeForMenu.addRow(i + 2, new Text(textString));
 
                     }
                     String s = "Total Revenue for " + r.getRestaurantId() + ": " + totalRev + " \nTips: " + totalTips;
