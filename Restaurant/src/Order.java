@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,6 +6,7 @@ public class Order {
     Restaurant currentRestaurant;
     private ArrayList<Food> orders = new ArrayList<>();
     private double orderTotal = 0;
+    final DecimalFormat df = new DecimalFormat("#.##");
     private int tableNumber;
     /**
      * Order constructor that creates tableNumber and currentRestaurant objects
@@ -34,7 +36,7 @@ public class Order {
     }
 
     public double getOrderTotal() {
-        return Math.round(orderTotal * 100) / 100;
+        return orderTotal;
     }
 
     /**
@@ -48,7 +50,7 @@ public class Order {
             s.append(f);
             s.append("\n");
         }
-        s.append(orderTotal);
+        s.append(df.format(orderTotal));
         return s.toString();
 
     }
