@@ -24,6 +24,10 @@ public class Order {
         orderTotal += f.getPrice();
     }
 
+    public ArrayList<Food> getOrderList() {
+        return orders;
+    }
+
 
     public int getTableNumber() {
         return tableNumber;

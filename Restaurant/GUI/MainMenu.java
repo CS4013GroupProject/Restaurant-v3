@@ -433,6 +433,26 @@ public class MainMenu extends Application {
         return table;
     }
 
+    public TableView generateOrderTable(Order o) {
+        TableView table = new TableView();
+
+        table.setEditable(false);
+
+        TableColumn name = new TableColumn("Item Name");
+        TableColumn price = new TableColumn("Item Price");
+
+        name.setCellValueFactory(new PropertyValueFactory<Food, String>("foodName"));
+        price.setCellValueFactory(new PropertyValueFactory<Food, Double>("price"));
+
+        table.getColumns().addAll(name, price);
+
+        ObservableList<Food> foodData = FXCollections.observableArrayList(o.getOrderList());
+
+        table.getItems().addAll(foodData);
+
+        return table;
+    }
+
     /**
      * displayCreationPage that displays the page for creating restaurants
      */
@@ -636,12 +656,17 @@ public class MainMenu extends Application {
 
             view.setOnAction(f -> {
                 clearRootNode();
-                StringBuilder s = new StringBuilder();
+                GridPane orderGrid = new GridPane();
+                orderGrid.setVgap(5);
+                orderGrid.setHgap(5);
+                int row = 0;
+                int column = 0;
                 for (Order o : r.getCurrentOrders()) {
-                    s.append(o.toString()).append("\n");
+                    orderGrid.add(generateOrderTable(o), column, row);
+                    column++;
+                    if(column == 3) {column = 0; row++;};
                 }
-                Text orders = new Text(s.toString());
-                rootNodeForMenu.addRow(2, orders);
+                rootNodeForMenu.addRow(2, orderGrid);
 
             });
             update.setOnAction(f -> {
@@ -675,12 +700,17 @@ public class MainMenu extends Application {
             });
             seeComplete.setOnAction(f -> {
                 clearRootNode();
-                String s = "";
+                GridPane orderGrid = new GridPane();
+                orderGrid.setVgap(5);
+                orderGrid.setHgap(5);
+                int row = 0;
+                int column = 0;
                 for (Order o : r.getCompletedOrder()) {
-                    s += o.toString() + "\n";
+                    orderGrid.add(generateOrderTable(o), column, row);
+                    column++;
+                    if(column == 3) {column = 0; row++;};
                 }
-                Text t = new Text(s);
-                rootNodeForMenu.addRow(2, t);
+                rootNodeForMenu.addRow(2, orderGrid);
             });
 
         });
