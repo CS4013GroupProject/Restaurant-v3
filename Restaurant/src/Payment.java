@@ -7,7 +7,6 @@ public class Payment extends TableReservation {
     private double amountDue;
     private LocalDate date;
     private double tip;
-
     /**
      * payment constructor that creates the amountDue object, the date object and the tip object
      * @param amountDue amount due
@@ -27,16 +26,12 @@ public class Payment extends TableReservation {
      */
     private void writeToFile(String[] data) throws FileNotFoundException {
 
-        try {
-            FileWriter f = new FileWriter("Restaurant/src/payments.csv", true);
+        CSV("Restaurant/src/payments.csv",data);
+            /*FileWriter f = new FileWriter("Restaurant/src/payments.csv", true);
             for (String s : data) {
                 f.write(s + ", ");
             }
-            f.write("\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("file not found");
-        }
+            f.write("\n");*/
 
     }
 
