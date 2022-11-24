@@ -219,7 +219,6 @@ public class Restaurant {
      *
      * @param path        the path to the csv file
      * @param columnNames the actual data
-     * @throws FileNotFoundException error if file is not found
      */
     public void CSV(String path, String[] columnNames) {
 
