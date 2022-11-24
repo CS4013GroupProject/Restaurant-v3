@@ -240,12 +240,10 @@ public class MainMenu extends Application {
         viewMenu.setOnAction(e -> {
             clearRootNode();
 
-            String menu = r.getMenu().toString();
+            ArrayList<Food> menu = r.getMenu().getAllMenuItemsAsArray();
             Text menuHead = new Text("Restaurant Menu:");
-            Text response = new Text();
-            response.setText(menu);
             rootNodeForMenu.addRow(3, menuHead);
-            rootNodeForMenu.addRow(4, response);
+            rootNodeForMenu.addRow(4, generateMenuTable(menu));
 
         });
 
@@ -314,8 +312,10 @@ public class MainMenu extends Application {
             TextField getOrder = new TextField("Choose Order To Pay");
             Text text1 = new Text("Choose date");
             DatePicker d = new DatePicker();
+            d.setValue(LocalDate.now());
             TextField payment = new TextField("Insert Payment");
             TextField tip = new TextField("Insert Tip");
+            Text paymentMethod = new Text("Payment Method");
             Button b = generateButton("Submit");
 
 
@@ -330,10 +330,11 @@ public class MainMenu extends Application {
             rootNodeForMenu.addRow(3, orderSelector);
             rootNodeForMenu.addRow(4,text1);
             rootNodeForMenu.addRow(5,d);
-            rootNodeForMenu.addRow(6, comboBox);
-            rootNodeForMenu.addRow(7, payment);
-            rootNodeForMenu.addRow(8, tip);
-            rootNodeForMenu.addRow(9, b);
+            rootNodeForMenu.addRow(6, paymentMethod);
+            rootNodeForMenu.addRow(7, comboBox);
+            rootNodeForMenu.addRow(8, payment);
+            rootNodeForMenu.addRow(9, tip);
+            rootNodeForMenu.addRow(10, b);
 
             b.setOnAction(g -> {
                 String selectedCombo = orderSelector.getValue().split("\\.")[0];
@@ -622,7 +623,6 @@ public class MainMenu extends Application {
         rootNodeForMenu.addRow(10, response);
 
         bForChef.setOnAction(e -> {
-            // "V)iew current orders, U)pdate status, S)ee completed orders, Q)uit
             setActive(originalButtons, bForChef);
             sidebar.getChildren().clear();
 
@@ -707,9 +707,6 @@ public class MainMenu extends Application {
                             Login log = new Login(username.getText(), pass.getText(), (int) ((Math.random() * 89999999) + 10000000));
                             r.addToListOfCustomers(log, false);
                             customer = log;
-//                            navbar.getChildren().clear();
-//                            navbar.getChildren().add(bForCustomer);
-//                            setActive(new ArrayList<Button>(), bForCustomer);
                             displayCustomerPage(rootNodeForMenu, sidebar, title);
                         }
                 );
@@ -727,9 +724,6 @@ public class MainMenu extends Application {
                     for (Login l : Restaurant.getListOfCustomers()) {
                         if (l.getUsername().equalsIgnoreCase(username.getText()) && l.getPassword().equalsIgnoreCase(pass.getText())) {
                             customer = l;
-//                            navbar.getChildren().clear();
-//                            navbar.getChildren().add(bForCustomer);
-//                            setActive(new ArrayList<Button>(), bForCustomer);
                             displayCustomerPage(rootNodeForMenu, sidebar, title);
                             rootNodeForMenu.getChildren().removeAll(username, pass, b);
                             break;
@@ -997,8 +991,9 @@ public class MainMenu extends Application {
                         ArrayList<Food> menu = r.getMenu().getAllMenuItemsAsArray();
                         ArrayList<Food> orderLocalItems = new ArrayList<>();
                         TextField food = new TextField("Enter Food");
-                        Button submitButton = generateButton("Submit Food");
-                        HBox submitCancel = new HBox(submitButton, backButton());
+                        Button submitButton = generateButton("Add To Order");
+                        Button completeOrder = generateButton("Complete Order");
+                        HBox submitCancel = new HBox(submitButton, completeOrder, backButton());
                         ComboBox<String> pickFood = new ComboBox<>();
 
                         TableView orderItems = generateMenuTable(orderLocalItems);
@@ -1023,6 +1018,11 @@ public class MainMenu extends Application {
                                     orderItems.getItems().add(foodItem);
                                 }
                             }
+                        });
+
+                        completeOrder.setOnAction(gf -> {
+                            r.addToActiveOrders(order);
+                            bCreateOrder.fire();
                         });
                     });
 
