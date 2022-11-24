@@ -190,7 +190,7 @@ public class MainMenu extends Application {
                 int noOfPPl = Integer.parseInt(noOfPpl.getText());
                 int tableNoInt = Integer.parseInt(tableNo.getText());
                 try {
-                    TableReservation res = new TableReservation(dateAsLocalDate, time, nameString, Integer.parseInt(phoneString), noOfPPl, r.getRestaurantId(), tableNoInt, r, customer.getCustomerid(), false);
+                    TableReservation res = new TableReservation(dateAsLocalDate, time, nameString, Integer.parseInt(phoneString), noOfPPl, r.getRestaurantId(), tableNoInt, r, customer.getCustomerid(), false, false);
                     boolean booked = false;
                     for (TableReservation r : r.getListOfReservations()) {
                         if (r.getDate().equals(dateAsLocalDate)) {
@@ -228,7 +228,7 @@ public class MainMenu extends Application {
 
             submitResData2.setOnAction(h -> {
                 try {
-                    TableReservation res = new TableReservation(LocalDate.now(), LocalTime.now(), Integer.parseInt(noOfPpl2.getText()), r.getRestaurantId(), r, customer.getCustomerid());
+                    TableReservation res = new TableReservation(LocalDate.now(), LocalTime.now(), Integer.parseInt(noOfPpl2.getText()), r.getRestaurantId(), r, customer.getCustomerid(), false);
                     r.getListOfReservations().add(res);
                     clearRootNode();
 
@@ -939,9 +939,11 @@ public class MainMenu extends Application {
                             }
 
                         }
-                        String textString = "Total For Day " + datesBetween.get(i).toString() + " : " + totalForDay + "\nTips: " + totalTipsForDay;
 
-                        rootNodeForMenu.addRow(i + 2, new Text(textString));
+                        String textString = "Total For Day " + datesBetween.get(i).toString() + " : " + totalForDay + "\nTips: " + totalTipsForDay;
+                        Text st = new Text(textString);
+                        ScrollPane s = new ScrollPane(st);
+                        rootNodeForMenu.addRow(i + 2, s);
 
                     }
                     String s = "Total Revenue for " + r.getRestaurantId() + ": " + totalRev + " \nTips: " + totalTips;
@@ -1000,7 +1002,8 @@ public class MainMenu extends Application {
 
                 }
                 Text res = new Text(s);
-                rootNodeForMenu.addRow(2, res);
+                ScrollPane scr = new ScrollPane(res);
+                rootNodeForMenu.addRow(2, scr);
             });
             bCreateOrder.setOnAction(f -> {
                 clearRootNode();

@@ -27,7 +27,7 @@ public class Waiter extends Restaurant {
         } else if (input.equalsIgnoreCase("C")) {
             System.out.println(currentRestaurant.getCapacity());
         } else if (input.equalsIgnoreCase("V")) {
-            viewMenu();
+            currentRestaurant.viewMenu();
         } else if (input.equalsIgnoreCase("Cr")) {
             createOrder();
         } else if (input.equalsIgnoreCase("Re")) {
@@ -51,7 +51,8 @@ public class Waiter extends Restaurant {
         System.out.println("Enter table number");
         int tableNumber = Integer.parseInt(s.nextLine());
         Order order = new Order(tableNumber, currentRestaurant);
-        currentRestaurant.viewMenu();
+        System.out.println(currentRestaurant.getMenu().getTotalMenu());
+
         System.out.println("\nEnter each food one by one:");
         String food = s.nextLine().toUpperCase();
         while(!food.equalsIgnoreCase("q")){

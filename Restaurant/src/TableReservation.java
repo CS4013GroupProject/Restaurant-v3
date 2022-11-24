@@ -14,7 +14,7 @@ public class TableReservation extends Restaurant {
     private int restaurantID; //id of restaurant taking reservation
     private int tableNumber; //table number thats been reserved
     private static ArrayList<String> csv = new ArrayList<>();
-    boolean cancelled;
+    boolean cancelled = false;
     private int rowNumber;
     private Restaurant currentRestaurant;
     private boolean booked = false;
@@ -34,11 +34,12 @@ public class TableReservation extends Restaurant {
      * @throws FileNotFoundException
      */
 
-    public TableReservation(LocalDate date, LocalTime time, int noOfPeople, int restaurantID, Restaurant currentRestaurant, int customerId) throws FileNotFoundException {
+    public TableReservation(LocalDate date, LocalTime time, int noOfPeople, int restaurantID, Restaurant currentRestaurant, int customerId, boolean cancelled) throws FileNotFoundException {
         this(restaurantID);
         this.customerId = customerId;
         this.date = date;
         this.time = time;
+        this.cancelled = cancelled;
         this.noOfPeople = noOfPeople;
         cancelled = false;
         this.restaurantID = restaurantID;
@@ -61,7 +62,7 @@ public class TableReservation extends Restaurant {
             int tableNumberIndex = (int) ((Math.random() * counter));
             tableNumber = tables.get(tableNumberIndex);
             reservationID = (int) ((Math.random() * 89999999) + 10000000);
-            String[] data = {"null", String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), "0", String.valueOf(customerId), String.valueOf(noOfPeople)};
+            String[] data = {"null", String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), "0", String.valueOf(customerId), String.valueOf(noOfPeople), String.valueOf(cancelled)};
             this.currentRestaurant = currentRestaurant;
             CSV("Restaurant/src/data.csv", data);
         }
@@ -81,13 +82,14 @@ public class TableReservation extends Restaurant {
      * @param exists boolean relating to the csv writer
      * @throws FileNotFoundException
      */
-    public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant, int customerId, boolean exists) throws FileNotFoundException {
+    public TableReservation(LocalDate date, LocalTime time, String fullName, int phoneNumber, int noOfPeople, int restaurantID, int tableNumber, Restaurant currentRestaurant, int customerId, boolean exists, boolean cancelled) throws FileNotFoundException {
         //this constructor makes a reservation
         this(restaurantID);
 
         this.customerId = customerId;
         this.date = date;
         this.time = time;
+        this.cancelled = cancelled;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.noOfPeople = noOfPeople;
@@ -95,13 +97,14 @@ public class TableReservation extends Restaurant {
         cancelled = false;
         this.restaurantID = restaurantID;
         reservationID = (int) ((Math.random() * 89999999) + 10000000);
-        String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(phoneNumber), String.valueOf(customerId), String.valueOf(noOfPeople)};
+        String[] data = {fullName, String.valueOf(reservationID), String.valueOf(tableNumber), String.valueOf(date), String.valueOf(time), String.valueOf(restaurantID), String.valueOf(phoneNumber), String.valueOf(customerId), String.valueOf(noOfPeople), String.valueOf(cancelled)};
         this.currentRestaurant = currentRestaurant;
         for(TableReservation r : currentRestaurant.getListOfReservations()){
             if(r.getDate().equals(date)){
                 if(r.getTime().getHour() + 3 >= time.getHour()){
                     if (r.getTableNumber() == tableNumber){
-                        System.out.println("Table is already booked at this time.");
+                        System.out.println("Table is already booked at this time." + tableNumber);
+                        System.out.println(r);
                         booked = true;
 
                     }
@@ -155,14 +158,16 @@ public class TableReservation extends Restaurant {
     @Override
     public String toString() {
         StringBuilder bobTheBuilder = new StringBuilder();
-        bobTheBuilder.append("Name: ").append(fullName).append("\n");
-        bobTheBuilder.append("Date and time: ").append(date).append(" ").append(time).append("\n");
-        bobTheBuilder.append("phone number: ").append(phoneNumber).append("\n");
-        bobTheBuilder.append("table number: ").append(tableNumber).append("\n");
-        bobTheBuilder.append("Reservation ID: ").append(reservationID).append("\n");
-        bobTheBuilder.append("Restaurant Id: ").append(restaurantID).append("\n");
-        bobTheBuilder.append("Number of people: ").append(noOfPeople).append("\n");
-        bobTheBuilder.append("Customer ID: ").append(customerId).append("\n");
+            bobTheBuilder.append("Name: ").append(fullName).append("\n");
+            bobTheBuilder.append("Date and time: ").append(date).append(" ").append(time).append("\n");
+            bobTheBuilder.append("phone number: ").append(phoneNumber).append("\n");
+            bobTheBuilder.append("table number: ").append(tableNumber).append("\n");
+            bobTheBuilder.append("Reservation ID: ").append(reservationID).append("\n");
+            bobTheBuilder.append("Restaurant Id: ").append(restaurantID).append("\n");
+            bobTheBuilder.append("Number of people: ").append(noOfPeople).append("\n");
+            bobTheBuilder.append("Customer ID: ").append(customerId).append("\n");
+            bobTheBuilder.append("Cancelled: " + cancelled);
+
         return bobTheBuilder.toString();
     }
 

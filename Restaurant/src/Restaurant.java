@@ -102,10 +102,11 @@ public class Restaurant {
                 int phoneNumber = Integer.parseInt(data[6]);
                 int customerID = Integer.parseInt(data[7]);
                 int numberOfPeople = Integer.parseInt(data[8]);
+                boolean cancel = Boolean.parseBoolean(data[9]);
 
                 if (restaurantID != this.getRestaurantId()) continue;
 
-                TableReservation tableReservation = new TableReservation(date, time, name, phoneNumber, numberOfPeople, restaurantID, table, this, customerID, true);
+                TableReservation tableReservation = new TableReservation(date, time, name, phoneNumber, numberOfPeople, restaurantID, table, this, customerID, true, cancel);
                 this.listOfReservations.add(tableReservation);
             }
         } catch (FileNotFoundException e) {

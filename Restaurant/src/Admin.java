@@ -104,7 +104,6 @@ public class Admin extends Restaurant {
                 LocalDate afterDate = LocalDate.of(afterFormat[0], afterFormat[1], afterFormat[2]);
                 List<LocalDate> datesBetween = beforeDate.datesUntil(afterDate).toList();
 
-                boolean finished = false;
                 double totalRev = 0;
                 double totalTips = 0;
                 for (int i = 0; i < datesBetween.size(); i++) {
@@ -123,8 +122,8 @@ public class Admin extends Restaurant {
                             dateFormat[j] = Integer.parseInt(date[j]);
                         }
                         LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1], dateFormat[2]);
-
-                        if (dateOf.isBefore(afterDate) && dateOf.isAfter(beforeDate) && (currentRestaurant.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0, 1)))) {
+                        System.out.println(line);
+                        if (dateOf.isBefore(afterDate) && dateOf.isAfter(beforeDate) && (currentRestaurant.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0, dataPerLine[4].length()-1)))) {
 
                             if (dateOf.equals(datesBetween.get(i))) {
                                 totalForDay += Double.parseDouble(dataPerLine[0]);

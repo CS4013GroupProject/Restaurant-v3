@@ -151,9 +151,7 @@ public class Menu {
      */
     public void addToMenu(int timeOfDay, Food food) throws FileNotFoundException {
         if (timeOfDay == 1) {
-            System.out.println("HRAONRWIPNF");
             menuForMorning.add(food);
-            System.out.println(menuForMorning);
         } else if (timeOfDay == 2) {
             menuForAfterNoon.add(food);
         } else if (timeOfDay == 3) {

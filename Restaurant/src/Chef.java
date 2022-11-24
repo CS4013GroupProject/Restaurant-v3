@@ -37,10 +37,10 @@ public class Chef extends Restaurant {
                 } else {
                     System.out.println("Choose an order to update");
                     for (int i = 0; i < currentRestaurant.getCurrentOrders().size(); i++) {
-                        System.out.println(i + " " + currentRestaurant.getCurrentOrders().get(i));
+                        System.out.println((i + 1) + " " + currentRestaurant.getCurrentOrders().get(i));
                     }
                     Scanner in = new Scanner(System.in);
-                    int index = Integer.parseInt(in.nextLine().trim());
+                    int index = Integer.parseInt(in.nextLine().trim()) - 1;;
                     if (index >= 0 && index <= currentRestaurant.getCurrentOrders().size()) {
                         currentRestaurant.getCompletedOrder().add(currentRestaurant.getCurrentOrders().get(index));
                         currentRestaurant.getPaymentPendingOrders().add(currentRestaurant.getCurrentOrders().get(index));

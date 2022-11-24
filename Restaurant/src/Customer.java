@@ -98,16 +98,20 @@ public class Customer extends Restaurant {
         } else if (input.equalsIgnoreCase("C")) {
             System.out.println("Choose a reservation to cancel");
             int i = 1;
+            TableReservation delete = new TableReservation();
             for (TableReservation t : currentRestaurant.getListOfReservations()) {
-                System.out.println(i);
-                System.out.println(t);
-                i++;
-
+                if(t.getCustomerId() == customerId) {
+                    delete = t;
+                    System.out.println(i);
+                    System.out.println(t);
+                    i++;
+                }
             }
             int index = Integer.parseInt(in.nextLine().trim()) - 1;
             if (index >= 0 && index < currentRestaurant.getListOfReservations().size()) {
+                delete.cancels();
 
-                cancelReservation(currentRestaurant.getListOfReservations(), index);
+                currentRestaurant.getListOfReservations().remove(delete);
             } else {
                 System.out.println("invalid reservation");
                 menuForCustomers();
@@ -117,7 +121,7 @@ public class Customer extends Restaurant {
             System.out.println("Choose an Order");
             for (int i = 0; i < currentRestaurant.getPaymentPendingOrders().size(); i++) {
                 System.out.println((i + 1) + ".");
-                System.out.println(currentRestaurant.getPaymentPendingOrders().get(i).getOrderTotal());
+                System.out.println(currentRestaurant.getPaymentPendingOrders().get(i).toString());
             }
             int index = Integer.parseInt(in.nextLine().trim()) - 1;
             System.out.println("Enter Date: YYYY-MM-DD");
@@ -143,7 +147,6 @@ public class Customer extends Restaurant {
             double tip = Double.parseDouble(in.nextLine().trim());
             double tipActual = currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal() * (tip / 100);
             Payment newPayment = new Payment(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal(), LocalDate.now(), tipActual);
-            newPayment.takePayment();
             String[] data = {
                     String.valueOf(currentRestaurant.getPaymentPendingOrders().get(index).getOrderTotal()),
                     String.valueOf(theDay),
@@ -171,6 +174,7 @@ public class Customer extends Restaurant {
             System.out.println("Input a time HH:MM");
             String t = in.nextLine().trim();
             String[] timeArray = t.split(":");
+            LocalTime a = LocalTime.of(Integer.parseInt(timeArray[0]),Integer.parseInt(timeArray[1]));
             int counter = currentRestaurant.getNumberOfTables();
             ArrayList<TableReservation> currentRes = new ArrayList<>();
             for (TableReservation r : currentRestaurant.getListOfReservations()) {
@@ -178,7 +182,7 @@ public class Customer extends Restaurant {
                 System.out.println(timeArray[0]);
                 if (r.getDate().toString().equals(s)) {
                     System.out.println("equal date");
-                    if (r.getTime().getHour() <= Integer.parseInt(timeArray[0])) {
+                    if (r.getTime().getHour() + 3 >= a.getHour()) {
                         System.out.println("Equal time");
                         counter--;
                         currentRes.add(r);
@@ -278,7 +282,7 @@ public class Customer extends Restaurant {
                     }
                 }
                 if (currentRestaurant.getListOfReservations().isEmpty()) {
-                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false);
+                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false, false);
                     currentRestaurant.getListOfReservations().add(a);
                 } else {
                     for (TableReservation r : currentRestaurant.getListOfReservations()) {
@@ -291,7 +295,7 @@ public class Customer extends Restaurant {
                             }
                         }
                     }
-                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false);
+                    TableReservation a = new TableReservation(b, c, resData[2], Integer.parseInt(resData[3]), Integer.parseInt(resData[4]), currentRestaurant.getRestaurantId(), Integer.parseInt(resData[5]), currentRestaurant, customerId, false,false);
                     if(!a.getBooked()) {
                         currentRestaurant.getListOfReservations().add(a);
                     }
@@ -315,7 +319,7 @@ public class Customer extends Restaurant {
             Scanner in = new Scanner(System.in);
             int noOfPeople = Integer.parseInt(in.nextLine().trim());
             if (noOfPeople <= currentRestaurant.getCapacity()) {
-                TableReservation a = new TableReservation(LocalDate.now(), LocalTime.now(), noOfPeople, currentRestaurant.getRestaurantId(), currentRestaurant, customerId);
+                TableReservation a = new TableReservation(LocalDate.now(), LocalTime.now(), noOfPeople, currentRestaurant.getRestaurantId(), currentRestaurant, customerId, false);
                 currentRestaurant.getListOfReservations().add(a);
             } else {
                 System.out.println(noOfPeople + " people exceeds capacity of " + currentRestaurant.getCapacity() + "\n" + "Please edit reservation");
