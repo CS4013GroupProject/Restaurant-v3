@@ -22,6 +22,16 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class MainMenu extends Application {
+    public Restaurant r;
+    public Login customer;
+    String backgroundColor = "#E5F9E0";
+    String navColor = "#222E50";
+    String buttonColor = "#A3F7B5";
+    private Stage stage;
+    private Manager manager;
+    private int xHeight = 1920;
+    private int yHeight = 1080;
+
     /**
      * Main menu class that creates the GUI for the program
      *
@@ -30,16 +40,6 @@ public class MainMenu extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    public Restaurant r;
-    public Login customer;
-    private Stage stage;
-    private Manager manager;
-    private int xHeight = 1920;
-    String backgroundColor = "#E5F9E0";
-    String navColor = "#222E50";
-    String buttonColor = "#A3F7B5";
-    private int yHeight = 1080;
 
     /**
      * start method that creates the GUI and starts it
@@ -385,8 +385,6 @@ public class MainMenu extends Application {
             t.setText(string.toString());
 
             rootNodeForMenu.addRow(2, t);
-
-
         });
     }
 
@@ -437,7 +435,7 @@ public class MainMenu extends Application {
     /**
      * quit button method, creates quit button
      *
-     * @return returns quit
+     * @return Button
      */
     public Button quitButton() {
         Button quit = generateButton("Quit");
@@ -513,7 +511,7 @@ public class MainMenu extends Application {
     }
 
 
-    public HBox addMenuHbox(ArrayList<Button> buttonList, boolean excludeBack) {
+    public HBox addMenuHbox(ArrayList<Button> buttonList) {
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
         hbox.setSpacing(15);
@@ -522,11 +520,6 @@ public class MainMenu extends Application {
         for (Button b : buttonList) {
             hbox.getChildren().add(b);
         }
-
-        if (!excludeBack) {
-            hbox.getChildren().add(backButton());
-        }
-
 
         return hbox;
     }
@@ -553,7 +546,7 @@ public class MainMenu extends Application {
         BorderPane nav = new BorderPane();
 
         ArrayList<Button> originalButtons = generateMenuButtons();
-        HBox navbar = addMenuHbox(originalButtons, true);
+        HBox navbar = addMenuHbox(originalButtons);
         VBox sidebar = new VBox();
 
         nav.setBackground(Background.fill(Paint.valueOf(backgroundColor)));
@@ -589,7 +582,7 @@ public class MainMenu extends Application {
             sidebar.getChildren().clear();
 
             Button view = generateButton("View Current Orders");
-            Button update = generateButton("Update Status");
+            Button update = generateButton("Mark Orders Complete");
             Button seeComplete = generateButton("See Completed Orders");
 
             sidebar.getChildren().add(view);
@@ -608,24 +601,31 @@ public class MainMenu extends Application {
             });
             update.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
-                Text t = new Text("Choose an order to update");
+                Text t = new Text("Choose an order to mark");
                 String s = "";
                 int i = 1;
+
+                ComboBox<String> comboBox = new ComboBox<>();
+
                 for (Order o : r.getCurrentOrders()) {
                     s += i + "\n";
                     s += o.toString() + "\n";
+                    comboBox.getItems().add(i + ". " + o);
+                    System.out.println("ADDED " + i + ". " + o);
                 }
-                Text orders = new Text(s);
-                TextField index = new TextField("Enter order Number");
                 Button submit = generateButton("Submit");
                 rootNodeForMenu.addRow(2, t);
-                rootNodeForMenu.addRow(3, orders);
-                rootNodeForMenu.addRow(4, index);
+                rootNodeForMenu.addRow(3, comboBox);
                 rootNodeForMenu.addRow(5, submit);
                 submit.setOnAction(g -> {
-                    r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) - 1));
-                    r.getPaymentPendingOrders().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) - 1));
-                    r.getCurrentOrders().remove(Integer.parseInt(index.getText()) - 1);
+                    String comboSelect = comboBox.getValue();
+                    System.out.println(Arrays.deepToString(comboSelect.split("\\.")));
+                    int selected = Integer.parseInt(comboSelect.split("\\.")[0]) - 1;
+                    Order orderToMark = r.getCurrentOrders().get(selected);
+                    r.getCompletedOrder().add(orderToMark);
+                    r.getPaymentPendingOrders().add(orderToMark);
+                    r.getCurrentOrders().remove(selected);
+                    comboBox.getItems().remove(comboSelect);
                 });
             });
             seeComplete.setOnAction(f -> {
@@ -793,8 +793,6 @@ public class MainMenu extends Application {
                     r.setMenu(newMenu);
                     stage.setScene(mainMenu);
                 });
-
-
             });
 
 
@@ -864,8 +862,6 @@ public class MainMenu extends Application {
                                     totalTips += Double.parseDouble(dataPerLine[2]);
 
                                 }
-
-
                             }
 
                         }
@@ -873,12 +869,10 @@ public class MainMenu extends Application {
 
                         rootNodeForMenu.addRow(i + 1 + 1, new Text(textString));
 
-
                     }
                     String s = "Total Revenue for " + r.getRestaurantId() + ": " + totalRev + " \nTips: " + totalTips;
                     int noOfRows = rootNodeForMenu.getRowCount();
                     rootNodeForMenu.addRow(noOfRows + 1, new Text(s));
-
 
                 });
             });
@@ -938,6 +932,7 @@ public class MainMenu extends Application {
             bCreateOrder.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
+                GridPane tableButtons = new GridPane();
                 TextField t = new TextField("Enter Table Number");
                 Button submit = generateButton("Submit");
                 rootNodeForMenu.addRow(2, t);
@@ -1000,11 +995,8 @@ public class MainMenu extends Application {
             Restaurant resTemp = null;
             for (Restaurant res : Manager.getListOfRestaurants()) {
                 if (String.valueOf(res.getRestaurantId()).equalsIgnoreCase(st)) {
-
                     resTemp = res;
                     break;
-
-
                 }
             }
             r = resTemp;
@@ -1019,6 +1011,4 @@ public class MainMenu extends Application {
 
         });
     }
-
-
 }
