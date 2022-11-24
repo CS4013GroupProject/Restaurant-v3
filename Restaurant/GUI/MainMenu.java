@@ -24,11 +24,13 @@ import java.util.concurrent.TimeUnit;
 public class MainMenu extends Application {
     /**
      * Main menu class that creates the GUI for the program
+     *
      * @param args args
      */
     public static void main(String[] args) {
         launch(args);
     }
+
     public Restaurant r;
     public Login customer;
     private Stage stage;
@@ -41,6 +43,7 @@ public class MainMenu extends Application {
 
     /**
      * start method that creates the GUI and starts it
+     *
      * @param primaryStage primary stage
      */
     public void start(Stage primaryStage) throws FileNotFoundException {
@@ -75,9 +78,9 @@ public class MainMenu extends Application {
             titleText2.setY(100);
 
             Pane titlePane = new Pane(titleText1, titleText2);
-            titlePane.setBackground(new Background(new BackgroundFill(Color.LAVENDER,null,null)));
+            titlePane.setBackground(new Background(new BackgroundFill(Color.LAVENDER, null, null)));
 
-            StackPane rootPane = new StackPane(titlePane,buttonPane);
+            StackPane rootPane = new StackPane(titlePane, buttonPane);
 
             Scene titleScene = new Scene(rootPane, xHeight, yHeight);
             titleScene.setFill(Color.LAWNGREEN);
@@ -96,8 +99,10 @@ public class MainMenu extends Application {
 
 
     }
+
     /**
      * display customer method that displays the GUI menu for customers
+     *
      * @param rootNodeForMenu
      * @param sidebar
      * @param title
@@ -127,13 +132,13 @@ public class MainMenu extends Application {
         sidebar.getChildren().add(seeRem);
 
         StringBuilder s = new StringBuilder();
-        for(TableReservation r : r.getListOfReservations()){
+        for (TableReservation r : r.getListOfReservations()) {
             System.out.println(r.getDate().getDayOfYear() + "Q");
             System.out.println((r.getTime().getHour() * 60) + r.getTime().getMinute());
             System.out.println(LocalDate.now().getDayOfYear());
             System.out.println((LocalTime.now().getHour() * 60) + LocalTime.now().getMinute());
-            if(r.getCustomerId() == customer.getCustomerid()){
-                if(r.getDate().getDayOfYear() > LocalDate.now().getDayOfYear()){
+            if (r.getCustomerId() == customer.getCustomerid()) {
+                if (r.getDate().getDayOfYear() > LocalDate.now().getDayOfYear()) {
                     s.append("Reminder! You have the following reservation upcoming!\n");
                     s.append(r).append("\n");
 
@@ -178,20 +183,20 @@ public class MainMenu extends Application {
                 try {
                     TableReservation res = new TableReservation(dateAsLocalDate, time, nameString, Integer.parseInt(phoneString), noOfPPl, r.getRestaurantId(), tableNoInt, r, customer.getCustomerid(), false);
                     boolean booked = false;
-                    for(TableReservation r : r.getListOfReservations()){
-                        if(r.getDate().equals(dateAsLocalDate)){
-                            if(r.getTime().getHour() + 3 >= time.getHour()){
-                                if(r.getTableNumber() == tableNoInt){
+                    for (TableReservation r : r.getListOfReservations()) {
+                        if (r.getDate().equals(dateAsLocalDate)) {
+                            if (r.getTime().getHour() + 3 >= time.getHour()) {
+                                if (r.getTableNumber() == tableNoInt) {
 
                                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                                     Text text = new Text("Table is booked at that time");
-                                    rootNodeForMenu.addRow(2,text);
+                                    rootNodeForMenu.addRow(2, text);
                                     booked = true;
                                 }
                             }
                         }
                     }
-                    if(!booked) {
+                    if (!booked) {
                         r.getListOfReservations().add(res);
                         rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                     }
@@ -280,7 +285,7 @@ public class MainMenu extends Application {
             StringBuilder str = new StringBuilder();
             int i = 0;
             for (Order o : r.getPaymentPendingOrders()) {
-                str.append((i+1) + ".\n");
+                str.append((i + 1) + ".\n");
                 str.append(o.toString());
                 str.append("\n");
                 i++;
@@ -302,37 +307,38 @@ public class MainMenu extends Application {
             ComboBox<String> comboBox = new ComboBox<>(options);
             rootNodeForMenu.addRow(2, text);
             rootNodeForMenu.addRow(3, paymentPending);
-            rootNodeForMenu.addRow(4,getOrder);
+            rootNodeForMenu.addRow(4, getOrder);
             rootNodeForMenu.addRow(5, comboBox);
-            rootNodeForMenu.addRow(6,payment);
-            rootNodeForMenu.addRow(7,tip);
-            rootNodeForMenu.addRow(8,b);
+            rootNodeForMenu.addRow(6, payment);
+            rootNodeForMenu.addRow(7, tip);
+            rootNodeForMenu.addRow(8, b);
 
             b.setOnAction(g -> {
                 Double tipActual = Double.parseDouble(payment.getText()) + Double.parseDouble(tip.getText());
                 Payment newPayment = null;
-                if(Double.parseDouble(payment.getText()) < r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText() ) -1).getOrderTotal()){
+                if (Double.parseDouble(payment.getText()) < r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()) {
                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                     Text notEnough = new Text("Payment not enough!");
-                    rootNodeForMenu.addRow(2,notEnough);
+                    rootNodeForMenu.addRow(2, notEnough);
 
 
-                }else{
+                } else {
                     try {
                         rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
-                        double changeDue = Math.round((Double.parseDouble(payment.getText()) - r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) -1).getOrderTotal()) * 100) / 100;
+                        double changeDue = Math.round((Double.parseDouble(payment.getText()) - r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()) * 100) / 100;
                         Text change = new Text("Change due: €" + changeDue);
                         Text thanks = new Text("Thank you. Payment has been processed");
                         rootNodeForMenu.addRow(2, thanks);
-                        rootNodeForMenu.addRow(3,change);
+                        rootNodeForMenu.addRow(3, change);
                         newPayment = new Payment(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal(), LocalDate.now(), tipActual);
                         newPayment.takePayment();
-                        String[] dataPayment = {String.valueOf(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()), LocalDate.now().toString(), tip.getText(),comboBox.getValue()};
+                        String[] dataPayment = {String.valueOf(r.getPaymentPendingOrders().get(Integer.parseInt(getOrder.getText()) - 1).getOrderTotal()), LocalDate.now().toString(), tip.getText(), comboBox.getValue()};
                         r.CSV("Restaurant/src/payments.csv", dataPayment);
                         r.getPaymentPendingOrders().remove(Integer.parseInt(getOrder.getText()) - 1);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
-                    }}
+                    }
+                }
             });
         });
         lookUp.setOnAction(f -> {
@@ -368,8 +374,8 @@ public class MainMenu extends Application {
 
             Text text = new Text();
             StringBuilder string = new StringBuilder();
-            for(TableReservation r : r.getListOfReservations()){
-                if(r.getCustomerId() == customer.getCustomerid()){
+            for (TableReservation r : r.getListOfReservations()) {
+                if (r.getCustomerId() == customer.getCustomerid()) {
 
                     string.append(r).append("\n");
 
@@ -378,7 +384,7 @@ public class MainMenu extends Application {
 
             t.setText(string.toString());
 
-            rootNodeForMenu.addRow(2,t);
+            rootNodeForMenu.addRow(2, t);
 
 
         });
@@ -404,15 +410,14 @@ public class MainMenu extends Application {
         Button buttonSubmit = generateButton("Submit");
 
 
-
         GridPane textFieldPane = new GridPane();
         textFieldPane.addRow(0, restaurantID, capacity, noOfTables);
         textFieldPane.addRow(1, buttonSubmit);
         textFieldPane.setAlignment(Pos.CENTER);
 
         GridPane rootNode = new GridPane();
-        rootNode.addRow(0,createTest);
-        rootNode.addRow(1,textFieldPane);
+        rootNode.addRow(0, createTest);
+        rootNode.addRow(1, textFieldPane);
         rootNode.setAlignment(Pos.CENTER);
         Scene createRestaurantScene = new Scene(rootNode, xHeight, yHeight);
         stage.setScene(createRestaurantScene);
@@ -428,8 +433,10 @@ public class MainMenu extends Application {
                 }
         );
     }
+
     /**
      * quit button method, creates quit button
+     *
      * @return returns quit
      */
     public Button quitButton() {
@@ -439,8 +446,10 @@ public class MainMenu extends Application {
         });
         return quit;
     }
+
     /**
      * backButton method that creates back button to return to previous screen
+     *
      * @return returns back
      */
 
@@ -454,12 +463,14 @@ public class MainMenu extends Application {
         });
         return back;
     }
+
     /**
      * backButton method that creates back button to return to previous screen
+     *
      * @param o order
      * @return returns back
      */
-    public Button backButton(Order o){
+    public Button backButton(Order o) {
         r.getCurrentOrders().add(o);
         Button back = generateButton("Back");
         back.setOnAction(e -> {
@@ -508,11 +519,11 @@ public class MainMenu extends Application {
         hbox.setSpacing(15);
         hbox.setBackground(Background.fill(Paint.valueOf(navColor)));
 
-        for(Button b : buttonList) {
+        for (Button b : buttonList) {
             hbox.getChildren().add(b);
         }
 
-        if(!excludeBack) {
+        if (!excludeBack) {
             hbox.getChildren().add(backButton());
         }
 
@@ -521,7 +532,7 @@ public class MainMenu extends Application {
     }
 
     public void setActive(ArrayList<Button> buttons, Button a) {
-        for(Button b : buttons) {
+        for (Button b : buttons) {
             b.setBackground(Background.fill(Paint.valueOf(buttonColor)));
         }
 
@@ -559,7 +570,7 @@ public class MainMenu extends Application {
         nav.setTop(navbar);
         GridPane rootNodeForMenu = new GridPane();
         ScrollPane root = new ScrollPane(rootNodeForMenu);
-        rootNodeForMenu.addRow(1,textBox);
+        rootNodeForMenu.addRow(1, textBox);
         rootNodeForMenu.setPadding(new Insets(10));
         rootNodeForMenu.setVgap(10);
         rootNodeForMenu.setAlignment(Pos.CENTER);
@@ -585,51 +596,51 @@ public class MainMenu extends Application {
             sidebar.getChildren().add(update);
             sidebar.getChildren().add(seeComplete);
 
-            view.setOnAction(f ->{
+            view.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 StringBuilder s = new StringBuilder();
-                for(Order o : r.getCurrentOrders()){
+                for (Order o : r.getCurrentOrders()) {
                     s.append(o.toString()).append("\n");
                 }
                 Text orders = new Text(s.toString());
-                rootNodeForMenu.addRow(2,orders);
+                rootNodeForMenu.addRow(2, orders);
 
             });
-            update.setOnAction(f ->{
+            update.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 Text t = new Text("Choose an order to update");
                 String s = "";
                 int i = 1;
-                for(Order o : r.getCurrentOrders()){
-                    s += i + "\n" ;
+                for (Order o : r.getCurrentOrders()) {
+                    s += i + "\n";
                     s += o.toString() + "\n";
                 }
                 Text orders = new Text(s);
                 TextField index = new TextField("Enter order Number");
                 Button submit = generateButton("Submit");
-                rootNodeForMenu.addRow(2,t);
-                rootNodeForMenu.addRow(3,orders );
-                rootNodeForMenu.addRow(4,index);
-                rootNodeForMenu.addRow(5,submit);
+                rootNodeForMenu.addRow(2, t);
+                rootNodeForMenu.addRow(3, orders);
+                rootNodeForMenu.addRow(4, index);
+                rootNodeForMenu.addRow(5, submit);
                 submit.setOnAction(g -> {
-                    r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) -1));
-                    r.getPaymentPendingOrders().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) -1));
-                    r.getCurrentOrders().remove(Integer.parseInt(index.getText()) -1);
+                    r.getCompletedOrder().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) - 1));
+                    r.getPaymentPendingOrders().add(r.getCurrentOrders().get(Integer.parseInt(index.getText()) - 1));
+                    r.getCurrentOrders().remove(Integer.parseInt(index.getText()) - 1);
                 });
             });
-            seeComplete.setOnAction(f ->{
+            seeComplete.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 String s = "";
-                for(Order o : r.getCompletedOrder()){
+                for (Order o : r.getCompletedOrder()) {
                     s += o.toString() + "\n";
                 }
                 Text t = new Text(s);
-                rootNodeForMenu.addRow(2,t);
+                rootNodeForMenu.addRow(2, t);
             });
 
         });
 
-        bForCustomer.setOnAction( e -> {
+        bForCustomer.setOnAction(e -> {
             rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
             setActive(originalButtons, bForCustomer);
@@ -639,12 +650,12 @@ public class MainMenu extends Application {
             Button bSignIn = generateButton("Sign in");
             sidebar.getChildren().add(bCreateAcc);
             sidebar.getChildren().add(bSignIn);
-            bCreateAcc.setOnAction( f ->{
+            bCreateAcc.setOnAction(f -> {
                 TextField username = new TextField("Username");
                 TextField pass = new TextField("Password");
                 Button b = generateButton("Submit");
                 rootNodeForMenu.addRow(3, username);
-                rootNodeForMenu.addRow(4,pass);
+                rootNodeForMenu.addRow(4, pass);
                 rootNodeForMenu.addRow(5, b);
                 b.setOnAction(g -> {
                             rootNodeForMenu.getChildren().removeAll(username, pass, b);
@@ -654,7 +665,7 @@ public class MainMenu extends Application {
 //                            navbar.getChildren().clear();
 //                            navbar.getChildren().add(bForCustomer);
 //                            setActive(new ArrayList<Button>(), bForCustomer);
-                            displayCustomerPage(rootNodeForMenu,sidebar, title);
+                            displayCustomerPage(rootNodeForMenu, sidebar, title);
                         }
                 );
 
@@ -665,11 +676,11 @@ public class MainMenu extends Application {
                 TextField pass = new TextField("Password");
                 Button b = generateButton("Submit");
                 rootNodeForMenu.addRow(3, username);
-                rootNodeForMenu.addRow(4,pass);
+                rootNodeForMenu.addRow(4, pass);
                 rootNodeForMenu.addRow(5, b);
                 b.setOnAction(g -> {
-                    for(Login l : Restaurant.getListOfCustomers()){
-                        if(l.getUsername().equalsIgnoreCase(username.getText()) && l.getPassword().equalsIgnoreCase(pass.getText())){
+                    for (Login l : Restaurant.getListOfCustomers()) {
+                        if (l.getUsername().equalsIgnoreCase(username.getText()) && l.getPassword().equalsIgnoreCase(pass.getText())) {
                             customer = l;
 //                            navbar.getChildren().clear();
 //                            navbar.getChildren().add(bForCustomer);
@@ -681,12 +692,6 @@ public class MainMenu extends Application {
                     }
                 });
             });
-
-
-
-
-
-
 
 
         });
@@ -718,36 +723,36 @@ public class MainMenu extends Application {
             getID.setOnAction(d -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
-                Text t = new Text("Restaurant ID: " + r.getRestaurantId() );
-                rootNodeForMenu.addRow(2,t);
+                Text t = new Text("Restaurant ID: " + r.getRestaurantId());
+                rootNodeForMenu.addRow(2, t);
             });
 
             getCapacity.setOnAction(d -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
-                Text t = new Text("Restaurant Capacity: " + r.getCapacity() );
-                rootNodeForMenu.addRow(2,t);
+                Text t = new Text("Restaurant Capacity: " + r.getCapacity());
+                rootNodeForMenu.addRow(2, t);
             });
 
             getNumberOfTables.setOnAction(d -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
-                Text t = new Text("Restaurant Number Of Tables: " + r.getNumberOfTables() );
-                rootNodeForMenu.addRow(2,t);
+                Text t = new Text("Restaurant Number Of Tables: " + r.getNumberOfTables());
+                rootNodeForMenu.addRow(2, t);
             });
-            switchRestaurant.setOnAction( d ->{
+            switchRestaurant.setOnAction(d -> {
                 displaySwitch(rootNodeForMenu, data, response);
             });
-            viewReservations.setOnAction( d -> {
+            viewReservations.setOnAction(d -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 String s = "";
-                for(TableReservation r : r.getListOfReservations()){
+                for (TableReservation r : r.getListOfReservations()) {
                     s += r.toString() + "\n";
 
                 }
                 Text res = new Text(s);
                 ScrollPane scroll = new ScrollPane(res);
-                rootNodeForMenu.addRow(2,scroll);
+                rootNodeForMenu.addRow(2, scroll);
             });
             addToMenu.setOnAction(d -> {
                 data.setText("");
@@ -765,19 +770,19 @@ public class MainMenu extends Application {
                         );
                 ComboBox<String> comboBox = new ComboBox<>(options);
                 Button b = generateButton("Submit");
-                rootNodeForMenu.addRow(5,b);
-                rootNodeForMenu.addRow(2,name);
-                rootNodeForMenu.addRow(3,price);
-                rootNodeForMenu.addRow(4,comboBox);
+                rootNodeForMenu.addRow(5, b);
+                rootNodeForMenu.addRow(2, name);
+                rootNodeForMenu.addRow(3, price);
+                rootNodeForMenu.addRow(4, comboBox);
                 b.setOnAction(f -> {
                     Food newFood = new Food(name.getText(), Double.parseDouble(price.getText()));
                     Menu newMenu = new Menu(r);
                     int time = 0;
-                    if (comboBox.getValue().equalsIgnoreCase("morning")){
+                    if (comboBox.getValue().equalsIgnoreCase("morning")) {
                         time = 1;
-                    }else if(comboBox.getValue().equalsIgnoreCase("noon")){
+                    } else if (comboBox.getValue().equalsIgnoreCase("noon")) {
                         time = 2;
-                    }else if (comboBox.getValue().equalsIgnoreCase("evening")){
+                    } else if (comboBox.getValue().equalsIgnoreCase("evening")) {
                         time = 3;
                     }
                     try {
@@ -802,20 +807,21 @@ public class MainMenu extends Application {
 
                 String menu = r.getMenu().toString();
                 Text textMenu = new Text("Restaurant Menu:\n" + menu);
-                rootNodeForMenu.addRow(2,textMenu);
+                rootNodeForMenu.addRow(2, textMenu);
             });
-            getAnalytics.setOnAction(d ->{
+            getAnalytics.setOnAction(d -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 Text t = new Text("Enter Start Date");
                 Text t2 = new Text("Enter End Date");
                 DatePicker start = new DatePicker();
                 DatePicker end = new DatePicker();
                 Button submit = generateButton("Submit");
-                rootNodeForMenu.addRow(2,t);
-                rootNodeForMenu.addRow(3,start);
-                rootNodeForMenu.addRow(4,t2);;
-                rootNodeForMenu.addRow(5,end);
-                rootNodeForMenu.addRow(6,submit);
+                rootNodeForMenu.addRow(2, t);
+                rootNodeForMenu.addRow(3, start);
+                rootNodeForMenu.addRow(4, t2);
+                ;
+                rootNodeForMenu.addRow(5, end);
+                rootNodeForMenu.addRow(6, submit);
                 submit.setOnAction(g -> {
                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
@@ -825,8 +831,8 @@ public class MainMenu extends Application {
 
                     boolean finished = false;
                     double totalRev = 0;
-                    double totalTips= 0;
-                    for(int i = 0; i < datesBetween.size(); i++){
+                    double totalTips = 0;
+                    for (int i = 0; i < datesBetween.size(); i++) {
                         Scanner scanPay = null;
                         try {
                             scanPay = new Scanner(new File("Restaurant//src//payments.csv"));
@@ -838,20 +844,20 @@ public class MainMenu extends Application {
 
                         double totalForDay = 0;
                         double totalTipsForDay = 0;
-                        while(scanPay.hasNext()){
-                            String line =scanPay.nextLine().trim();
+                        while (scanPay.hasNext()) {
+                            String line = scanPay.nextLine().trim();
 
                             String[] dataPerLine = line.split(", ");
                             String[] date = dataPerLine[1].split("-");
                             int[] dateFormat = new int[3];
-                            for(int j = 0; j < 3; j++){
+                            for (int j = 0; j < 3; j++) {
                                 dateFormat[j] = Integer.parseInt(date[j]);
                             }
-                            LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1],dateFormat[2]);
+                            LocalDate dateOf = LocalDate.of(dateFormat[0], dateFormat[1], dateFormat[2]);
                             System.out.println(r.getRestaurantId());
                             System.out.println(dataPerLine[4].charAt(0));
-                            if(dateOf.isBefore( after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0,1)))){
-                                if(dateOf.equals(datesBetween.get(i))){
+                            if (dateOf.isBefore(after) && dateOf.isAfter(before) && (r.getRestaurantId() == Integer.parseInt(dataPerLine[4].substring(0, 1)))) {
+                                if (dateOf.equals(datesBetween.get(i))) {
                                     totalForDay += Double.parseDouble(dataPerLine[0]);
                                     totalTipsForDay += Double.parseDouble(dataPerLine[2]);
                                     totalRev += Double.parseDouble(dataPerLine[0]);
@@ -863,17 +869,15 @@ public class MainMenu extends Application {
                             }
 
                         }
-                        String textString =  "Total For Day "+ datesBetween.get(i).toString() +" : " + totalForDay + "\nTips: " + totalTipsForDay;
+                        String textString = "Total For Day " + datesBetween.get(i).toString() + " : " + totalForDay + "\nTips: " + totalTipsForDay;
 
                         rootNodeForMenu.addRow(i + 1 + 1, new Text(textString));
 
 
-
                     }
-                    String s = "Total Revenue for " + r.getRestaurantId() + ": " +  totalRev + " \nTips: " + totalTips;
+                    String s = "Total Revenue for " + r.getRestaurantId() + ": " + totalRev + " \nTips: " + totalTips;
                     int noOfRows = rootNodeForMenu.getRowCount();
                     rootNodeForMenu.addRow(noOfRows + 1, new Text(s));
-
 
 
                 });
@@ -903,7 +907,7 @@ public class MainMenu extends Application {
                 rootNodeForMenu.addRow(2, t);
 
             });
-            bCap.setOnAction(f ->{
+            bCap.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 Text t = new Text("Capacity: " + r.getCapacity());
                 rootNodeForMenu.addRow(2, t);
@@ -912,32 +916,32 @@ public class MainMenu extends Application {
             bNoOfT.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 Text t = new Text("Number of Tables: " + r.getNumberOfTables());
-                rootNodeForMenu.addRow(2,t);
+                rootNodeForMenu.addRow(2, t);
             });
             bViewMenu.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 String s = "";
                 s += r.getMenu().getTotalMenu().toString();
                 Text t = new Text(s);
-                rootNodeForMenu.addRow(2,t);
+                rootNodeForMenu.addRow(2, t);
             });
             bViewRes.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
                 String s = "";
-                for(TableReservation r : r.getListOfReservations()){
-                    s+= r.toString() + "\n";
+                for (TableReservation r : r.getListOfReservations()) {
+                    s += r.toString() + "\n";
 
                 }
                 Text res = new Text(s);
-                rootNodeForMenu.addRow(2,res);
+                rootNodeForMenu.addRow(2, res);
             });
             bCreateOrder.setOnAction(f -> {
                 rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
                 TextField t = new TextField("Enter Table Number");
                 Button submit = generateButton("Submit");
-                rootNodeForMenu.addRow(2,t);
-                rootNodeForMenu.addRow(3,submit);
+                rootNodeForMenu.addRow(2, t);
+                rootNodeForMenu.addRow(3, submit);
                 submit.setOnAction(g -> {
                     rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
@@ -945,14 +949,14 @@ public class MainMenu extends Application {
                     Text menu = new Text(r.getMenu().toString());
                     rootNodeForMenu.addRow(2, menu);
                     TextField food = new TextField("Enter Food");
-                    rootNodeForMenu.addRow(3,food);
+                    rootNodeForMenu.addRow(3, food);
                     Button submitButton = generateButton("Submit Food");
 
-                    rootNodeForMenu.addRow(4,submitButton,backButton(order));
+                    rootNodeForMenu.addRow(4, submitButton, backButton(order));
                     submitButton.setOnAction(h -> {
 
-                        for(Food foodString : r.getMenu().getTotalMenu()){
-                            if(foodString.getFoodName().equalsIgnoreCase(food.getText())){
+                        for (Food foodString : r.getMenu().getTotalMenu()) {
+                            if (foodString.getFoodName().equalsIgnoreCase(food.getText())) {
                                 order.addToOrder(foodString);
                                 food.setText("");
                                 try {
@@ -963,13 +967,17 @@ public class MainMenu extends Application {
                                     ex.printStackTrace();
                                 }
                             }
-                        }});
+                        }
+                    });
                 });
             });
         });
 
         stage.setScene(mainMenu);
-    };
+    }
+
+    ;
+
     public void displaySwitch(GridPane rootNodeForMenu, Text data, Text response) {
         rootNodeForMenu.getChildren().removeIf(node -> GridPane.getRowIndex(node) > 1);
 
@@ -1005,16 +1013,12 @@ public class MainMenu extends Application {
             data.setStyle("-fx-font: 36 Helvetica;");
             rootNodeForMenu.getChildren().remove(0);
             rootNodeForMenu.addRow(1, data);
-            rootNodeForMenu.getChildren().remove(rootNodeForMenu.getChildren().size()-1);
+            rootNodeForMenu.getChildren().remove(rootNodeForMenu.getChildren().size() - 1);
 
-            rootNodeForMenu.getChildren().add(0,data);
+            rootNodeForMenu.getChildren().add(0, data);
 
         });
     }
-
-
-
-
 
 
 }
